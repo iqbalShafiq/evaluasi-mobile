@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="evaluasi">Evaluasi</string>
+    <string name="subject">Subject</string>
+    <string name="create_assessment">Create Assessment</string>
+</resources>
