@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -30,27 +31,56 @@ import androidx.compose.ui.unit.dp
 import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.model.ClassRoomUi
 import id.usecase.assessment.presentation.screens.home.item.ClassRoomCard
+import id.usecase.core.presentation.ui.ObserveAsEvents
 import id.usecase.designsystem.EvaluasiTheme
 import id.usecase.designsystem.components.app_bar.EvaluasiTopAppBar
 import id.usecase.designsystem.components.button.EvaluasiFloatingActionButton
+import id.usecase.designsystem.components.dialog.StandardAlertDialog
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeScreenRoot(
-    onClassRoomChosen: (String) -> Unit,
+    onClassRoomChosen: (Int) -> Unit,
     onCreateClassRoomClicked: () -> Unit,
     homeViewModel: HomeViewModel = koinViewModel()
 ) {
+    // Load class room data
+    homeViewModel.onAction(HomeAction.LoadClassRoom)
+
+    // Error dialog state
+    val showErrorDialog = remember { mutableStateOf(false) }
+
+    // Observe events
+    ObserveAsEvents(
+        flow = homeViewModel.events,
+    ) { event ->
+        when (event) {
+            is HomeEvent.OnErrorOccurred -> {
+                showErrorDialog.value = true
+            }
+        }
+    }
+
+    // Show error dialog
+    when {
+        showErrorDialog.value -> {
+            StandardAlertDialog(
+                dialogTitle = "Error",
+                dialogText = "An error occurred",
+                onDismissRequest = { showErrorDialog.value = false },
+                onConfirmation = { showErrorDialog.value = false },
+                icon = ImageVector.vectorResource(id = id.usecase.designsystem.R.drawable.ic_test_icon),
+                iconDescription = "Error icon"
+            )
+        }
+    }
+
+    // Render home screen
     HomeScreen(
         modifier = Modifier.fillMaxSize(),
         classRoomList = homeViewModel.state.classRooms,
-        onAction = { action ->
-            when (action) {
-                is HomeAction.AddClassRoom -> onCreateClassRoomClicked()
-                is HomeAction.OpenClassRoom -> onClassRoomChosen(action.classRoomId)
-                HomeAction.LoadClassRoom -> homeViewModel.onAction(action)
-            }
-        }
+        onCreateClassRoomClicked = onCreateClassRoomClicked,
+        onClassRoomChosen = onClassRoomChosen,
     )
 }
 
@@ -58,7 +88,8 @@ fun HomeScreenRoot(
 fun HomeScreen(
     modifier: Modifier = Modifier,
     classRoomList: List<ClassRoomUi>,
-    onAction: (HomeAction) -> Unit,
+    onCreateClassRoomClicked: () -> Unit,
+    onClassRoomChosen: (Int) -> Unit
 ) {
     var fabHeight by remember {
         mutableIntStateOf(0)
@@ -81,7 +112,9 @@ fun HomeScreen(
                 text = "Add New Class",
                 icon = ImageVector.vectorResource(id = R.drawable.ic_add),
                 iconContentDescription = "Add button",
-                onClickListener = { onAction(HomeAction.AddClassRoom) }
+                onClickListener = {
+                    onCreateClassRoomClicked()
+                }
             )
         },
         content = { innerPadding ->
@@ -106,7 +139,7 @@ fun HomeScreen(
                         itemContent = { index ->
                             ClassRoomCard(
                                 onDetailClickedListener = {
-                                    onAction(HomeAction.OpenClassRoom(it.id))
+                                    onClassRoomChosen(classRoomList[index].id)
                                 },
                                 item = classRoomList[index]
                             )
@@ -130,7 +163,7 @@ private fun HomeScreenPreview() {
                     subject = "Math",
                     className = "A",
                     studentCount = 20,
-                    id = "1",
+                    id = 1,
                     lastAssessment = "January Math Exam",
                     startPeriod = "2021-01-01",
                     endPeriod = "2021-12-31"
@@ -139,7 +172,7 @@ private fun HomeScreenPreview() {
                     subject = "Science",
                     className = "B",
                     studentCount = 30,
-                    id = "2",
+                    id = 2,
                     lastAssessment = "February Science Exam",
                     startPeriod = "2021-01-01",
                     endPeriod = "2021-12-31"
@@ -148,7 +181,7 @@ private fun HomeScreenPreview() {
                     subject = "English",
                     className = "C",
                     studentCount = 40,
-                    id = "3",
+                    id = 3,
                     lastAssessment = "March English Exam",
                     startPeriod = "2021-01-01",
                     endPeriod = "2021-12-31"
@@ -157,13 +190,14 @@ private fun HomeScreenPreview() {
                     subject = "History",
                     className = "D",
                     studentCount = 50,
-                    id = "4",
+                    id = 4,
                     lastAssessment = "April History Exam",
                     startPeriod = "2021-01-01",
                     endPeriod = "2021-12-31"
                 )
             ),
-            onAction = { }
+            onCreateClassRoomClicked = { },
+            onClassRoomChosen = { }
         )
     }
 }

@@ -1,7 +1,7 @@
 package id.usecase.assessment.presentation.model
 
 data class StudentScoreUi(
-    val studentId: String,
+    val studentId: Int,
     val studentName: String,
     val comments: String,
     val score: Double,

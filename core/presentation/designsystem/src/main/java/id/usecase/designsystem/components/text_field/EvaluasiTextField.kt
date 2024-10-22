@@ -1,6 +1,8 @@
 package id.usecase.designsystem.components.text_field
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,14 +37,26 @@ fun EvaluasiTextField(
     containerColor: Color = MaterialTheme.colorScheme.surfaceContainerHighest,
     state: TextFieldState,
     inputType: KeyboardType,
+    clickAction: Boolean = false,
+    onClick: () -> Unit = {}
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+
+    if (clickAction && isPressed) onClick()
+
     BasicTextField(
-        modifier = modifier,
+        modifier =  if (clickAction) {
+            modifier.pointerInput(Unit) {}
+        } else {
+            modifier
+        },
         state = state,
-        readOnly = readOnly,
+        readOnly = readOnly || clickAction,
+        interactionSource = interactionSource,
         lineLimits = TextFieldLineLimits.SingleLine,
         keyboardOptions = KeyboardOptions(
-            keyboardType = inputType,
+            keyboardType = if (clickAction) KeyboardType.Text else inputType,
             imeAction = ImeAction.Done
         ),
         decorator = { innerTextField ->

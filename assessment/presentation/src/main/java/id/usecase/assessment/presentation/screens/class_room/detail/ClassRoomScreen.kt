@@ -152,25 +152,25 @@ private fun ClassRoomPreview() {
         ),
         assessmentEvents = listOf(
             AssessmentEventUi(
-                id = "1",
+                id = 1,
                 name = "Assessment 1",
                 eventDate = "03 Oct 2024 12:00:00",
                 createdTime = "03 Oct 2024 12:00:00",
                 assessedStudentCount = 10,
-                categoryId = "1",
+                categoryId = 1,
                 categoryName = "Category 1",
-                classId = "1",
+                classId = 1,
                 lastModifiedTime = "03 Oct 2024 12:00:00",
             ),
             AssessmentEventUi(
-                id = "2",
+                id = 2,
                 name = "Assessment 2",
                 eventDate = "03 Oct 2024 12:00:00",
                 createdTime = "03 Oct 2024 12:00:00",
                 assessedStudentCount = 10,
-                categoryId = "1",
+                categoryId = 1,
                 categoryName = "Category 1",
-                classId = "1",
+                classId = 1,
                 lastModifiedTime = "03 Oct 2024 12:00:00",
             )
         )

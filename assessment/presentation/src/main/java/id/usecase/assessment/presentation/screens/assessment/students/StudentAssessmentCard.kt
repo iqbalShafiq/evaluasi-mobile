@@ -106,7 +106,7 @@ private fun StudentAssessmentCardPreview() {
     StudentAssessmentCard(
         state = StudentAssessmentState(
             data = StudentScoreUi(
-                studentId = "1",
+                studentId = 1,
                 studentName = "John Doe",
                 comments = "Good job",
                 score = 90.0,

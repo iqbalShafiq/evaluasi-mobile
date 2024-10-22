@@ -1,7 +1,7 @@
 package id.usecase.assessment.presentation.model
 
 data class AssessmentUi(
-    val id: String,
+    val id: Int,
     val name: String,
     val eventName: String,
     val categoryName: String,

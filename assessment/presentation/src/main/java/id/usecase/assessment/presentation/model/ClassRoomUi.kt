@@ -1,7 +1,7 @@
 package id.usecase.assessment.presentation.model
 
 data class ClassRoomUi(
-    val id: String,
+    val id: Int,
     val className: String,
     val subject: String,
     val lastAssessment: String,

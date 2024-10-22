@@ -3,6 +3,7 @@
 package id.usecase.assessment.presentation.screens.class_room.create
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,8 +35,11 @@ import id.usecase.designsystem.components.app_bar.EvaluasiTopAppBar
 import id.usecase.designsystem.components.button.ButtonType
 import id.usecase.designsystem.components.button.EvaluasiButton
 import id.usecase.designsystem.components.dialog.StandardAlertDialog
+import id.usecase.designsystem.components.dialog.StandardDatePicker
 import id.usecase.designsystem.components.text_field.EvaluasiTextField
 import org.koin.androidx.compose.koinViewModel
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun CreateClassRoomScreenRoot(
@@ -46,11 +50,33 @@ fun CreateClassRoomScreenRoot(
 ) {
     val openAlertDialog = remember { mutableStateOf(false) }
     val errorMessage = remember { mutableStateOf("") }
+    val showStartDatePicker = remember { mutableStateOf(false) }
+
+    when {
+        showStartDatePicker.value -> {
+            StandardDatePicker(
+                onDismiss = {
+                    showStartDatePicker.value = false
+                },
+                onDateSelected = {
+                    viewModel.onAction(
+                        CreateClassRoomAction.SetStartDate(
+                            startDate = SimpleDateFormat(
+                                "yyyy-MM-dd",
+                                Locale.getDefault()
+                            ).format(it)
+                        )
+                    )
+                    showStartDatePicker.value = false
+                }
+            )
+        }
+    }
 
     ObserveAsEvents(
         flow = viewModel.events
     ) { event ->
-        when(event) {
+        when (event) {
             is CreateClassRoomEvent.OnErrorOccurred -> {
                 openAlertDialog.value = true
                 errorMessage.value = event.message
@@ -80,6 +106,9 @@ fun CreateClassRoomScreenRoot(
     CreateClassRoomScreen(
         modifier = modifier,
         onBackPressed = onBackPressed,
+        showStartDatePicker = {
+            showStartDatePicker.value = true
+        },
         state = viewModel.state.value
     )
 }
@@ -88,6 +117,7 @@ fun CreateClassRoomScreenRoot(
 fun CreateClassRoomScreen(
     modifier: Modifier = Modifier,
     onBackPressed: () -> Unit,
+    showStartDatePicker: () -> Unit,
     state: CreateClassRoomState
 ) {
     Scaffold(
@@ -147,7 +177,11 @@ fun CreateClassRoomScreen(
                         label = "Start Class Date",
                         placeholder = "Pick date",
                         state = state.startDate,
-                        inputType = KeyboardType.Text
+                        clickAction = true,
+                        inputType = KeyboardType.Text,
+                        onClick = {
+                            showStartDatePicker()
+                        }
                     )
                 }
 
@@ -182,6 +216,21 @@ fun CreateClassRoomScreen(
 @Composable
 private fun CreateClassRoomPreview() {
     EvaluasiTheme {
+        val showStartDatePicker = remember { mutableStateOf(false) }
+
+        when {
+            showStartDatePicker.value -> {
+                StandardDatePicker(
+                    onDismiss = {
+                        showStartDatePicker.value = false
+                    },
+                    onDateSelected = {
+                        showStartDatePicker.value = false
+                    }
+                )
+            }
+        }
+
         CreateClassRoomScreen(
             onBackPressed = { },
             state = CreateClassRoomState(
@@ -194,7 +243,10 @@ private fun CreateClassRoomPreview() {
                         name = TextFieldState()
                     )
                 )
-            )
+            ),
+            showStartDatePicker = {
+                showStartDatePicker.value = true
+            }
         )
     }
 }

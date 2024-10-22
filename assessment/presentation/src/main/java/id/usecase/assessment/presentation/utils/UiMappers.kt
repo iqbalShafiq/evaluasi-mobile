@@ -10,9 +10,9 @@ import id.usecase.core.domain.assessment.model.classroom.ClassRoom
 fun ClassRoom.toUi(): ClassRoomUi = ClassRoomUi(
     id = id,
     className = name,
-    subject = students.first().name,
-    lastAssessment = students.last().name,
-    studentCount = students.size,
+    subject = subject,
+    lastAssessment = "",
+    studentCount = 0,
     startPeriod = startPeriod.toString(),
     endPeriod = endPeriod?.toString() ?: ""
 )

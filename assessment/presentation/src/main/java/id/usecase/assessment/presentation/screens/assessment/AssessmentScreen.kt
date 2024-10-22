@@ -148,7 +148,7 @@ private fun AssessmentScreenPreview() {
                 students = listOf(
                     StudentAssessmentState(
                         data = StudentScoreUi(
-                            studentId = "1",
+                            studentId = 1,
                             studentName = "John Doe",
                             comments = "Good job",
                             score = 90.0,
@@ -157,7 +157,7 @@ private fun AssessmentScreenPreview() {
                     ),
                     StudentAssessmentState(
                         data = StudentScoreUi(
-                            studentId = "2",
+                            studentId = 2,
                             studentName = "Jane Doe",
                             comments = "Good job",
                             score = 90.0,
@@ -166,7 +166,7 @@ private fun AssessmentScreenPreview() {
                     ),
                     StudentAssessmentState(
                         data = StudentScoreUi(
-                            studentId = "3",
+                            studentId = 3,
                             studentName = "John Smith",
                             comments = "Good job",
                             score = 90.0,
