@@ -1,15 +1,19 @@
 package id.usecase.core.database.entities
 
-import io.realm.kotlin.types.RealmInstant
-import io.realm.kotlin.types.RealmObject
-import io.realm.kotlin.types.annotations.PrimaryKey
-import org.mongodb.kbson.ObjectId
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-class StudentEntity : RealmObject {
-    @PrimaryKey
-    var id: ObjectId = ObjectId()
-    var name: String = ""
-    var identifier: Int = 0
-    var createdTime: RealmInstant = RealmInstant.now()
-    var lastModifiedTime: RealmInstant = RealmInstant.now()
-}
+@Entity(tableName = "students")
+data class StudentEntity (
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val name: String,
+    val identifier: Int,
+    @ColumnInfo(name = "class_room_id")
+    val classRoomId: Int,
+    @ColumnInfo(name = "created_time")
+    val createdTime: Long,
+    @ColumnInfo(name = "last_modified_time")
+    val lastModifiedTime: Long
+)

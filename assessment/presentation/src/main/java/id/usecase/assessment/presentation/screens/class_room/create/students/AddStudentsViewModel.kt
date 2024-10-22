@@ -2,7 +2,7 @@ package id.usecase.assessment.presentation.screens.class_room.create.students
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import id.usecase.assessment.presentation.models.AddStudentUi
+import id.usecase.assessment.presentation.model.AddStudentUi
 import id.usecase.assessment.presentation.utils.toUi
 
 class AddStudentsViewModel : ViewModel() {

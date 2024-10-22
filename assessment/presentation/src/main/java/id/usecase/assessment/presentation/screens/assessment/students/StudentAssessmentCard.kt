@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import id.usecase.assessment.presentation.models.StudentScoreUi
+import id.usecase.assessment.presentation.model.StudentScoreUi
 import id.usecase.designsystem.components.text_field.EvaluasiTextField
 
 @Composable

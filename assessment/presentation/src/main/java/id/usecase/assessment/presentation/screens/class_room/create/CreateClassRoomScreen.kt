@@ -14,6 +14,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -24,16 +26,62 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import id.usecase.assessment.presentation.R
-import id.usecase.assessment.presentation.screens.class_room.create.students.AddStudentCardState
+import id.usecase.assessment.presentation.model.ClassRoomUi
+import id.usecase.assessment.presentation.screens.class_room.create.students.item.AddStudentCardState
+import id.usecase.core.presentation.ui.ObserveAsEvents
 import id.usecase.designsystem.EvaluasiTheme
 import id.usecase.designsystem.components.app_bar.EvaluasiTopAppBar
 import id.usecase.designsystem.components.button.ButtonType
 import id.usecase.designsystem.components.button.EvaluasiButton
+import id.usecase.designsystem.components.dialog.StandardAlertDialog
 import id.usecase.designsystem.components.text_field.EvaluasiTextField
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun CreateClassRoomScreenRoot(modifier: Modifier = Modifier) {
+fun CreateClassRoomScreenRoot(
+    modifier: Modifier = Modifier,
+    onBackPressed: () -> Unit,
+    onClassHasCreated: (classRoom: ClassRoomUi) -> Unit,
+    viewModel: CreateClassRoomViewModel = koinViewModel()
+) {
+    val openAlertDialog = remember { mutableStateOf(false) }
+    val errorMessage = remember { mutableStateOf("") }
 
+    ObserveAsEvents(
+        flow = viewModel.events
+    ) { event ->
+        when(event) {
+            is CreateClassRoomEvent.OnErrorOccurred -> {
+                openAlertDialog.value = true
+                errorMessage.value = event.message
+            }
+
+            is CreateClassRoomEvent.OnClassRoomCreated -> {
+                onClassHasCreated(event.classRoomUi)
+            }
+        }
+    }
+
+    if (openAlertDialog.value) {
+        StandardAlertDialog(
+            onDismissRequest = {
+                openAlertDialog.value = false
+            },
+            onConfirmation = {
+                openAlertDialog.value = false
+            },
+            dialogTitle = "Error",
+            dialogText = errorMessage.value,
+            icon = ImageVector.vectorResource(id.usecase.designsystem.R.drawable.ic_test_icon),
+            iconDescription = "Error icon"
+        )
+    }
+
+    CreateClassRoomScreen(
+        modifier = modifier,
+        onBackPressed = onBackPressed,
+        state = viewModel.state.value
+    )
 }
 
 @Composable
@@ -120,7 +168,7 @@ fun CreateClassRoomScreen(
                 ) {
                     EvaluasiButton(
                         modifier = Modifier.weight(1f),
-                        text = "Next",
+                        text = "Create",
                         buttonType = ButtonType.PRIMARY,
                         onClick = { }
                     )

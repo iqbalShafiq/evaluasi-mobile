@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.compose.compiler)
+    kotlin("plugin.serialization") version "2.0.20"
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -68,6 +70,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.kotlinx.serialization.json)
 
     // coroutines
     implementation(libs.kotlinx.coroutines.core)
@@ -81,6 +84,9 @@ dependencies {
     implementation(libs.koin.core)
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
+
+    // navigation
+    implementation(libs.androidx.navigation.compose)
 
     // testing
     testImplementation(libs.junit)

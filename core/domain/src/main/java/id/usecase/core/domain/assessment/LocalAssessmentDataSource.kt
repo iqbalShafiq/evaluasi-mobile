@@ -1,36 +1,35 @@
 package id.usecase.core.domain.assessment
 
-import id.usecase.core.domain.assessment.models.Assessment
-import id.usecase.core.domain.assessment.models.AssessmentCategory
-import id.usecase.core.domain.assessment.models.AssessmentEvent
-import id.usecase.core.domain.assessment.models.ClassRoom
-import id.usecase.core.domain.assessment.models.Student
-import kotlinx.coroutines.flow.Flow
+import id.usecase.core.domain.assessment.model.assessment.Assessment
+import id.usecase.core.domain.assessment.model.assessment.category.Category
+import id.usecase.core.domain.assessment.model.assessment.event.Event
+import id.usecase.core.domain.assessment.model.classroom.ClassRoom
+import id.usecase.core.domain.assessment.model.student.Student
 
 interface LocalAssessmentDataSource {
-    suspend fun insertClassRoom(classRooms: ClassRoom)
-    suspend fun insertStudentsToClassRoom(classRoomId: String, students: List<Student>)
-    suspend fun updateClassRoom(classRoom: ClassRoom)
-    suspend fun deleteClassRoom(classRoomId: String)
-    suspend fun deleteStudentFromClassRoom(studentId: String)
-    fun getClassRooms(): Flow<List<ClassRoom>>
-    fun getClassRoomById(classRoomId: String): Flow<ClassRoom?>
+    suspend fun upsertClassRoom(classRoom: ClassRoom)
+    suspend fun getClassRooms(): List<ClassRoom>
+    suspend fun getClassRoomById(classRoomId: Int): ClassRoom?
+    suspend fun deleteClassRoom(classRoom: ClassRoom)
 
-    suspend fun insertAssessmentCategory(category: AssessmentCategory, classRoom: ClassRoom)
-    suspend fun updateAssessmentCategory(category: AssessmentCategory)
-    suspend fun deleteAssessmentCategory(categoryId: String)
-    fun getAssessmentCategories(): Flow<List<AssessmentCategory>>
-    fun getAssessmentCategoryById(categoryId: String): Flow<AssessmentCategory?>
+    suspend fun insertStudent(students: Student)
+    suspend fun insertStudents(students: List<Student>)
+    suspend fun getStudentsByClassRoomId(classRoomId: Int): List<Student>
+    suspend fun deleteStudent(student: Student)
 
-    suspend fun insertAssessmentEvent(event: AssessmentEvent, category: AssessmentCategory)
-    suspend fun updateAssessmentEvent(event: AssessmentEvent)
-    suspend fun deleteAssessmentEvent(eventId: String)
-    fun getAssessmentEvents(): Flow<List<AssessmentEvent>>
-    fun getAssessmentEventById(eventId: String): Flow<AssessmentEvent?>
+    suspend fun upsertCategory(category: Category)
+    suspend fun getCategoriesByClassRoomId(classRoomId: Int): List<Category>
+    suspend fun getCategoryById(categoryId: Int): Category?
+    suspend fun deleteCategory(category: Category)
 
-    suspend fun insertAssessment(assessment: Assessment, event: AssessmentEvent, student: Student)
-    suspend fun updateAssessment(assessment: Assessment)
-    suspend fun deleteAssessment(assessmentId: String)
-    fun getAssessments(): Flow<List<Assessment>>
-    fun getAssessmentById(assessmentId: String): Flow<Assessment?>
+    suspend fun upsertEvent(event: Event)
+    suspend fun getEventsByClassRoomId(classRoomId: Int): List<Event>
+    suspend fun getEventsByCategoryId(categoryId: Int): List<Event>
+    suspend fun getEventById(eventId: Int): Event?
+    suspend fun deleteEvent(event: Event)
+
+    suspend fun upsertAssessment(assessment: Assessment)
+    suspend fun getAssessmentsByEventId(eventId: Int): List<Assessment>
+    suspend fun getAssessmentById(assessmentId: Int): Assessment?
+    suspend fun deleteAssessment(assessment: Assessment)
 }

@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
-
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -39,6 +39,11 @@ dependencies {
 
     // realm
     implementation(libs.realm.base)
+
+    // room
+    implementation(libs.androidx.room.runtime)
+    annotationProcessor(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.compiler)
 
     // coroutines
     implementation(libs.kotlinx.coroutines.core)

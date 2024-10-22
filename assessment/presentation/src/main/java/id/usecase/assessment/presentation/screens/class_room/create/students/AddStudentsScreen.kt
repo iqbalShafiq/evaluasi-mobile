@@ -2,6 +2,11 @@
 
 package id.usecase.assessment.presentation.screens.class_room.create.students
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,12 +18,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -28,6 +34,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import id.usecase.assessment.presentation.R
+import id.usecase.assessment.presentation.screens.class_room.create.students.item.AddStudentCard
+import id.usecase.assessment.presentation.screens.class_room.create.students.item.AddStudentCardState
 import id.usecase.designsystem.EvaluasiTheme
 import id.usecase.designsystem.components.app_bar.EvaluasiTopAppBar
 import id.usecase.designsystem.components.button.ButtonType
@@ -98,11 +106,31 @@ fun AddStudentsScreen(
 
                     Spacer(modifier = Modifier.height(12.dp))
 
+                    val students = remember { mutableStateListOf<AddStudentCardState>() }
+                    students.clear()
+                    students.addAll(state.studentList)
+
                     LazyColumn {
-                        items(state.studentList) { student ->
-                            AddStudentCard(
-                                state = student
-                            )
+                        items(students.size) { index ->
+                            val student = students[index]
+
+                            AnimatedVisibility(
+                                visible = true,
+                                enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+                                exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
+                            ) {
+                                AddStudentCard(state = student)
+
+                                if (
+                                    index == students.size - 1 &&
+                                    student.name.text.isNotEmpty()
+                                ) students.add(AddStudentCardState())
+
+                                if (
+                                    index != students.size - 1 &&
+                                    student.name.text.isEmpty()
+                                ) students.removeAt(index)
+                            }
 
                             Spacer(modifier = Modifier.padding(8.dp))
                         }
@@ -154,9 +182,10 @@ fun AddStudentsScreen(
 @Preview
 @Composable
 private fun AddStudentsPreview() {
+    val state = remember { AddStudentsState() }
     EvaluasiTheme {
         AddStudentsScreen(
-            state = AddStudentsState(),
+            state = state,
             onBackPressed = { },
             openAutoFillScanner = { },
             onAction = { }

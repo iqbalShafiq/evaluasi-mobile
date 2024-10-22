@@ -1,11 +1,11 @@
 package id.usecase.assessment.presentation.utils
 
-import id.usecase.assessment.presentation.models.AddStudentUi
-import id.usecase.assessment.presentation.models.CategoryUi
-import id.usecase.assessment.presentation.models.ClassRoomUi
-import id.usecase.assessment.presentation.screens.class_room.create.categories.CategoryItemState
-import id.usecase.assessment.presentation.screens.class_room.create.students.AddStudentCardState
-import id.usecase.core.domain.assessment.models.ClassRoom
+import id.usecase.assessment.presentation.model.AddStudentUi
+import id.usecase.assessment.presentation.model.CategoryUi
+import id.usecase.assessment.presentation.model.ClassRoomUi
+import id.usecase.assessment.presentation.screens.class_room.create.categories.item.CategoryItemState
+import id.usecase.assessment.presentation.screens.class_room.create.students.item.AddStudentCardState
+import id.usecase.core.domain.assessment.model.classroom.ClassRoom
 
 fun ClassRoom.toUi(): ClassRoomUi = ClassRoomUi(
     id = id,

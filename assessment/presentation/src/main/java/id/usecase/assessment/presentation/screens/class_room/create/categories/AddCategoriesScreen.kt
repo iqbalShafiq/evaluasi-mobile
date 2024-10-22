@@ -2,6 +2,11 @@
 
 package id.usecase.assessment.presentation.screens.class_room.create.categories
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,13 +18,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -29,6 +34,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import id.usecase.assessment.presentation.R
+import id.usecase.assessment.presentation.screens.class_room.create.categories.item.CategoryCard
+import id.usecase.assessment.presentation.screens.class_room.create.categories.item.CategoryItemState
 import id.usecase.designsystem.EvaluasiTheme
 import id.usecase.designsystem.components.app_bar.EvaluasiTopAppBar
 import id.usecase.designsystem.components.button.ButtonType
@@ -46,7 +53,7 @@ fun AddCategoriesScreenRoot(
         state = viewModel.state.value,
         onBackPressed = onBackPressed,
         onAction = { action ->
-            when(action) {
+            when (action) {
                 is AddCategoriesAction.AddCategories -> viewModel.onAction(action)
             }
         }
@@ -96,11 +103,43 @@ fun AddCategoriesScreen(
                         style = MaterialTheme.typography.titleSmall,
                     )
 
+                    val categories = remember { mutableStateListOf<CategoryItemState>() }
+                    categories.clear()
+                    categories.addAll(state.categories)
+
                     LazyColumn(
                         modifier = Modifier.padding(top = 12.dp)
                     ) {
-                        items(state.categories) { item ->
-                            CategoryCard(state = item)
+                        items(categories.size) { index ->
+                            val category = categories[index]
+
+                            val totalPercentage = categories.sumOf {
+                                it.partPercentage.text.toString().toIntOrNull() ?: 0
+                            }
+
+                            AnimatedVisibility(
+                                visible = true,
+                                enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+                                exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
+                            ) {
+                                CategoryCard(
+                                    state = category,
+                                    percentageExceeded = totalPercentage > 100,
+                                    errorMessage = "Total percentage must be 100"
+                                )
+
+                                if (
+                                    index == categories.size - 1 &&
+                                    category.name.text.isNotEmpty()
+                                ) categories.add(
+                                    element = CategoryItemState()
+                                )
+
+                                if (
+                                    index < categories.size - 1 &&
+                                    category.name.text.isEmpty()
+                                ) categories.removeAt(index = index)
+                            }
                             Spacer(modifier = Modifier.height(12.dp))
                         }
                     }
@@ -151,17 +190,16 @@ fun AddCategoriesScreen(
 @Preview
 @Composable
 private fun AddCategoriesPreview() {
+    val state = remember {
+        AddCategoriesState(
+            categories = listOf(
+                CategoryItemState()
+            )
+        )
+    }
     EvaluasiTheme {
         AddCategoriesScreen(
-            state = AddCategoriesState(
-                categories = listOf(
-                    CategoryItemState(
-                        name = rememberTextFieldState(),
-                        partPercentage = rememberTextFieldState(),
-                        description = rememberTextFieldState()
-                    )
-                )
-            ),
+            state = state,
             onBackPressed = { },
             onAction = { }
         )

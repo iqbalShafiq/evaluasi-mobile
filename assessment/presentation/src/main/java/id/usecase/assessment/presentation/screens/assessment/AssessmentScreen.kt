@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import id.usecase.assessment.presentation.R
-import id.usecase.assessment.presentation.models.StudentScoreUi
+import id.usecase.assessment.presentation.model.StudentScoreUi
 import id.usecase.assessment.presentation.screens.assessment.students.StudentAssessmentCard
 import id.usecase.assessment.presentation.screens.assessment.students.StudentAssessmentState
 import id.usecase.designsystem.EvaluasiTheme

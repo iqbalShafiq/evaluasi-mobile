@@ -2,7 +2,7 @@ package id.usecase.assessment.presentation.screens.class_room.create.categories
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import id.usecase.assessment.presentation.models.CategoryUi
+import id.usecase.assessment.presentation.model.CategoryUi
 import id.usecase.assessment.presentation.utils.toUi
 
 class AddCategoriesViewModel : ViewModel() {

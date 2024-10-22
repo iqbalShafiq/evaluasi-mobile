@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 class HomeViewModel(
     private val repository: AssessmentRepository
 ) : ViewModel() {
-    var state by mutableStateOf(HomeStates())
+    var state by mutableStateOf(HomeState())
         private set
 
     private val eventChannel = Channel<HomeEvent>()

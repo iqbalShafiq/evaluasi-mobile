@@ -1,17 +1,32 @@
 package id.usecase.core.database.di
 
-import id.usecase.core.database.RealmConfig
-import id.usecase.core.database.RealmLocalAssessmentDataSource
+import androidx.room.Room
+import id.usecase.core.database.RoomAppDatabase
+import id.usecase.core.database.RoomLocalAssessmentDataSource
 import id.usecase.core.domain.assessment.LocalAssessmentDataSource
-import io.realm.kotlin.Realm
 import org.koin.dsl.module
 
 val dataSourceModule = module {
-    single<Realm> {
-        RealmConfig.getRealm()
+    single<RoomAppDatabase> {
+        Room.databaseBuilder(
+            get(),
+            RoomAppDatabase::class.java,
+            "evaluasi"
+        ).build()
     }
-
+    single { get<RoomAppDatabase>().eventDao() }
+    single { get<RoomAppDatabase>().assessmentDao() }
+    single { get<RoomAppDatabase>().studentDao() }
+    single { get<RoomAppDatabase>().categoryDao() }
+    single { get<RoomAppDatabase>().classRoomDao() }
     single<LocalAssessmentDataSource> {
-        RealmLocalAssessmentDataSource(get())
+        RoomLocalAssessmentDataSource(
+            classRoomDao = get(),
+            categoryDao = get(),
+            eventDao = get(),
+            assessmentDao = get(),
+            studentDao = get(),
+            dispatcher = get()
+        )
     }
 }

@@ -28,7 +28,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import id.usecase.assessment.presentation.R
-import id.usecase.assessment.presentation.models.ClassRoomUi
+import id.usecase.assessment.presentation.model.ClassRoomUi
+import id.usecase.assessment.presentation.screens.home.item.ClassRoomCard
 import id.usecase.designsystem.EvaluasiTheme
 import id.usecase.designsystem.components.app_bar.EvaluasiTopAppBar
 import id.usecase.designsystem.components.button.EvaluasiFloatingActionButton
@@ -40,7 +41,17 @@ fun HomeScreenRoot(
     onCreateClassRoomClicked: () -> Unit,
     homeViewModel: HomeViewModel = koinViewModel()
 ) {
-
+    HomeScreen(
+        modifier = Modifier.fillMaxSize(),
+        classRoomList = homeViewModel.state.classRooms,
+        onAction = { action ->
+            when (action) {
+                is HomeAction.AddClassRoom -> onCreateClassRoomClicked()
+                is HomeAction.OpenClassRoom -> onClassRoomChosen(action.classRoomId)
+                HomeAction.LoadClassRoom -> homeViewModel.onAction(action)
+            }
+        }
+    )
 }
 
 @Composable

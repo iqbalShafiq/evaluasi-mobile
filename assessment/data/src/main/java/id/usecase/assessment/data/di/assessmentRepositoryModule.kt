@@ -6,6 +6,9 @@ import org.koin.dsl.module
 
 val assessmentRepositoryModule = module {
     single<AssessmentRepository> {
-        AssessmentRepositoryImpl(get())
+        AssessmentRepositoryImpl(
+            assessmentDataSource = get(),
+            dispatcher = get(),
+        )
     }
 }
