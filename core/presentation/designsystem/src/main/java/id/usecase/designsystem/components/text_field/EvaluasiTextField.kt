@@ -59,6 +59,9 @@ fun EvaluasiTextField(
             keyboardType = if (clickAction) KeyboardType.Text else inputType,
             imeAction = ImeAction.Done
         ),
+        textStyle = MaterialTheme.typography.bodyMedium.copy(
+            color = MaterialTheme.colorScheme.onSurface
+        ),
         decorator = { innerTextField ->
             Column {
                 label?.let {

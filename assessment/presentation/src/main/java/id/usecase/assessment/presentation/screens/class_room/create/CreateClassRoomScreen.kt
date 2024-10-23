@@ -128,6 +128,7 @@ fun CreateClassRoomScreen(
                 navigationIcon = ImageVector.vectorResource(
                     R.drawable.rounded_arrow_back
                 ),
+                navigationIconTint = MaterialTheme.colorScheme.onSurface,
                 onNavigationClicked = onBackPressed
             )
         },
@@ -136,7 +137,7 @@ fun CreateClassRoomScreen(
                 modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = 24.dp)
             ) {
                 val (content, buttonContainer) = createRefs()
 

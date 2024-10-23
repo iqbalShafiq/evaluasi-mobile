@@ -129,7 +129,7 @@ fun HomeScreen(
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background)
                     .padding(innerPadding)
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = 24.dp)
             ) {
                 Text(text = "Your class rooms", style = MaterialTheme.typography.titleMedium)
 

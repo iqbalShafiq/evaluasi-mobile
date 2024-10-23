@@ -15,6 +15,8 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -27,6 +29,7 @@ fun EvaluasiTopAppBar(
     modifier: Modifier = Modifier,
     subtitle: String? = null,
     navigationIcon: ImageVector? = null,
+    navigationIconTint: Color? = null,
     trailingIcon: ImageVector? = null,
     onNavigationClicked: () -> Unit = {},
     onTrailingIconClicked: () -> Unit = {},
@@ -41,9 +44,10 @@ fun EvaluasiTopAppBar(
             navigationIcon?.let {
                 Image(
                     modifier = Modifier
-                        .padding(start = 4.dp)
+                        .padding(start = 16.dp)
                         .clickable { onNavigationClicked() },
                     imageVector = navigationIcon,
+                    colorFilter = navigationIconTint?.let { ColorFilter.tint(it) },
                     contentDescription = stringResource(R.string.navigation_icon)
                 )
             }
@@ -51,9 +55,9 @@ fun EvaluasiTopAppBar(
         title = {
             Column(
                 modifier = if (navigationIcon != null) {
-                    Modifier.padding(start = 12.dp)
+                    Modifier.padding(start = 16.dp, end = 24.dp)
                 } else {
-                    Modifier
+                    Modifier.padding(horizontal = 4.dp)
                 }
             ) {
                 Text(
