@@ -2,6 +2,7 @@
 
 package id.usecase.assessment.presentation.screens.home
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -38,14 +40,18 @@ import id.usecase.designsystem.components.button.EvaluasiFloatingActionButton
 import id.usecase.designsystem.components.dialog.StandardAlertDialog
 import org.koin.androidx.compose.koinViewModel
 
+private const val TAG = "HomeScreen"
+
 @Composable
 fun HomeScreenRoot(
     onClassRoomChosen: (Int) -> Unit,
     onCreateClassRoomClicked: () -> Unit,
     homeViewModel: HomeViewModel = koinViewModel()
 ) {
-    // Load class room data
-    homeViewModel.onAction(HomeAction.LoadClassRoom)
+    LaunchedEffect(Unit) {
+        // Load class room data
+        homeViewModel.onAction(HomeAction.LoadClassRoom)
+    }
 
     // Error dialog state
     val showErrorDialog = remember { mutableStateOf(false) }

@@ -1,5 +1,6 @@
 package id.usecase.assessment.presentation.screens.home
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -56,5 +57,9 @@ class HomeViewModel(
                     }
                 }
         }
+    }
+
+    companion object {
+        private val TAG = HomeViewModel::class.java.simpleName
     }
 }

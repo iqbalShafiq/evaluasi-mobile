@@ -51,7 +51,7 @@ fun MyNavigation() {
 
                 },
                 onCreateClassRoomClicked = {
-
+                    navController.navigate(CreateClassRoom)
                 }
             )
         }
@@ -59,6 +59,12 @@ fun MyNavigation() {
         composable<CreateClassRoom> {
             CreateClassRoomScreenRoot(
                 modifier = Modifier.fillMaxSize(),
+                onBackPressed = {
+
+                },
+                onClassHasCreated = { classRoom ->
+
+                }
             )
         }
     }
