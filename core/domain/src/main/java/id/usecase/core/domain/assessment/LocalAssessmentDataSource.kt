@@ -7,7 +7,7 @@ import id.usecase.core.domain.assessment.model.classroom.ClassRoom
 import id.usecase.core.domain.assessment.model.student.Student
 
 interface LocalAssessmentDataSource {
-    suspend fun upsertClassRoom(classRoom: ClassRoom)
+    suspend fun upsertClassRoom(classRoom: ClassRoom): ClassRoom?
     suspend fun getClassRooms(): List<ClassRoom>
     suspend fun getClassRoomById(classRoomId: Int): ClassRoom?
     suspend fun deleteClassRoom(classRoom: ClassRoom)

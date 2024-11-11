@@ -13,6 +13,14 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments(
+                    mapOf("room.schemaLocation" to "$projectDir/schemas")
+                )
+            }
+        }
     }
 
     buildTypes {

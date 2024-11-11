@@ -2,7 +2,6 @@
 
 package id.usecase.assessment.presentation.screens.home
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -37,7 +36,6 @@ import id.usecase.core.presentation.ui.ObserveAsEvents
 import id.usecase.designsystem.EvaluasiTheme
 import id.usecase.designsystem.components.app_bar.EvaluasiTopAppBar
 import id.usecase.designsystem.components.button.EvaluasiFloatingActionButton
-import id.usecase.designsystem.components.dialog.StandardAlertDialog
 import org.koin.androidx.compose.koinViewModel
 
 private const val TAG = "HomeScreen"
@@ -54,7 +52,7 @@ fun HomeScreenRoot(
     }
 
     // Error dialog state
-    val showErrorDialog = remember { mutableStateOf(false) }
+    val errorMessage = remember { mutableStateOf<String?>(null) }
 
     // Observe events
     ObserveAsEvents(
@@ -62,28 +60,15 @@ fun HomeScreenRoot(
     ) { event ->
         when (event) {
             is HomeEvent.OnErrorOccurred -> {
-                showErrorDialog.value = true
+                errorMessage.value = event.error.message ?: "An error occurred"
             }
-        }
-    }
-
-    // Show error dialog
-    when {
-        showErrorDialog.value -> {
-            StandardAlertDialog(
-                dialogTitle = "Error",
-                dialogText = "An error occurred",
-                onDismissRequest = { showErrorDialog.value = false },
-                onConfirmation = { showErrorDialog.value = false },
-                icon = ImageVector.vectorResource(id = id.usecase.designsystem.R.drawable.ic_test_icon),
-                iconDescription = "Error icon"
-            )
         }
     }
 
     // Render home screen
     HomeScreen(
         modifier = Modifier.fillMaxSize(),
+        errorMessage = errorMessage.value,
         classRoomList = homeViewModel.state.classRooms,
         onCreateClassRoomClicked = onCreateClassRoomClicked,
         onClassRoomChosen = onClassRoomChosen,
@@ -93,6 +78,7 @@ fun HomeScreenRoot(
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
+    errorMessage: String? = null,
     classRoomList: List<ClassRoomUi>,
     onCreateClassRoomClicked: () -> Unit,
     onClassRoomChosen: (Int) -> Unit
@@ -133,7 +119,16 @@ fun HomeScreen(
             ) {
                 Text(text = "Your class rooms", style = MaterialTheme.typography.titleMedium)
 
-                Spacer(modifier = Modifier.height(16.dp))
+                errorMessage?.let {
+                    Text(
+                        text = errorMessage,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(top = 12.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
 
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),

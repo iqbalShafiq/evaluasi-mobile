@@ -4,16 +4,10 @@ import id.usecase.core.domain.assessment.DataResult
 import id.usecase.core.domain.assessment.model.assessment.Assessment
 import id.usecase.core.domain.assessment.model.assessment.category.Category
 import id.usecase.core.domain.assessment.model.assessment.event.Event
-import id.usecase.core.domain.assessment.model.classroom.ClassRoom
 import id.usecase.core.domain.assessment.model.student.Student
 import kotlinx.coroutines.flow.Flow
 
 interface AssessmentRepository {
-    suspend fun upsertClassRoom(classRoom: ClassRoom)
-    fun getClassRooms(): Flow<DataResult<List<ClassRoom>>>
-    fun getClassRoomById(classRoomId: Int): Flow<DataResult<ClassRoom?>>
-    suspend fun deleteClassRoom(classRoom: ClassRoom)
-
     suspend fun insertStudent(students: Student)
     suspend fun insertStudents(students: List<Student>)
     fun getStudentsByClassRoomId(classRoomId: Int): Flow<DataResult<List<Student>>>

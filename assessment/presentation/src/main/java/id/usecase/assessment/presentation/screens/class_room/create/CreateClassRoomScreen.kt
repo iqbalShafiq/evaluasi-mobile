@@ -35,6 +35,7 @@ import id.usecase.designsystem.components.button.ButtonType
 import id.usecase.designsystem.components.button.EvaluasiButton
 import id.usecase.designsystem.components.dialog.StandardAlertDialog
 import id.usecase.designsystem.components.dialog.StandardDatePicker
+import id.usecase.designsystem.components.dialog.StandardLoadingDialog
 import id.usecase.designsystem.components.text_field.EvaluasiTextField
 import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
@@ -48,6 +49,7 @@ fun CreateClassRoomScreenRoot(
     viewModel: CreateClassRoomViewModel = koinViewModel()
 ) {
     val openAlertDialog = remember { mutableStateOf(false) }
+    val openLoadingDialog = remember { mutableStateOf(false) }
     val errorMessage = remember { mutableStateOf("") }
     val showStartDatePicker = remember { mutableStateOf(false) }
 
@@ -82,6 +84,7 @@ fun CreateClassRoomScreenRoot(
             }
 
             is CreateClassRoomEvent.OnClassRoomCreated -> {
+                openLoadingDialog.value = false
                 onClassHasCreated(event.classRoomUi)
             }
         }
@@ -102,9 +105,17 @@ fun CreateClassRoomScreenRoot(
         )
     }
 
+    if (openLoadingDialog.value) {
+        StandardLoadingDialog()
+    }
+
     CreateClassRoomScreen(
         modifier = modifier,
         onBackPressed = onBackPressed,
+        onCreatePressed = {
+            viewModel.onAction(CreateClassRoomAction.CreateClassRoom)
+            openLoadingDialog.value = true
+        },
         showStartDatePicker = {
             showStartDatePicker.value = true
         },
@@ -116,6 +127,7 @@ fun CreateClassRoomScreenRoot(
 fun CreateClassRoomScreen(
     modifier: Modifier = Modifier,
     onBackPressed: () -> Unit,
+    onCreatePressed: () -> Unit,
     showStartDatePicker: () -> Unit,
     state: CreateClassRoomState
 ) {
@@ -204,7 +216,7 @@ fun CreateClassRoomScreen(
                         modifier = Modifier.weight(1f),
                         text = "Create",
                         buttonType = ButtonType.PRIMARY,
-                        onClick = { }
+                        onClick = onCreatePressed
                     )
                 }
             }
@@ -233,6 +245,7 @@ private fun CreateClassRoomPreview() {
 
         CreateClassRoomScreen(
             onBackPressed = { },
+            onCreatePressed = { },
             state = CreateClassRoomState(
                 classRoomName = TextFieldState(),
                 subject = TextFieldState(),

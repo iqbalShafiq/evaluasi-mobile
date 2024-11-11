@@ -22,9 +22,10 @@ class RoomLocalAssessmentDataSource(
     private val studentDao: StudentDao,
     private val dispatcher: CoroutineDispatcher
 ) : LocalAssessmentDataSource {
-    override suspend fun upsertClassRoom(classRoom: ClassRoom) {
-        withContext(dispatcher) {
-            classRoomDao.upsert(classRoom.toEntity())
+    override suspend fun upsertClassRoom(classRoom: ClassRoom): ClassRoom? {
+        return withContext(dispatcher) {
+            val id = classRoomDao.upsert(classRoom.toEntity())
+            return@withContext classRoomDao.getClassRoomById(id.toInt())?.toDomainForm()
         }
     }
 

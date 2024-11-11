@@ -9,7 +9,7 @@ import id.usecase.core.database.entities.ClassRoomEntity
 @Dao
 interface ClassRoomDao {
     @Upsert
-    suspend fun upsert(classRoom: ClassRoomEntity)
+    suspend fun upsert(classRoom: ClassRoomEntity): Long
 
     @Query("SELECT * FROM class_rooms ORDER BY last_modified_time DESC")
     suspend fun getAllClassRooms(): List<ClassRoomEntity>
