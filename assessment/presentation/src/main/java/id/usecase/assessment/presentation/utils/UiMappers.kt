@@ -1,13 +1,14 @@
 package id.usecase.assessment.presentation.utils
 
+import androidx.compose.foundation.text.input.TextFieldState
 import id.usecase.assessment.presentation.model.AddStudentUi
-import id.usecase.assessment.presentation.model.CategoryUi
 import id.usecase.assessment.presentation.model.ClassRoomUi
 import id.usecase.assessment.presentation.screens.class_room.create.categories.item.CategoryItemState
 import id.usecase.assessment.presentation.screens.class_room.create.students.item.AddStudentCardState
+import id.usecase.core.domain.assessment.model.assessment.category.Category
 import id.usecase.core.domain.assessment.model.classroom.ClassRoom
 
-fun ClassRoom.toUi(): ClassRoomUi = ClassRoomUi(
+fun ClassRoom.toDomainForm(): ClassRoomUi = ClassRoomUi(
     id = id,
     className = name,
     subject = subject,
@@ -17,13 +18,21 @@ fun ClassRoom.toUi(): ClassRoomUi = ClassRoomUi(
     endPeriod = endPeriod?.toString() ?: ""
 )
 
-fun CategoryItemState.toUi() = CategoryUi(
+fun CategoryItemState.toDomainForm(classRoomId: Int) = Category(
+    id = 0,
     name = name.text.toString(),
     percentage = partPercentage.text.toString().toDouble(),
-    description = description.text.toString()
+    classRoomId = classRoomId,
+    createdTime = System.currentTimeMillis(),
+    lastModifiedTime = System.currentTimeMillis()
 )
 
-fun AddStudentCardState.toUi() = AddStudentUi(
+fun Category.toItemState() = CategoryItemState(
+    name = TextFieldState(initialText = name),
+    partPercentage = TextFieldState(initialText = percentage.toString())
+)
+
+fun AddStudentCardState.toDomainForm() = AddStudentUi(
     identifier = identifier.text.toString().toInt(),
     name = name.text.toString()
 )

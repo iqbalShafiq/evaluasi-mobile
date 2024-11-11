@@ -17,9 +17,11 @@ interface LocalAssessmentDataSource {
     suspend fun getStudentsByClassRoomId(classRoomId: Int): List<Student>
     suspend fun deleteStudent(student: Student)
 
-    suspend fun upsertCategory(category: Category)
+    suspend fun upsertCategories(categories: List<Category>): List<Long>
+    suspend fun upsertCategory(category: Category): Long
     suspend fun getCategoriesByClassRoomId(classRoomId: Int): List<Category>
     suspend fun getCategoryById(categoryId: Int): Category?
+    suspend fun getCategoriesByIds(categoryIds: List<Int>): List<Category>
     suspend fun deleteCategory(category: Category)
 
     suspend fun upsertEvent(event: Event)

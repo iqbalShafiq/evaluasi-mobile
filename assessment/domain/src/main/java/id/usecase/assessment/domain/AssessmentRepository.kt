@@ -13,7 +13,8 @@ interface AssessmentRepository {
     fun getStudentsByClassRoomId(classRoomId: Int): Flow<DataResult<List<Student>>>
     suspend fun deleteStudent(student: Student)
 
-    suspend fun upsertCategory(category: Category)
+    suspend fun upsertCategories(categories: List<Category>): DataResult<List<Category>>
+    suspend fun upsertCategory(category: Category): DataResult<Category?>
     fun getCategoriesByClassRoomId(classRoomId: Int): Flow<DataResult<List<Category>>>
     fun getCategoryById(categoryId: Int): Flow<DataResult<Category?>>
     suspend fun deleteCategory(category: Category)

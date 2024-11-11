@@ -12,7 +12,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import id.usecase.assessment.presentation.screens.class_room.create.CreateClassRoomScreenRoot
+import id.usecase.assessment.presentation.screens.class_room.create.categories.AddCategoriesScreenRoot
 import id.usecase.assessment.presentation.screens.home.HomeScreenRoot
 import id.usecase.designsystem.EvaluasiTheme
 
@@ -58,8 +60,24 @@ fun MyNavigation() {
                     navController.popBackStack()
                 },
                 onClassHasCreated = { classRoom ->
-
+                    navController.navigate(CreateCategories(classRoom.id))
                 }
+            )
+        }
+
+        composable<CreateCategories> { backStackEntry ->
+            val createCategories: CreateCategories = backStackEntry.toRoute()
+            val classRoomId = createCategories.classRoomId
+
+            AddCategoriesScreenRoot(
+                modifier = Modifier.fillMaxSize(),
+                classRoomId = classRoomId,
+                onBackPressed = {
+                    navController.popBackStack()
+                },
+                onCategoriesHasCreated = {
+                    navController.popBackStack()
+                },
             )
         }
     }

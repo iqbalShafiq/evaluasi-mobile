@@ -23,7 +23,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,6 +38,7 @@ import androidx.constraintlayout.compose.Dimension
 import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.screens.class_room.create.categories.item.CategoryCard
 import id.usecase.assessment.presentation.screens.class_room.create.categories.item.CategoryItemState
+import id.usecase.core.presentation.ui.ObserveAsEvents
 import id.usecase.designsystem.EvaluasiTheme
 import id.usecase.designsystem.components.app_bar.EvaluasiTopAppBar
 import id.usecase.designsystem.components.button.ButtonType
@@ -45,17 +48,47 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun AddCategoriesScreenRoot(
     modifier: Modifier = Modifier,
+    classRoomId: Int,
     onBackPressed: () -> Unit,
+    onCategoriesHasCreated: () -> Unit,
     viewModel: AddCategoriesViewModel = koinViewModel()
 ) {
+    val openAlertDialog = remember { mutableStateOf(false) }
+    val openLoadingDialog = remember { mutableStateOf(false) }
+    val errorMessage = remember { mutableStateOf("") }
+
+    ObserveAsEvents(
+        flow = viewModel.events,
+        onEvent = { event ->
+            when (event) {
+                is AddCategoriesEvent.OnErrorOccurred -> {
+                    openAlertDialog.value = true
+                    errorMessage.value = event.message
+                }
+
+                AddCategoriesEvent.OnCategoriesHasAdded -> {
+                    openLoadingDialog.value = false
+                    onCategoriesHasCreated()
+                }
+            }
+        }
+    )
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.onAction(
+            AddCategoriesAction.LoadCategories(
+                classRoomId = classRoomId
+            )
+        )
+    }
+
     AddCategoriesScreen(
         modifier = modifier,
+        classRoomId = classRoomId,
         state = viewModel.state.value,
         onBackPressed = onBackPressed,
         onAction = { action ->
-            when (action) {
-                is AddCategoriesAction.AddCategories -> viewModel.onAction(action)
-            }
+            viewModel.onAction(action = action)
         }
     )
 }
@@ -63,6 +96,7 @@ fun AddCategoriesScreenRoot(
 @Composable
 fun AddCategoriesScreen(
     modifier: Modifier = Modifier,
+    classRoomId: Int,
     state: AddCategoriesState,
     onBackPressed: () -> Unit,
     onAction: (AddCategoriesAction) -> Unit
@@ -79,11 +113,15 @@ fun AddCategoriesScreen(
             )
         },
         content = { innerPadding ->
+            val categories = remember { mutableStateListOf<CategoryItemState>() }
+            categories.clear()
+            categories.addAll(state.categories)
+
             ConstraintLayout(
                 modifier = modifier
                     .padding(innerPadding)
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = 24.dp)
             ) {
                 val (content, buttonContainer) = createRefs()
 
@@ -102,10 +140,6 @@ fun AddCategoriesScreen(
                         text = "Category List",
                         style = MaterialTheme.typography.titleSmall,
                     )
-
-                    val categories = remember { mutableStateListOf<CategoryItemState>() }
-                    categories.clear()
-                    categories.addAll(state.categories)
 
                     LazyColumn(
                         modifier = Modifier.padding(top = 12.dp)
@@ -176,7 +210,12 @@ fun AddCategoriesScreen(
                         onClick = {
                             onAction(
                                 AddCategoriesAction.AddCategories(
-                                    state.categories
+                                    categories = categories
+                                        .toList()
+                                        .filterIndexed { index, _ ->
+                                            index != categories.size - 1
+                                                       },
+                                    classRoomId = classRoomId
                                 )
                             )
                         }
@@ -201,7 +240,8 @@ private fun AddCategoriesPreview() {
         AddCategoriesScreen(
             state = state,
             onBackPressed = { },
-            onAction = { }
+            onAction = { },
+            classRoomId = 0
         )
     }
 }

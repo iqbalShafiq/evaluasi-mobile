@@ -3,7 +3,7 @@ package id.usecase.assessment.presentation.screens.class_room.create.students
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import id.usecase.assessment.presentation.model.AddStudentUi
-import id.usecase.assessment.presentation.utils.toUi
+import id.usecase.assessment.presentation.utils.toDomainForm
 
 class AddStudentsViewModel : ViewModel() {
     var state = mutableStateOf(AddStudentsState())
@@ -13,7 +13,7 @@ class AddStudentsViewModel : ViewModel() {
         when (action) {
             is AddStudentsAction.AddStudents -> {
                 val students = action.students.map {
-                    it.toUi()
+                    it.toDomainForm()
                 }
 
                 submitStudents(students)

@@ -81,8 +81,20 @@ class RoomLocalAssessmentDataSource(
         }
     }
 
-    override suspend fun upsertCategory(category: Category) {
-        withContext(dispatcher) {
+    override suspend fun upsertCategories(categories: List<Category>): List<Long> {
+        return withContext(dispatcher) {
+            val categoryEntities = categories.map {
+                it.toEntity()
+            }
+
+            categoryDao.upsert(
+                categories = categoryEntities
+            )
+        }
+    }
+
+    override suspend fun upsertCategory(category: Category): Long {
+        return withContext(dispatcher) {
             categoryDao.upsert(category.toEntity())
         }
     }
@@ -100,6 +112,14 @@ class RoomLocalAssessmentDataSource(
             categoryDao
                 .getCategoryById(categoryId)
                 ?.toDomainForm()
+        }
+    }
+
+    override suspend fun getCategoriesByIds(categoryIds: List<Int>): List<Category> {
+        return withContext(dispatcher) {
+            categoryDao
+                .getCategoriesByIds(categoryIds)
+                .map { it.toDomainForm() }
         }
     }
 

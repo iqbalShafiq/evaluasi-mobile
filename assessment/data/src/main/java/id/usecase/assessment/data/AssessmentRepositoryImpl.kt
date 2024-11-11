@@ -41,8 +41,7 @@ class AssessmentRepositoryImpl(
         return flow {
             try {
                 emit(DataResult.Loading)
-                val students: List<Student> =
-                    dataSource.getStudentsByClassRoomId(classRoomId)
+                val students: List<Student> = dataSource.getStudentsByClassRoomId(classRoomId)
                 if (students.isEmpty()) {
                     emit(
                         DataResult.Error(
@@ -68,12 +67,33 @@ class AssessmentRepositoryImpl(
         }
     }
 
-    override suspend fun upsertCategory(category: Category) {
-        withContext(dispatcher) {
+    override suspend fun upsertCategories(categories: List<Category>): DataResult<List<Category>> {
+        return withContext(dispatcher) {
             try {
-                dataSource.upsertCategory(category)
+                val insertedIds = dataSource
+                    .upsertCategories(categories)
+                    .map { it.toInt() }
+                val insertedCategories = dataSource.getCategoriesByIds(insertedIds)
+                return@withContext DataResult.Success(insertedCategories)
             } catch (e: Exception) {
                 throw e
+                return@withContext DataResult.Error(e)
+            }
+        }
+    }
+
+    override suspend fun upsertCategory(category: Category): DataResult<Category?> {
+        return withContext(dispatcher) {
+            try {
+                val id = dataSource
+                    .upsertCategory(category)
+                    .toInt()
+                val category = dataSource.getCategoryById(id)
+
+                return@withContext DataResult.Success(category)
+            } catch (e: Exception) {
+                throw e
+                return@withContext DataResult.Error(e)
             }
         }
     }
@@ -82,16 +102,7 @@ class AssessmentRepositoryImpl(
         return flow {
             try {
                 emit(DataResult.Loading)
-                val categories: List<Category> =
-                    dataSource.getCategoriesByClassRoomId(classRoomId)
-                if (categories.isEmpty()) {
-                    emit(
-                        DataResult.Error(
-                            Exception("Haven't create any category yet")
-                        )
-                    )
-                    return@flow
-                }
+                val categories: List<Category> = dataSource.getCategoriesByClassRoomId(classRoomId)
                 emit(DataResult.Success(categories))
             } catch (e: Exception) {
                 emit(DataResult.Error(e))

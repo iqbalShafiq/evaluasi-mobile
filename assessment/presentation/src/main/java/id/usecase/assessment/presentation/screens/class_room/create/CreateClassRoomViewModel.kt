@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import id.usecase.assessment.domain.ClassRoomRepository
 import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.screens.class_room.create.CreateClassRoomEvent.*
-import id.usecase.assessment.presentation.utils.toUi
+import id.usecase.assessment.presentation.utils.toDomainForm
 import id.usecase.core.domain.assessment.DataResult
 import id.usecase.core.domain.assessment.model.classroom.ClassRoom
 import kotlinx.coroutines.CoroutineDispatcher
@@ -74,7 +74,7 @@ class CreateClassRoomViewModel(
 
                 is DataResult.Success -> {
                     state.value = state.value.copy(isLoading = false)
-                    result.data?.toUi()?.let {
+                    result.data?.toDomainForm()?.let {
                         _events.send(OnClassRoomCreated(it))
                     }
                 }
