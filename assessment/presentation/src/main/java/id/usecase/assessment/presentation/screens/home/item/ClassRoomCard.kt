@@ -18,10 +18,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.model.ClassRoomUi
+import id.usecase.core.domain.assessment.utils.toFormattedDate
 import id.usecase.designsystem.components.button.EvaluasiButton
 
 @Composable
@@ -48,28 +50,29 @@ fun ClassRoomCard(
                         Text(
                             text = item.subject,
                             style = MaterialTheme.typography.labelLarge.copy(
-                                color = MaterialTheme.colorScheme.primary
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.SemiBold
                             )
                         )
 
                         Row {
                             Text(
                                 text = "Class ${item.className}",
-                                style = MaterialTheme.typography.titleMedium
+                                style = MaterialTheme.typography.bodyMedium
                             )
 
                             Spacer(modifier = Modifier.width(8.dp))
 
                             Text(
                                 text = "-",
-                                style = MaterialTheme.typography.titleMedium
+                                style = MaterialTheme.typography.bodyMedium
                             )
 
                             Spacer(modifier = Modifier.width(8.dp))
 
                             Text(
                                 text = "${item.studentCount} students",
-                                style = MaterialTheme.typography.titleMedium
+                                style = MaterialTheme.typography.bodyMedium
                             )
                         }
                     }
@@ -85,7 +88,7 @@ fun ClassRoomCard(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Row(
                     modifier = Modifier.fillMaxWidth()
@@ -93,38 +96,52 @@ fun ClassRoomCard(
                     Column {
                         Text(
                             text = "Start Period",
-                            style = MaterialTheme.typography.labelMedium
+                            style = MaterialTheme.typography.labelLarge.copy(
+                                fontWeight = FontWeight.SemiBold
+                            )
                         )
                         Text(
-                            text = item.startPeriod,
+                            text = item.startPeriod
+                                .toLong()
+                                .toFormattedDate(),
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
 
-                    Spacer(modifier = Modifier.width(16.dp))
+                    if (item.endPeriod.isNotEmpty()) {
+                        Spacer(modifier = Modifier.width(16.dp))
 
-                    Column {
-                        Text(
-                            text = "End Period",
-                            style = MaterialTheme.typography.labelMedium
-                        )
-                        Text(
-                            text = item.endPeriod,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
+                        Column {
+                            Text(
+                                text = "End Period",
+                                style = MaterialTheme.typography.labelLarge.copy(
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            )
+                            Text(
+                                text = item.endPeriod
+                                    .toLong()
+                                    .toFormattedDate(),
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                if (item.lastAssessment.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                Text(
-                    text = "Last Assessment",
-                    style = MaterialTheme.typography.labelMedium
-                )
-                Text(
-                    text = item.lastAssessment,
-                    style = MaterialTheme.typography.bodyMedium
-                )
+                    Text(
+                        text = "Last Assessment",
+                        style = MaterialTheme.typography.labelLarge.copy(
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    )
+                    Text(
+                        text = item.lastAssessment,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
