@@ -23,7 +23,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,29 +37,80 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.screens.class_room.create.students.item.AddStudentCard
-import id.usecase.assessment.presentation.screens.class_room.create.students.item.AddStudentCardState
+import id.usecase.assessment.presentation.screens.class_room.create.students.item.AddStudentItemState
+import id.usecase.core.presentation.ui.ObserveAsEvents
 import id.usecase.designsystem.EvaluasiTheme
 import id.usecase.designsystem.components.app_bar.EvaluasiTopAppBar
 import id.usecase.designsystem.components.button.ButtonType
 import id.usecase.designsystem.components.button.EvaluasiButton
+import id.usecase.designsystem.components.dialog.StandardAlertDialog
+import id.usecase.designsystem.components.dialog.StandardLoadingDialog
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AddStudentsScreenRoot(
     modifier: Modifier = Modifier,
+    classRoomId: Int,
     onBackPressed: () -> Unit,
+    onStudentHasAdded: () -> Unit,
     openAutoFillScanner: () -> Unit,
     viewModel: AddStudentsViewModel = koinViewModel()
 ) {
+
+    val openAlertDialog = remember { mutableStateOf(false) }
+    val errorMessage = remember { mutableStateOf("") }
+
+    ObserveAsEvents(
+        flow = viewModel.events,
+        onEvent = { event ->
+            when (event) {
+                is AddStudentsEvent.OnErrorOccurred -> {
+                    errorMessage.value = event.message
+                    openAlertDialog.value = true
+                }
+
+                AddStudentsEvent.OnStudentsHasAdded -> {
+                    onStudentHasAdded()
+                }
+            }
+        }
+    )
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.onAction(
+            action = AddStudentsAction.LoadStudents(
+                classRoomId = classRoomId
+            )
+        )
+    }
+
+    if (openAlertDialog.value) {
+        StandardAlertDialog(
+            onDismissRequest = {
+                openAlertDialog.value = false
+            },
+            onConfirmation = {
+                openAlertDialog.value = false
+            },
+            dialogTitle = "Error",
+            dialogText = errorMessage.value,
+            icon = ImageVector.vectorResource(id.usecase.designsystem.R.drawable.ic_test_icon),
+            iconDescription = "Error icon"
+        )
+    }
+
+    if (viewModel.state.value.isLoading) {
+        StandardLoadingDialog()
+    }
+
     AddStudentsScreen(
         modifier = modifier,
+        classRoomId = classRoomId,
         onBackPressed = onBackPressed,
         openAutoFillScanner = openAutoFillScanner,
         state = viewModel.state.value,
         onAction = { action ->
-            when (action) {
-                is AddStudentsAction.AddStudents -> viewModel.onAction(action)
-            }
+            viewModel.onAction(action)
         },
     )
 }
@@ -65,6 +118,7 @@ fun AddStudentsScreenRoot(
 @Composable
 fun AddStudentsScreen(
     modifier: Modifier = Modifier,
+    classRoomId: Int,
     onBackPressed: () -> Unit,
     openAutoFillScanner: () -> Unit,
     onAction: (AddStudentsAction) -> Unit,
@@ -106,7 +160,7 @@ fun AddStudentsScreen(
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    val students = remember { mutableStateListOf<AddStudentCardState>() }
+                    val students = remember { mutableStateListOf<AddStudentItemState>() }
                     students.clear()
                     students.addAll(state.studentList)
 
@@ -124,7 +178,7 @@ fun AddStudentsScreen(
                                 if (
                                     index == students.size - 1 &&
                                     student.name.text.isNotEmpty()
-                                ) students.add(AddStudentCardState())
+                                ) students.add(AddStudentItemState())
 
                                 if (
                                     index != students.size - 1 &&
@@ -168,7 +222,8 @@ fun AddStudentsScreen(
                         onClick = {
                             onAction(
                                 AddStudentsAction.AddStudents(
-                                    state.studentList
+                                    students = state.studentList,
+                                    classRoomId = classRoomId
                                 )
                             )
                         }
@@ -186,6 +241,7 @@ private fun AddStudentsPreview() {
     EvaluasiTheme {
         AddStudentsScreen(
             state = state,
+            classRoomId = 0,
             onBackPressed = { },
             openAutoFillScanner = { },
             onAction = { }

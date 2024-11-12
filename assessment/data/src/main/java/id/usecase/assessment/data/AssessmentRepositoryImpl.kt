@@ -17,22 +17,26 @@ class AssessmentRepositoryImpl(
     private val dataSource: LocalAssessmentDataSource,
     private val dispatcher: CoroutineDispatcher
 ) : AssessmentRepository {
-    override suspend fun insertStudent(students: Student) {
-        withContext(dispatcher) {
+    override suspend fun upsertStudent(students: Student): DataResult<Student?> {
+        return withContext(dispatcher) {
             try {
-                dataSource.insertStudent(students)
+                val student = dataSource.upsertStudent(students)
+                return@withContext DataResult.Success(student)
             } catch (e: Exception) {
                 throw e
+                return@withContext DataResult.Error(e)
             }
         }
     }
 
-    override suspend fun insertStudents(students: List<Student>) {
-        withContext(dispatcher) {
+    override suspend fun upsertStudents(students: List<Student>): DataResult<List<Student>> {
+        return withContext(dispatcher) {
             try {
-                dataSource.insertStudents(students)
+                val students = dataSource.upsertStudents(students)
+                return@withContext DataResult.Success(students)
             } catch (e: Exception) {
                 throw e
+                return@withContext DataResult.Error(e)
             }
         }
     }

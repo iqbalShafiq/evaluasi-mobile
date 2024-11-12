@@ -27,7 +27,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.model.ClassRoomUi
-import id.usecase.assessment.presentation.screens.class_room.create.students.item.AddStudentCardState
+import id.usecase.assessment.presentation.screens.class_room.create.students.item.AddStudentItemState
 import id.usecase.core.presentation.ui.ObserveAsEvents
 import id.usecase.designsystem.EvaluasiTheme
 import id.usecase.designsystem.components.app_bar.EvaluasiTopAppBar
@@ -251,7 +251,7 @@ private fun CreateClassRoomPreview() {
                 subject = TextFieldState(),
                 startDate = TextFieldState(),
                 students = listOf(
-                    AddStudentCardState(
+                    AddStudentItemState(
                         identifier = TextFieldState(),
                         name = TextFieldState()
                     )

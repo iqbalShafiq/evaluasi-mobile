@@ -43,6 +43,8 @@ import id.usecase.designsystem.EvaluasiTheme
 import id.usecase.designsystem.components.app_bar.EvaluasiTopAppBar
 import id.usecase.designsystem.components.button.ButtonType
 import id.usecase.designsystem.components.button.EvaluasiButton
+import id.usecase.designsystem.components.dialog.StandardAlertDialog
+import id.usecase.designsystem.components.dialog.StandardLoadingDialog
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -80,6 +82,25 @@ fun AddCategoriesScreenRoot(
                 classRoomId = classRoomId
             )
         )
+    }
+
+    if (openAlertDialog.value) {
+        StandardAlertDialog(
+            onDismissRequest = {
+                openAlertDialog.value = false
+            },
+            onConfirmation = {
+                openAlertDialog.value = false
+            },
+            dialogTitle = "Error",
+            dialogText = errorMessage.value,
+            icon = ImageVector.vectorResource(id.usecase.designsystem.R.drawable.ic_test_icon),
+            iconDescription = "Error icon"
+        )
+    }
+
+    if (openLoadingDialog.value) {
+        StandardLoadingDialog()
     }
 
     AddCategoriesScreen(
@@ -214,7 +235,7 @@ fun AddCategoriesScreen(
                                         .toList()
                                         .filterIndexed { index, _ ->
                                             index != categories.size - 1
-                                                       },
+                                        },
                                     classRoomId = classRoomId
                                 )
                             )

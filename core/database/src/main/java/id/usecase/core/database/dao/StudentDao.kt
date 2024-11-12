@@ -9,10 +9,10 @@ import id.usecase.core.database.entities.StudentEntity
 @Dao
 interface StudentDao {
     @Upsert
-    suspend fun upsert(student: StudentEntity)
+    suspend fun upsert(student: StudentEntity): Long
 
     @Upsert
-    suspend fun upsert(studentList: List<StudentEntity>)
+    suspend fun upsert(studentList: List<StudentEntity>): List<Long>
 
     @Query("SELECT * FROM students WHERE id = :id")
     suspend fun getStudentById(id: Int): StudentEntity?
@@ -27,7 +27,7 @@ interface StudentDao {
         WHERE assessments.event_id = :eventId
         """
     )
-    suspend fun getStudentsByEventId(eventId: Int) : List<StudentEntity>
+    suspend fun getStudentsByEventId(eventId: Int): List<StudentEntity>
 
     @Delete
     suspend fun delete(student: StudentEntity)

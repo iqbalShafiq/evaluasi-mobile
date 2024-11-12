@@ -12,8 +12,8 @@ interface LocalAssessmentDataSource {
     suspend fun getClassRoomById(classRoomId: Int): ClassRoom?
     suspend fun deleteClassRoom(classRoom: ClassRoom)
 
-    suspend fun insertStudent(students: Student)
-    suspend fun insertStudents(students: List<Student>)
+    suspend fun upsertStudent(students: Student): Student?
+    suspend fun upsertStudents(students: List<Student>): List<Student>
     suspend fun getStudentsByClassRoomId(classRoomId: Int): List<Student>
     suspend fun deleteStudent(student: Student)
 

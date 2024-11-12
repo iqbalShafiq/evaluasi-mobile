@@ -2,7 +2,7 @@ package id.usecase.assessment.presentation.screens.class_room.create.students.it
 
 import androidx.compose.foundation.text.input.TextFieldState
 
-data class AddStudentCardState(
+data class AddStudentItemState(
     val identifier: TextFieldState = TextFieldState(),
     val name: TextFieldState = TextFieldState(),
 )

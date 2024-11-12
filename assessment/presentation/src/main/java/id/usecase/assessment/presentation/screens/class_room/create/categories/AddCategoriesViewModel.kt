@@ -11,13 +11,14 @@ import id.usecase.assessment.presentation.screens.class_room.create.categories.i
 import id.usecase.assessment.presentation.utils.toDomainForm
 import id.usecase.assessment.presentation.utils.toItemState
 import id.usecase.core.domain.assessment.DataResult
-import id.usecase.core.domain.assessment.model.assessment.category.Category
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AddCategoriesViewModel(
     private val application: Application,
@@ -37,11 +38,10 @@ class AddCategoriesViewModel(
             }
 
             is AddCategoriesAction.AddCategories -> {
-                val categories = action.categories.map {
-                    it.toDomainForm(action.classRoomId)
-                }
-
-                addCategories(categories)
+                addCategories(
+                    categories = action.categories,
+                    classRoomId = action.classRoomId
+                )
             }
         }
     }
@@ -89,9 +89,15 @@ class AddCategoriesViewModel(
         }
     }
 
-    private fun addCategories(categories: List<Category>) {
+    private fun addCategories(categories: List<CategoryItemState>, classRoomId: Int) {
         viewModelScope.launch(dispatcher) {
-            val result = assessmentRepository.upsertCategories(categories)
+            val categoryList = withContext(Dispatchers.Default) {
+                categories.map {
+                    it.toDomainForm(classRoomId)
+                }
+            }
+
+            val result = assessmentRepository.upsertCategories(categoryList)
             when (result) {
                 DataResult.Loading -> {
                     state.value = state.value.copy(isLoading = true)

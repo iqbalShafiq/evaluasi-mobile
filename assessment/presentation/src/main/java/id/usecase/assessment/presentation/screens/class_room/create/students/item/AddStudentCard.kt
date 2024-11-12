@@ -16,7 +16,7 @@ import id.usecase.designsystem.components.text_field.EvaluasiTextField
 @Composable
 fun AddStudentCard(
     modifier: Modifier = Modifier,
-    state: AddStudentCardState
+    state: AddStudentItemState
 ) {
 
     Card(
@@ -56,7 +56,7 @@ fun AddStudentCard(
 private fun AddStudentCardPreview() {
     EvaluasiTheme {
         AddStudentCard(
-            state = AddStudentCardState()
+            state = AddStudentItemState()
         )
     }
 }

@@ -51,19 +51,28 @@ class RoomLocalAssessmentDataSource(
         }
     }
 
-    override suspend fun insertStudent(students: Student) {
-        withContext(dispatcher) {
-            studentDao.upsert(students.toEntity())
+    override suspend fun upsertStudent(students: Student): Student? {
+        return withContext(dispatcher) {
+            val id = studentDao.upsert(students.toEntity())
+            studentDao
+                .getStudentById(id.toInt())
+                ?.toDomainForm()
         }
     }
 
-    override suspend fun insertStudents(students: List<Student>) {
-        withContext(dispatcher) {
-            studentDao.upsert(
-                students.map {
-                    it.toEntity()
-                }
+    override suspend fun upsertStudents(students: List<Student>): List<Student> {
+        return withContext(dispatcher) {
+            val studentEntities = students.map {
+                it.toEntity()
+            }
+
+            val ids = studentDao.upsert(
+                studentList = studentEntities
             )
+
+            studentDao
+                .getStudentsByClassRoomId(ids.first().toInt())
+                .map { it.toDomainForm() }
         }
     }
 

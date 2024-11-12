@@ -4,9 +4,10 @@ import androidx.compose.foundation.text.input.TextFieldState
 import id.usecase.assessment.presentation.model.AddStudentUi
 import id.usecase.assessment.presentation.model.ClassRoomUi
 import id.usecase.assessment.presentation.screens.class_room.create.categories.item.CategoryItemState
-import id.usecase.assessment.presentation.screens.class_room.create.students.item.AddStudentCardState
+import id.usecase.assessment.presentation.screens.class_room.create.students.item.AddStudentItemState
 import id.usecase.core.domain.assessment.model.assessment.category.Category
 import id.usecase.core.domain.assessment.model.classroom.ClassRoom
+import id.usecase.core.domain.assessment.model.student.Student
 
 fun ClassRoom.toDomainForm(): ClassRoomUi = ClassRoomUi(
     id = id,
@@ -32,7 +33,21 @@ fun Category.toItemState() = CategoryItemState(
     partPercentage = TextFieldState(initialText = percentage.toString())
 )
 
-fun AddStudentCardState.toDomainForm() = AddStudentUi(
+fun AddStudentItemState.toDomainForm(classRoomId: Int) = Student(
+    id = 0,
+    name = name.text.toString(),
+    classRoomId = classRoomId,
+    identifier = identifier.text.toString().toInt(),
+    createdTime = System.currentTimeMillis(),
+    lastModifiedTime = System.currentTimeMillis()
+)
+
+fun Student.toItemState() = AddStudentItemState(
+    identifier = TextFieldState(initialText = id.toString()),
+    name = TextFieldState(initialText = name)
+)
+
+fun AddStudentItemState.toDomainForm() = AddStudentUi(
     identifier = identifier.text.toString().toInt(),
     name = name.text.toString()
 )
