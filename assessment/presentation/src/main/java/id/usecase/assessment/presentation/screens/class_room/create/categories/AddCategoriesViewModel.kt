@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import id.usecase.assessment.domain.AssessmentRepository
+import id.usecase.assessment.domain.CategoryRepository
 import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.screens.class_room.create.categories.item.CategoryItemState
 import id.usecase.assessment.presentation.utils.toDomainForm
@@ -22,7 +22,7 @@ import kotlinx.coroutines.withContext
 
 class AddCategoriesViewModel(
     private val application: Application,
-    private val assessmentRepository: AssessmentRepository,
+    private val repository: CategoryRepository,
     private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
     private val _events = Channel<AddCategoriesEvent>()
@@ -48,7 +48,7 @@ class AddCategoriesViewModel(
 
     private fun loadCategories(classRoomId: Int) {
         viewModelScope.launch(dispatcher) {
-            assessmentRepository.getCategoriesByClassRoomId(classRoomId)
+            repository.getCategoriesByClassRoomId(classRoomId)
                 .catch { e ->
                     Log.e(TAG, "loadCategories: Catch", e)
                     state.value = state.value.copy(isLoading = false)
@@ -97,7 +97,7 @@ class AddCategoriesViewModel(
                 }
             }
 
-            val result = assessmentRepository.upsertCategories(categoryList)
+            val result = repository.upsertCategories(categoryList)
             when (result) {
                 DataResult.Loading -> {
                     state.value = state.value.copy(isLoading = true)

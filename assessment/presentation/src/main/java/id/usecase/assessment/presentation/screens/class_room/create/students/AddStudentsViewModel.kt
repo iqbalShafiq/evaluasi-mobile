@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import id.usecase.assessment.domain.AssessmentRepository
+import id.usecase.assessment.domain.StudentRepository
 import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.screens.class_room.create.students.item.AddStudentItemState
 import id.usecase.assessment.presentation.utils.toDomainForm
@@ -21,7 +21,7 @@ import kotlinx.coroutines.withContext
 class AddStudentsViewModel(
     private val application: Application,
     private val dispatcher: CoroutineDispatcher,
-    private val assessmentRepository: AssessmentRepository
+    private val repository: StudentRepository
 ) : ViewModel() {
     private val _events = Channel<AddStudentsEvent>()
     val events = _events.receiveAsFlow()
@@ -46,7 +46,7 @@ class AddStudentsViewModel(
 
     private fun loadStudents(classRoomId: Int) {
         viewModelScope.launch(dispatcher) {
-            assessmentRepository.getStudentsByClassRoomId(classRoomId = classRoomId)
+            repository.getStudentsByClassRoomId(classRoomId = classRoomId)
                 .catch { e ->
                     state.value = state.value.copy(isLoading = false)
                     _events.send(
@@ -93,7 +93,7 @@ class AddStudentsViewModel(
                 }
             }
 
-            val result = assessmentRepository.upsertStudents(studentList)
+            val result = repository.upsertStudents(studentList)
 
             when (result) {
                 DataResult.Loading -> state.value = state.value.copy(isLoading = true)

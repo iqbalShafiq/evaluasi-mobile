@@ -130,6 +130,7 @@ fun AddCategoriesScreen(
                 navigationIcon = ImageVector.vectorResource(
                     id = R.drawable.rounded_arrow_back
                 ),
+                navigationIconTint = MaterialTheme.colorScheme.onSurface,
                 onNavigationClicked = onBackPressed
             )
         },
@@ -232,9 +233,9 @@ fun AddCategoriesScreen(
                             onAction(
                                 AddCategoriesAction.AddCategories(
                                     categories = categories
-                                        .toList()
-                                        .filterIndexed { index, _ ->
-                                            index != categories.size - 1
+                                        .filterIndexed { index, category ->
+                                            index != categories.size - 1 ||
+                                                    category.name.text.isNotEmpty()
                                         },
                                     classRoomId = classRoomId
                                 )

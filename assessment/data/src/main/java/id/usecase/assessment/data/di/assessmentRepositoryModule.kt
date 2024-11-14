@@ -1,12 +1,39 @@
 package id.usecase.assessment.data.di
 
 import id.usecase.assessment.data.AssessmentRepositoryImpl
+import id.usecase.assessment.data.CategoryRepositoryImpl
 import id.usecase.assessment.data.ClassRoomRepositoryImpl
+import id.usecase.assessment.data.EventRepositoryImpl
+import id.usecase.assessment.data.StudentRepositoryImpl
 import id.usecase.assessment.domain.AssessmentRepository
+import id.usecase.assessment.domain.CategoryRepository
 import id.usecase.assessment.domain.ClassRoomRepository
+import id.usecase.assessment.domain.EventRepository
+import id.usecase.assessment.domain.StudentRepository
 import org.koin.dsl.module
 
 val assessmentRepositoryModule = module {
+    single<ClassRoomRepository> {
+        ClassRoomRepositoryImpl(
+            dataSource = get(),
+            dispatcher = get(),
+        )
+    }
+
+    single<CategoryRepository> {
+        CategoryRepositoryImpl(
+            dataSource = get(),
+            dispatcher = get(),
+        )
+    }
+
+    single<EventRepository> {
+        EventRepositoryImpl(
+            dataSource = get(),
+            dispatcher = get(),
+        )
+    }
+
     single<AssessmentRepository> {
         AssessmentRepositoryImpl(
             dataSource = get(),
@@ -14,8 +41,8 @@ val assessmentRepositoryModule = module {
         )
     }
 
-    single<ClassRoomRepository> {
-        ClassRoomRepositoryImpl(
+    single<StudentRepository> {
+        StudentRepositoryImpl(
             dataSource = get(),
             dispatcher = get(),
         )

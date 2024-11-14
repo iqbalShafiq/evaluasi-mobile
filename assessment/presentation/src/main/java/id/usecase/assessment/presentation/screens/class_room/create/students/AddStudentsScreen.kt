@@ -129,10 +129,15 @@ fun AddStudentsScreen(
             EvaluasiTopAppBar(
                 title = "Add Students",
                 navigationIcon = ImageVector.vectorResource(R.drawable.rounded_arrow_back),
+                navigationIconTint = MaterialTheme.colorScheme.onSurface,
                 onNavigationClicked = onBackPressed
             )
         },
         content = { innerPadding ->
+            val students = remember { mutableStateListOf<AddStudentItemState>() }
+            students.clear()
+            students.addAll(state.studentList)
+
             ConstraintLayout(
                 modifier = modifier
                     .padding(innerPadding)
@@ -159,10 +164,6 @@ fun AddStudentsScreen(
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
-
-                    val students = remember { mutableStateListOf<AddStudentItemState>() }
-                    students.clear()
-                    students.addAll(state.studentList)
 
                     LazyColumn {
                         items(students.size) { index ->
@@ -222,7 +223,11 @@ fun AddStudentsScreen(
                         onClick = {
                             onAction(
                                 AddStudentsAction.AddStudents(
-                                    students = state.studentList,
+                                    students = students
+                                        .filterIndexed { index, student ->
+                                            index != students.size - 1 ||
+                                                student.name.text.isNotEmpty()
+                                        },
                                     classRoomId = classRoomId
                                 )
                             )
