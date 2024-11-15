@@ -110,7 +110,8 @@ private fun StudentAssessmentCardPreview() {
                 studentName = "John Doe",
                 comments = "Good job",
                 score = 90.0,
-                avgScore = 80.0
+                avgScore = 80.0,
+                assessmentId = 1
             )
         )
     )

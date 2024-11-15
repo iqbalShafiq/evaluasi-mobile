@@ -187,7 +187,7 @@ fun AddStudentsScreen(
                                 ) students.removeAt(index)
                             }
 
-                            Spacer(modifier = Modifier.padding(8.dp))
+                            Spacer(modifier = Modifier.padding(12.dp))
                         }
                     }
                 }

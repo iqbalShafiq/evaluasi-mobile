@@ -5,6 +5,7 @@ import id.usecase.assessment.presentation.model.ClassRoomUi
 import id.usecase.assessment.presentation.screens.assessment.students.StudentAssessmentState
 import id.usecase.core.domain.assessment.model.assessment.Assessment
 import id.usecase.core.domain.assessment.model.assessment.category.Category
+import id.usecase.core.domain.assessment.model.assessment.event.Event
 import id.usecase.core.domain.assessment.model.student.Student
 
 data class AssessmentState(
@@ -13,6 +14,7 @@ data class AssessmentState(
     val startDateField: TextFieldState = TextFieldState(),
     val categoryField: TextFieldState = TextFieldState(),
     val assessmentListField: List<StudentAssessmentState> = emptyList(),
+    val assessmentEvent: Event? = null,
     val category: Category? = null,
     val classRoom: ClassRoomUi? = null,
     val assessmentList: List<Assessment> = emptyList(),

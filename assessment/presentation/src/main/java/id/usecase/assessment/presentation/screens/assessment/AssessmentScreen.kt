@@ -2,6 +2,11 @@
 
 package id.usecase.assessment.presentation.screens.assessment
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,12 +14,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -38,18 +46,47 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun AssessmentScreenRoot(
     modifier: Modifier = Modifier,
+    classRoomId: Int,
+    eventId: Int?,
+    viewModel: AssessmentViewModel = koinViewModel(),
     onBackPressed: () -> Unit,
-    onAssessmentHasSaved: () -> Unit,
-    viewModel: AssessmentViewModel = koinViewModel()
+    onAssessmentHasSaved: () -> Unit
 ) {
+    val openAlertDialog = remember { mutableStateOf(false) }
+    val openLoadingDialog = remember { mutableStateOf(false) }
+    val errorMessage = remember { mutableStateOf("") }
+    val showStartDatePicker = remember { mutableStateOf(false) }
 
+    LaunchedEffect(key1 = Unit) {
+        if (eventId != null) {
+            viewModel.onAction(
+                action = AssessmentAction.LoadAssessmentDetail(
+                    classRoomId = classRoomId,
+                    eventId = eventId
+                )
+            )
+        }
+    }
+
+    AssessmentScreen(
+        modifier = modifier,
+        classRoomId = classRoomId,
+        state = viewModel.state.value,
+        onAction = viewModel::onAction
+    )
 }
 
 @Composable
 fun AssessmentScreen(
     modifier: Modifier = Modifier,
-    state: AssessmentState
+    classRoomId: Int,
+    state: AssessmentState,
+    onAction: (AssessmentAction) -> Unit
 ) {
+    val assessments = remember { mutableStateListOf<StudentAssessmentState>() }
+    assessments.clear()
+    assessments.addAll(state.assessmentListField)
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -117,10 +154,27 @@ fun AssessmentScreen(
                         modifier = Modifier
                             .padding(top = 8.dp)
                     ) {
-                        items(state.assessmentListField) { student ->
-                            StudentAssessmentCard(
-                                state = student
-                            )
+                        items(assessments.size) { index ->
+                            val assessment = assessments[index]
+                            AnimatedVisibility(
+                                visible = true,
+                                enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+                                exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
+                            ) {
+                                StudentAssessmentCard(
+                                    state = assessment
+                                )
+
+                                if (
+                                    index == assessments.size - 1 &&
+                                    assessment.score.text.isNotEmpty()
+                                ) assessments.add(StudentAssessmentState())
+
+                                if (
+                                    index != assessments.size - 1 &&
+                                    assessment.score.text.isEmpty()
+                                ) assessments.removeAt(index)
+                            }
 
                             Spacer(modifier = Modifier.height(12.dp))
                         }
@@ -137,7 +191,17 @@ fun AssessmentScreen(
                         }
                         .padding(vertical = 12.dp),
                     text = "Save Assessment",
-                    onClick = { /* TODO: Save assessment */ },
+                    onClick = {
+                        onAction(
+                            AssessmentAction.SaveAssessmentEvent(
+                                assessments = assessments
+                                    .filterIndexed { index, assessment ->
+                                        index != assessments.size - 1 ||
+                                                assessment.score.text.isNotEmpty()
+                                    }
+                            )
+                        )
+                    },
                     buttonType = ButtonType.INVERSE
                 )
             }
@@ -150,6 +214,8 @@ fun AssessmentScreen(
 private fun AssessmentScreenPreview() {
     EvaluasiTheme {
         AssessmentScreen(
+            onAction = {},
+            classRoomId = 1,
             state = AssessmentState(
                 assessmentListField = listOf(
                     StudentAssessmentState(
