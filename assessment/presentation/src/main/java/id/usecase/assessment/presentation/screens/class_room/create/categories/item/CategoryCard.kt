@@ -25,7 +25,7 @@ fun CategoryCard(
         shape = MaterialTheme.shapes.medium,
         content = {
             Column(
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(vertical = 20.dp, horizontal = 20.dp)
             ) {
                 EvaluasiTextField(
                     modifier = Modifier.fillMaxWidth(),
@@ -39,7 +39,7 @@ fun CategoryCard(
                 EvaluasiTextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 12.dp),
+                        .padding(top = 16.dp),
                     label = "Percentage",
                     placeholder = "Enter Percentage (total must be 100)",
                     state = state.partPercentage,
@@ -52,7 +52,7 @@ fun CategoryCard(
                 EvaluasiTextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 12.dp),
+                        .padding(top = 16.dp),
                     label = "Category Description",
                     placeholder = "Enter category description (optional)",
                     state = state.description,
