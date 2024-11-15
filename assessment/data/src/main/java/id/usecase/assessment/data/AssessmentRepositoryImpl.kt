@@ -14,12 +14,19 @@ class AssessmentRepositoryImpl(
     private val dataSource: LocalAssessmentDataSource,
     private val dispatcher: CoroutineDispatcher
 ) : AssessmentRepository {
-    override suspend fun upsertAssessment(assessment: Assessment) {
-        withContext(dispatcher) {
+    override suspend fun upsertAssessments(assessmentList: List<Assessment>): DataResult<List<Assessment>> {
+        return withContext(dispatcher) {
             try {
-                dataSource.upsertAssessment(assessment)
+                val assessmentIds = dataSource.upsertAssessments(assessmentList)
+                val assessments = dataSource.getAssessmentsByIds(
+                    assessmentIds.map {
+                        it.toInt()
+                    }
+                )
+
+                DataResult.Success(assessments)
             } catch (e: Exception) {
-                throw e
+                DataResult.Error(e)
             }
         }
     }
@@ -59,6 +66,18 @@ class AssessmentRepositoryImpl(
                     return@flow
                 }
                 emit(DataResult.Success(assessment))
+            } catch (e: Exception) {
+                emit(DataResult.Error(e))
+            }
+        }.flowOn(dispatcher)
+    }
+
+    override fun getAverageScoreByStudentId(studentId: Int): Flow<DataResult<Double>> {
+        return flow {
+            try {
+                emit(DataResult.Loading)
+                val avgScore: Double = dataSource.getAverageScoreByStudentId(studentId)
+                emit(DataResult.Success(avgScore))
             } catch (e: Exception) {
                 emit(DataResult.Error(e))
             }

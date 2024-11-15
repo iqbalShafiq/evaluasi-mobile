@@ -24,14 +24,16 @@ interface LocalAssessmentDataSource {
     suspend fun getCategoriesByIds(categoryIds: List<Int>): List<Category>
     suspend fun deleteCategory(category: Category)
 
-    suspend fun upsertEvent(event: Event)
+    suspend fun upsertEvent(event: Event): Long
     suspend fun getEventsByClassRoomId(classRoomId: Int): List<Event>
     suspend fun getEventsByCategoryId(categoryId: Int): List<Event>
     suspend fun getEventById(eventId: Int): Event?
     suspend fun deleteEvent(event: Event)
 
-    suspend fun upsertAssessment(assessment: Assessment)
+    suspend fun upsertAssessments(assessmentList: List<Assessment>): List<Long>
+    suspend fun getAssessmentsByIds(assessmentIds: List<Int>): List<Assessment>
     suspend fun getAssessmentsByEventId(eventId: Int): List<Assessment>
     suspend fun getAssessmentById(assessmentId: Int): Assessment?
+    suspend fun getAverageScoreByStudentId(studentId: Int): Double
     suspend fun deleteAssessment(assessment: Assessment)
 }

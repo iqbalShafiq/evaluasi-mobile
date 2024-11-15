@@ -12,6 +12,7 @@ import id.usecase.core.domain.assessment.model.assessment.event.Event
 import id.usecase.core.domain.assessment.model.classroom.ClassRoom
 import id.usecase.core.domain.assessment.model.student.Student
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class RoomLocalAssessmentDataSource(
@@ -138,8 +139,8 @@ class RoomLocalAssessmentDataSource(
         }
     }
 
-    override suspend fun upsertEvent(event: Event) {
-        withContext(dispatcher) {
+    override suspend fun upsertEvent(event: Event): Long {
+        return withContext(dispatcher) {
             eventDao.upsert(event.toEntity())
         }
     }
@@ -174,9 +175,23 @@ class RoomLocalAssessmentDataSource(
         }
     }
 
-    override suspend fun upsertAssessment(assessment: Assessment) {
-        withContext(dispatcher) {
-            assessmentDao.upsert(assessment.toEntity())
+    override suspend fun upsertAssessments(assessmentList: List<Assessment>): List<Long> {
+        return withContext(dispatcher) {
+            val mappedAssessmentList = withContext(Dispatchers.Default) {
+                assessmentList.map {
+                    it.toEntity()
+                }
+            }
+
+            assessmentDao.upsert(mappedAssessmentList)
+        }
+    }
+
+    override suspend fun getAssessmentsByIds(assessmentIds: List<Int>): List<Assessment> {
+        return withContext(dispatcher) {
+            assessmentDao
+                .getAssessmentsByIds(assessmentIds)
+                .map { it.toDomainForm() }
         }
     }
 
@@ -193,6 +208,12 @@ class RoomLocalAssessmentDataSource(
             assessmentDao
                 .getAssessmentById(assessmentId)
                 ?.toDomainForm()
+        }
+    }
+
+    override suspend fun getAverageScoreByStudentId(studentId: Int): Double {
+        return withContext(dispatcher) {
+            assessmentDao.getAverageScoreByStudentId(studentId)
         }
     }
 

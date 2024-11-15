@@ -33,9 +33,15 @@ import id.usecase.designsystem.components.app_bar.EvaluasiTopAppBar
 import id.usecase.designsystem.components.button.ButtonType
 import id.usecase.designsystem.components.button.EvaluasiButton
 import id.usecase.designsystem.components.text_field.EvaluasiTextField
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun AssessmentScreenRoot(modifier: Modifier = Modifier) {
+fun AssessmentScreenRoot(
+    modifier: Modifier = Modifier,
+    onBackPressed: () -> Unit,
+    onAssessmentHasSaved: () -> Unit,
+    viewModel: AssessmentViewModel = koinViewModel()
+) {
 
 }
 
@@ -77,7 +83,7 @@ fun AssessmentScreen(
                         modifier = Modifier.fillMaxWidth(),
                         label = "Assessment Name",
                         placeholder = "Type name",
-                        state = state.assessmentName,
+                        state = state.assessmentNameField,
                         inputType = KeyboardType.Text
                     )
 
@@ -87,7 +93,7 @@ fun AssessmentScreen(
                             .padding(top = 12.dp),
                         label = "Assessment Date",
                         placeholder = "Pick date",
-                        state = state.assessmentName,
+                        state = state.assessmentNameField,
                         inputType = KeyboardType.Text
                     )
 
@@ -97,7 +103,7 @@ fun AssessmentScreen(
                             .padding(top = 12.dp),
                         label = "Category",
                         placeholder = "Choose category",
-                        state = state.assessmentName,
+                        state = state.assessmentNameField,
                         inputType = KeyboardType.Text
                     )
 
@@ -111,7 +117,7 @@ fun AssessmentScreen(
                         modifier = Modifier
                             .padding(top = 8.dp)
                     ) {
-                        items(state.students) { student ->
+                        items(state.assessmentListField) { student ->
                             StudentAssessmentCard(
                                 state = student
                             )
@@ -145,9 +151,10 @@ private fun AssessmentScreenPreview() {
     EvaluasiTheme {
         AssessmentScreen(
             state = AssessmentState(
-                students = listOf(
+                assessmentListField = listOf(
                     StudentAssessmentState(
                         data = StudentScoreUi(
+                            assessmentId = 1,
                             studentId = 1,
                             studentName = "John Doe",
                             comments = "Good job",
@@ -157,6 +164,7 @@ private fun AssessmentScreenPreview() {
                     ),
                     StudentAssessmentState(
                         data = StudentScoreUi(
+                            assessmentId = 2,
                             studentId = 2,
                             studentName = "Jane Doe",
                             comments = "Good job",
@@ -166,6 +174,7 @@ private fun AssessmentScreenPreview() {
                     ),
                     StudentAssessmentState(
                         data = StudentScoreUi(
+                            assessmentId = 3,
                             studentId = 3,
                             studentName = "John Smith",
                             comments = "Good job",

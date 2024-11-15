@@ -14,12 +14,13 @@ class EventRepositoryImpl(
     private val dataSource: LocalAssessmentDataSource,
     private val dispatcher: CoroutineDispatcher
 ) : EventRepository {
-    override suspend fun upsertEvent(event: Event) {
-        withContext(dispatcher) {
+    override suspend fun upsertEvent(event: Event): DataResult<Event?> {
+        return withContext(dispatcher) {
             try {
-                dataSource.upsertEvent(event)
+                val eventId = dataSource.upsertEvent(event)
+                DataResult.Success(dataSource.getEventById(eventId.toInt()))
             } catch (e: Exception) {
-                throw e
+                DataResult.Error(e)
             }
         }
     }

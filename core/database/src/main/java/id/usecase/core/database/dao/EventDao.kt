@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface EventDao {
     @Upsert
-    suspend fun upsert(event: EventEntity)
+    suspend fun upsert(event: EventEntity): Long
 
     @Query("SELECT * FROM events WHERE id = :id")
     suspend fun getEventById(id: Int): EventEntity?
