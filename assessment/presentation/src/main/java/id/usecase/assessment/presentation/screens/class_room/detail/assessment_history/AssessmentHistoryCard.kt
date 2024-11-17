@@ -1,4 +1,4 @@
-package id.usecase.assessment.presentation.screens.class_room.detail
+package id.usecase.assessment.presentation.screens.class_room.detail.assessment_history
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -90,14 +90,14 @@ fun AssessmentHistoryCard(
 
                 Column {
                     Text(
-                        text = "Students",
+                        text = "Total Assessment",
                         style = MaterialTheme.typography.labelMedium
                     )
                     Spacer(
                         modifier = Modifier.padding(top = 4.dp)
                     )
                     Text(
-                        text = eventUi.assessedStudentCount.toString(),
+                        text = eventUi.totalAssessment.toString(),
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
@@ -125,7 +125,7 @@ private fun AssessmentHistoryCardPreview() {
             name = "Assessment 1",
             eventDate = "03 Oct 2024 12:00:00",
             createdTime = "03 Oct 2024 12:00:00",
-            assessedStudentCount = 10,
+            totalAssessment = 10,
             categoryId = 1,
             categoryName = "Category 1",
             classId = 1,

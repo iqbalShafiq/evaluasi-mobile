@@ -30,14 +30,6 @@ class EventRepositoryImpl(
             try {
                 emit(DataResult.Loading)
                 val events: List<Event> = dataSource.getEventsByClassRoomId(classRoomId)
-                if (events.isEmpty()) {
-                    emit(
-                        DataResult.Error(
-                            Exception("Haven't create any event yet")
-                        )
-                    )
-                    return@flow
-                }
                 emit(DataResult.Success(events))
             } catch (e: Exception) {
                 emit(DataResult.Error(e))
@@ -50,14 +42,6 @@ class EventRepositoryImpl(
             try {
                 emit(DataResult.Loading)
                 val events: List<Event> = dataSource.getEventsByCategoryId(categoryId)
-                if (events.isEmpty()) {
-                    emit(
-                        DataResult.Error(
-                            Exception("Haven't create any event yet")
-                        )
-                    )
-                    return@flow
-                }
                 emit(DataResult.Success(events))
             } catch (e: Exception) {
                 emit(DataResult.Error(e))

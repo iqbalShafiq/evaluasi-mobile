@@ -3,7 +3,7 @@ package id.usecase.assessment.presentation.model
 data class AssessmentEventUi(
     val id: Int,
     val name: String,
-    val assessedStudentCount: Int,
+    val totalAssessment: Int,
     val categoryId: Int,
     val categoryName: String,
     val classId: Int,

@@ -2,10 +2,12 @@ package id.usecase.assessment.presentation.utils
 
 import androidx.compose.foundation.text.input.TextFieldState
 import id.usecase.assessment.presentation.model.AddStudentUi
+import id.usecase.assessment.presentation.model.AssessmentEventUi
 import id.usecase.assessment.presentation.model.ClassRoomUi
 import id.usecase.assessment.presentation.screens.class_room.create.categories.item.CategoryItemState
 import id.usecase.assessment.presentation.screens.class_room.create.students.item.AddStudentItemState
 import id.usecase.core.domain.assessment.model.assessment.category.Category
+import id.usecase.core.domain.assessment.model.assessment.event.Event
 import id.usecase.core.domain.assessment.model.classroom.ClassRoom
 import id.usecase.core.domain.assessment.model.student.Student
 
@@ -50,4 +52,16 @@ fun Student.toItemState() = AddStudentItemState(
 fun AddStudentItemState.toDomainForm() = AddStudentUi(
     identifier = identifier.text.toString().toInt(),
     name = name.text.toString()
+)
+
+fun Event.toUi(classRoomId: Int, assessedStudent: Int, categoryName: String) = AssessmentEventUi(
+    id = id,
+    name = name,
+    totalAssessment = assessedStudent,
+    categoryId = categoryId,
+    categoryName = categoryName,
+    classId = classRoomId,
+    eventDate = eventDate.toString(),
+    createdTime = createdTime.toString(),
+    lastModifiedTime = lastModifiedTime.toString()
 )
