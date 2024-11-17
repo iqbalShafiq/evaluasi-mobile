@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "id.usecase.evaluasi"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "id.usecase.evaluasi"

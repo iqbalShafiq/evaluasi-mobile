@@ -44,7 +44,7 @@ fun AddStudentCard(
                 label = "Name",
                 placeholder = "Type student name",
                 state = state.name,
-                inputType = KeyboardType.Number,
+                inputType = KeyboardType.Text,
                 containerColor = MaterialTheme.colorScheme.surfaceContainer
             )
         }

@@ -1,15 +1,15 @@
 package id.usecase.designsystem.components.app_bar
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -48,21 +48,16 @@ fun EvaluasiBottomAppBar(
             )
         },
         actions = {
-            Row(
-                modifier = Modifier.padding(horizontal = 8.dp)
-            ) {
-                actionItemList.forEach { actionItem ->
-                    Image(
-                        modifier = Modifier.clickable { actionItem.onClick() },
-                        imageVector = actionItem.icon,
-                        contentDescription = actionItem.contentDescription,
-                        colorFilter = ColorFilter.tint(
-                            color = MaterialTheme.colorScheme.onSurface
+            actionItemList.forEach { actionItem ->
+                IconButton(
+                    onClick = { actionItem.onClick() },
+                    content = {
+                        Icon(
+                            imageVector = actionItem.icon,
+                            contentDescription = actionItem.contentDescription
                         )
-                    )
-
-                    Spacer(modifier = Modifier.width(16.dp))
-                }
+                    }
+                )
             }
         }
     )

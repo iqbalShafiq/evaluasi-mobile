@@ -25,7 +25,7 @@ fun CategoryCard(
         shape = MaterialTheme.shapes.medium,
         content = {
             Column(
-                modifier = Modifier.padding(vertical = 20.dp, horizontal = 20.dp)
+                modifier = Modifier.padding(20.dp)
             ) {
                 EvaluasiTextField(
                     modifier = Modifier.fillMaxWidth(),

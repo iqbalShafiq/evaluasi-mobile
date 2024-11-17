@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "id.usecase.assessment.presentation"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 26
@@ -68,6 +68,9 @@ dependencies {
     implementation(libs.koin.core)
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
+
+    // chart
+    implementation (libs.compose.charts)
 
     // testing
     implementation(libs.androidx.core.ktx)

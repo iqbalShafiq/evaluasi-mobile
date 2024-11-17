@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -22,7 +21,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,10 +28,10 @@ import androidx.compose.ui.unit.dp
 import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.model.AlertUi
 import id.usecase.assessment.presentation.model.AssessmentEventUi
-import id.usecase.assessment.presentation.utils.ignoreHorizontalParentPadding
 import id.usecase.designsystem.EvaluasiTheme
+import id.usecase.designsystem.components.app_bar.ActionItem
+import id.usecase.designsystem.components.app_bar.EvaluasiBottomAppBar
 import id.usecase.designsystem.components.app_bar.EvaluasiTopAppBar
-import id.usecase.designsystem.components.button.EvaluasiFloatingActionButton
 
 @Composable
 fun ClassRoomScreenRoot(modifier: Modifier = Modifier) {
@@ -43,7 +41,11 @@ fun ClassRoomScreenRoot(modifier: Modifier = Modifier) {
 @Composable
 fun ClassRoomScreen(
     modifier: Modifier = Modifier,
-    state: ClassRoomState
+    state: ClassRoomState,
+    onBioEditClicked: () -> Unit,
+    onCategoryEditClicked: () -> Unit,
+    onAddAssessmentClicked: () -> Unit,
+    onStudentEditClicked: () -> Unit
 ) {
     var fabHeight by remember {
         mutableIntStateOf(0)
@@ -60,19 +62,48 @@ fun ClassRoomScreen(
                     R.drawable.rounded_arrow_back
                 ),
                 trailingIcon = ImageVector.vectorResource(
-                    R.drawable.ic_notification
+                    R.drawable.ic_students
                 ),
             )
         },
-        floatingActionButton = {
-            EvaluasiFloatingActionButton(
-                modifier = Modifier.onGloballyPositioned {
-                    fabHeight = it.size.height
+        bottomBar = {
+            EvaluasiBottomAppBar(
+                modifier = Modifier,
+                navigationIcon = ImageVector.vectorResource(
+                    R.drawable.ic_add
+                ),
+                onNavigationClicked = {
+                    onAddAssessmentClicked()
                 },
-                text = "New Assessment",
-                icon = ImageVector.vectorResource(id = R.drawable.ic_add),
-                iconContentDescription = "Add button",
-                onClickListener = { }
+                actionItemList = listOf(
+                    ActionItem(
+                        icon = ImageVector.vectorResource(
+                            R.drawable.ic_edit
+                        ),
+                        onClick = {
+                            onBioEditClicked()
+                        },
+                        contentDescription = "Edit Class Room Bio"
+                    ),
+                    ActionItem(
+                        icon = ImageVector.vectorResource(
+                            R.drawable.ic_category
+                        ),
+                        onClick = {
+                            onCategoryEditClicked()
+                        },
+                        contentDescription = "Edit Categories"
+                    ),
+                    ActionItem(
+                        icon = ImageVector.vectorResource(
+                            R.drawable.ic_information
+                        ),
+                        onClick = {
+                            onStudentEditClicked()
+                        },
+                        contentDescription = "Class Room Alerts"
+                    ),
+                )
             )
         },
         content = { innerPadding ->
@@ -80,37 +111,28 @@ fun ClassRoomScreen(
                 modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = 24.dp)
             ) {
                 Text(
-                    modifier = Modifier.padding(bottom = 12.dp),
-                    text = "Recent Alerts",
-                    style = MaterialTheme.typography.titleMedium,
-                )
-
-                LazyRow(
-                    modifier = Modifier.ignoreHorizontalParentPadding(16.dp),
-                    contentPadding = PaddingValues(horizontal = 16.dp)
-                ) {
-                    items(state.alerts) { alert ->
-                        RecentAlertCard(
-                            modifier = if (state.alerts.indexOf(alert) != state.alerts.size - 1) Modifier.padding(
-                                end = 16.dp
-                            ) else Modifier.padding(0.dp),
-                            alert = alert,
-                            onClicked = { }
-                        )
-                    }
-                }
-
-                Text(
-                    modifier = Modifier.padding(top = 12.dp, bottom = 12.dp),
+                    modifier = Modifier,
                     text = "Assessment History",
                     style = MaterialTheme.typography.titleMedium,
                 )
 
+                if (state.assessmentEvents.isEmpty()) {
+                    Text(
+                        modifier = Modifier.padding(vertical = 12.dp),
+                        text = "Assessment has not been taken yet",
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            color = MaterialTheme.colorScheme.error
+                        ),
+                    )
+                }
+
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 12.dp),
                     contentPadding = PaddingValues(bottom = heightInDp)
                 ) {
                     items(state.assessmentEvents) { events ->
@@ -177,6 +199,10 @@ private fun ClassRoomPreview() {
     )
     EvaluasiTheme {
         ClassRoomScreen(
+            onBioEditClicked = { },
+            onCategoryEditClicked = { },
+            onStudentEditClicked = { },
+            onAddAssessmentClicked = { },
             state = state
         )
     }

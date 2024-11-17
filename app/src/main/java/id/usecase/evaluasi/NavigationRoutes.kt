@@ -13,3 +13,6 @@ internal data class CreateCategories(val classRoomId: Int)
 
 @Serializable
 internal data class AddStudents(val classRoomId: Int)
+
+@Serializable
+internal data class AddAssessmentEvent(val classRoomId: Int)

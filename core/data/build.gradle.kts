@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "id.usecase.core.data"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 26

@@ -13,6 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import id.usecase.assessment.presentation.screens.assessment.AssessmentScreenRoot
 import id.usecase.assessment.presentation.screens.class_room.create.CreateClassRoomScreenRoot
 import id.usecase.assessment.presentation.screens.class_room.create.categories.AddCategoriesScreenRoot
 import id.usecase.assessment.presentation.screens.class_room.create.students.AddStudentsScreenRoot
@@ -83,7 +84,7 @@ fun MyNavigation() {
         }
 
         composable<AddStudents> { backStackEntry ->
-            val addStudents: CreateCategories = backStackEntry.toRoute()
+            val addStudents: AddStudents = backStackEntry.toRoute()
             val classRoomId = addStudents.classRoomId
 
             AddStudentsScreenRoot(
@@ -100,6 +101,23 @@ fun MyNavigation() {
                 },
                 openAutoFillScanner = {
                     // TODO
+                }
+            )
+        }
+
+        composable<AddAssessmentEvent> { backStackEntry ->
+            val addAssessmentEvent: AddAssessmentEvent = backStackEntry.toRoute()
+            val classRoomId = addAssessmentEvent.classRoomId
+
+            AssessmentScreenRoot(
+                modifier = Modifier.fillMaxSize(),
+                classRoomId = classRoomId,
+                eventId = null,
+                onBackPressed = {
+                    navController.popBackStack()
+                },
+                onAssessmentHasSaved = {
+                    navController.popBackStack()
                 }
             )
         }

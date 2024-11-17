@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -56,6 +57,7 @@ fun AssessmentHistoryCard(
                 }
 
                 Image(
+                    modifier = Modifier.alpha(0f), // TODO
                     imageVector = ImageVector.vectorResource(R.drawable.ic_notification),
                     contentDescription = "Alert of assessment",
                     colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.error)

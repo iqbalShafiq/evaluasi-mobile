@@ -80,7 +80,7 @@ fun EvaluasiTopAppBar(
             trailingIcon?.let {
                 Image(
                     modifier = Modifier
-                        .padding(end = 4.dp)
+                        .padding(end = 16.dp)
                         .clickable { onTrailingIconClicked() },
                     imageVector = trailingIcon,
                     contentDescription = stringResource(R.string.trailing_icon)

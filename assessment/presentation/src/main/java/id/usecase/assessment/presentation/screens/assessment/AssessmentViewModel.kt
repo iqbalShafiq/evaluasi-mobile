@@ -56,7 +56,13 @@ class AssessmentViewModel(
 
             AssessmentAction.DeleteAssessmentEvent -> deleteAssessmentEvent()
 
-            is AssessmentAction.UpdateEventDate -> TODO()
+            is AssessmentAction.UpdateEventDate -> {
+                state.value = state.value.copy(
+                    startDateField = TextFieldState(
+                        initialText = action.date
+                    )
+                )
+            }
         }
     }
 

@@ -142,7 +142,7 @@ fun AddStudentsScreen(
                 modifier = modifier
                     .padding(innerPadding)
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = 24.dp)
             ) {
                 val (content, buttonContainer) = createRefs()
 
@@ -160,7 +160,7 @@ fun AddStudentsScreen(
                     Text(
                         modifier = Modifier,
                         text = "Students",
-                        style = MaterialTheme.typography.labelMedium
+                        style = MaterialTheme.typography.titleSmall
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -218,7 +218,7 @@ fun AddStudentsScreen(
 
                     EvaluasiButton(
                         modifier = Modifier.weight(1f),
-                        text = "Create Class Room",
+                        text = "Create Class",
                         buttonType = ButtonType.PRIMARY,
                         onClick = {
                             onAction(

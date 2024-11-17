@@ -1,4 +1,4 @@
-package id.usecase.assessment.presentation.screens.class_room.detail
+package id.usecase.assessment.presentation.screens.class_room.detail.recent_alert
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

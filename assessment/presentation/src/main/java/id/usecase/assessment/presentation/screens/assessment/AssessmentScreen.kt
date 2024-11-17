@@ -36,12 +36,18 @@ import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.model.StudentScoreUi
 import id.usecase.assessment.presentation.screens.assessment.students.StudentAssessmentCard
 import id.usecase.assessment.presentation.screens.assessment.students.StudentAssessmentState
+import id.usecase.core.presentation.ui.ObserveAsEvents
 import id.usecase.designsystem.EvaluasiTheme
 import id.usecase.designsystem.components.app_bar.EvaluasiTopAppBar
 import id.usecase.designsystem.components.button.ButtonType
 import id.usecase.designsystem.components.button.EvaluasiButton
+import id.usecase.designsystem.components.dialog.StandardAlertDialog
+import id.usecase.designsystem.components.dialog.StandardDatePicker
+import id.usecase.designsystem.components.dialog.StandardLoadingDialog
 import id.usecase.designsystem.components.text_field.EvaluasiTextField
 import org.koin.androidx.compose.koinViewModel
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun AssessmentScreenRoot(
@@ -53,7 +59,6 @@ fun AssessmentScreenRoot(
     onAssessmentHasSaved: () -> Unit
 ) {
     val openAlertDialog = remember { mutableStateOf(false) }
-    val openLoadingDialog = remember { mutableStateOf(false) }
     val errorMessage = remember { mutableStateOf("") }
     val showStartDatePicker = remember { mutableStateOf(false) }
 
@@ -68,9 +73,62 @@ fun AssessmentScreenRoot(
         }
     }
 
+    when {
+        showStartDatePicker.value -> {
+            StandardDatePicker(
+                onDismiss = {
+                    showStartDatePicker.value = false
+                },
+                onDateSelected = {
+                    viewModel.onAction(
+                        AssessmentAction.UpdateEventDate(
+                            date = SimpleDateFormat(
+                                "yyyy-MM-dd",
+                                Locale.getDefault()
+                            ).format(it)
+                        )
+                    )
+                    showStartDatePicker.value = false
+                }
+            )
+        }
+    }
+
+    ObserveAsEvents(
+        flow = viewModel.events,
+        onEvent = { event ->
+            when (event) {
+                is AssessmentEvent.OnErrorOccurred -> {
+                    openAlertDialog.value = true
+                    errorMessage.value = event.errorMessage
+                }
+
+                is AssessmentEvent.AssessmentHasSaved -> {
+                    onAssessmentHasSaved()
+                }
+            }
+        }
+    )
+
+    if (openAlertDialog.value) {
+        StandardAlertDialog(
+            onDismissRequest = {
+                openAlertDialog.value = false
+            },
+            onConfirmation = {
+                openAlertDialog.value = false
+            },
+            dialogTitle = "Error",
+            dialogText = errorMessage.value,
+            icon = ImageVector.vectorResource(id.usecase.designsystem.R.drawable.ic_test_icon),
+            iconDescription = "Error icon"
+        )
+    }
+
+    if (viewModel.state.value.isLoading) StandardLoadingDialog()
+
     AssessmentScreen(
         modifier = modifier,
-        classRoomId = classRoomId,
         state = viewModel.state.value,
         onAction = viewModel::onAction
     )
@@ -79,7 +137,6 @@ fun AssessmentScreenRoot(
 @Composable
 fun AssessmentScreen(
     modifier: Modifier = Modifier,
-    classRoomId: Int,
     state: AssessmentState,
     onAction: (AssessmentAction) -> Unit
 ) {
@@ -215,7 +272,6 @@ private fun AssessmentScreenPreview() {
     EvaluasiTheme {
         AssessmentScreen(
             onAction = {},
-            classRoomId = 1,
             state = AssessmentState(
                 assessmentListField = listOf(
                     StudentAssessmentState(
