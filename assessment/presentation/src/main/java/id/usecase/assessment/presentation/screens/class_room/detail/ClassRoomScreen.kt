@@ -44,6 +44,7 @@ fun ClassRoomScreenRoot(
     modifier: Modifier = Modifier,
     classRoomId: Int,
     onBackPressed: () -> Unit,
+    onDetailAssessmentEventClicked: (AssessmentEventUi) -> Unit,
     onBioEditClicked: () -> Unit,
     onCategoryEditClicked: () -> Unit,
     onAddAssessmentClicked: () -> Unit,
@@ -92,6 +93,7 @@ fun ClassRoomScreenRoot(
         modifier = modifier,
         state = viewModel.state.value,
         onBackPressed = onBackPressed,
+        onDetailAssessmentEventClicked = onDetailAssessmentEventClicked,
         onBioEditClicked = onBioEditClicked,
         onCategoryEditClicked = onCategoryEditClicked,
         onAddAssessmentClicked = onAddAssessmentClicked,
@@ -104,6 +106,7 @@ fun ClassRoomScreen(
     modifier: Modifier = Modifier,
     state: ClassRoomState,
     onBackPressed: () -> Unit,
+    onDetailAssessmentEventClicked: (AssessmentEventUi) -> Unit,
     onBioEditClicked: () -> Unit,
     onCategoryEditClicked: () -> Unit,
     onAddAssessmentClicked: () -> Unit,
@@ -198,11 +201,13 @@ fun ClassRoomScreen(
                         .padding(top = 12.dp),
                     contentPadding = PaddingValues(bottom = heightInDp)
                 ) {
-                    items(state.assessmentEvents) { events ->
+                    items(state.assessmentEvents) { assessmentEvent ->
                         AssessmentHistoryCard(
                             modifier = Modifier,
-                            eventUi = events,
-                            onDetailClicked = { },
+                            eventUi = assessmentEvent,
+                            onDetailClicked = {
+                                onDetailAssessmentEventClicked(assessmentEvent)
+                            },
                             onAlertClicked = { }
                         )
                         Spacer(modifier = Modifier.height(16.dp))
@@ -245,6 +250,7 @@ private fun ClassRoomPreview() {
     EvaluasiTheme {
         ClassRoomScreen(
             onBackPressed = { },
+            onDetailAssessmentEventClicked = { },
             onBioEditClicked = { },
             onCategoryEditClicked = { },
             onStudentEditClicked = { },

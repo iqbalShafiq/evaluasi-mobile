@@ -130,6 +130,7 @@ fun AssessmentScreenRoot(
     AssessmentScreen(
         modifier = modifier,
         state = viewModel.state.value,
+        onBackPressed = onBackPressed,
         onAction = viewModel::onAction
     )
 }
@@ -137,6 +138,7 @@ fun AssessmentScreenRoot(
 @Composable
 fun AssessmentScreen(
     modifier: Modifier = Modifier,
+    onBackPressed: () -> Unit,
     state: AssessmentState,
     onAction: (AssessmentAction) -> Unit
 ) {
@@ -152,7 +154,8 @@ fun AssessmentScreen(
                 title = stringResource(R.string.create_assessment),
                 navigationIcon = ImageVector.vectorResource(
                     R.drawable.rounded_arrow_back
-                )
+                ),
+                onNavigationClicked = onBackPressed
             )
         },
         content = { innerPadding ->
@@ -272,6 +275,7 @@ private fun AssessmentScreenPreview() {
     EvaluasiTheme {
         AssessmentScreen(
             onAction = {},
+            onBackPressed = {},
             state = AssessmentState(
                 assessmentListField = listOf(
                     StudentAssessmentState(

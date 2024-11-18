@@ -76,9 +76,17 @@ fun MyNavigation() {
                 modifier = Modifier.fillMaxSize(),
                 classRoomId = classRoomId,
                 onBackPressed = { navController.popBackStack() },
+                onDetailAssessmentEventClicked = { assessmentEvent ->
+                    navController.navigate(
+                        AssessmentEventEditor(
+                            classRoomId = classRoomId,
+                            eventId = assessmentEvent.id
+                        )
+                    )
+                },
                 onBioEditClicked = { navController.navigate(CreateClassRoom) },
                 onCategoryEditClicked = { navController.navigate(CreateCategories(classRoomId)) },
-                onAddAssessmentClicked = { navController.navigate(AddAssessmentEvent(classRoomId)) },
+                onAddAssessmentClicked = { navController.navigate(AssessmentEventEditor(classRoomId)) },
                 onStudentEditClicked = { navController.navigate(AddStudents(classRoomId)) }
             )
         }
@@ -121,9 +129,9 @@ fun MyNavigation() {
             )
         }
 
-        composable<AddAssessmentEvent> { backStackEntry ->
-            val addAssessmentEvent: AddAssessmentEvent = backStackEntry.toRoute()
-            val classRoomId = addAssessmentEvent.classRoomId
+        composable<AssessmentEventEditor> { backStackEntry ->
+            val assessmentEventEditor: AssessmentEventEditor = backStackEntry.toRoute()
+            val classRoomId = assessmentEventEditor.classRoomId
 
             AssessmentScreenRoot(
                 modifier = Modifier.fillMaxSize(),

@@ -18,4 +18,7 @@ internal data class CreateCategories(val classRoomId: Int)
 internal data class AddStudents(val classRoomId: Int)
 
 @Serializable
-internal data class AddAssessmentEvent(val classRoomId: Int)
+internal data class AssessmentEventEditor(
+    val classRoomId: Int,
+    val eventId: Int? = null
+)
