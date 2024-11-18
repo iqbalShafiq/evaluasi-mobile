@@ -48,7 +48,7 @@ fun MyNavigation() {
         composable<Home> {
             HomeScreenRoot(
                 onClassRoomChosen = {
-
+                    navController.navigate(ClassRoomDetail(it))
                 },
                 onCreateClassRoomClicked = {
                     navController.navigate(CreateClassRoom)

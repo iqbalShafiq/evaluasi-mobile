@@ -47,7 +47,8 @@ fun EvaluasiTopAppBar(
                         .padding(start = 16.dp)
                         .clickable { onNavigationClicked() },
                     imageVector = navigationIcon,
-                    colorFilter = navigationIconTint?.let { ColorFilter.tint(it) },
+                    colorFilter = navigationIconTint?.let { ColorFilter.tint(it) }
+                        ?: ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
                     contentDescription = stringResource(R.string.navigation_icon)
                 )
             }
@@ -83,6 +84,7 @@ fun EvaluasiTopAppBar(
                         .padding(end = 16.dp)
                         .clickable { onTrailingIconClicked() },
                     imageVector = trailingIcon,
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
                     contentDescription = stringResource(R.string.trailing_icon)
                 )
             }
