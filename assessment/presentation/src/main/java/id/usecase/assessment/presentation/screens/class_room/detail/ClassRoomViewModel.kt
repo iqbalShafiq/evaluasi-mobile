@@ -9,6 +9,7 @@ import id.usecase.assessment.domain.CategoryRepository
 import id.usecase.assessment.domain.ClassRoomRepository
 import id.usecase.assessment.domain.EventRepository
 import id.usecase.assessment.presentation.R
+import id.usecase.assessment.presentation.model.AssessmentEventUi
 import id.usecase.core.domain.assessment.DataResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.Channel
@@ -103,6 +104,41 @@ class ClassRoomViewModel(
                             )
 
                             val categoryNames = getCategoryNames(classRoomId)
+
+                            val assessmentEventUiList = result.data.map { event ->
+                                val categoryName = categoryNames
+                                    .find { it.first == event.categoryId }
+                                    ?.second ?: ""
+
+                                AssessmentEventUi(
+                                    id = event.id,
+                                    name = event.name,
+                                    totalAssessment = 0,
+                                    categoryId = event.categoryId,
+                                    categoryName = categoryName,
+                                    classId = classRoomId,
+                                    eventDate = event.eventDate.toString(),
+                                    createdTime = event.createdTime.toString(),
+                                    lastModifiedTime = event.lastModifiedTime.toString()
+                                )
+                            }
+
+                            state.value = state.value.copy(
+                                assessmentEvents = assessmentEventUiList
+                            )
+
+                            val assessmentEventUiListWithTotalAssessment = assessmentEventUiList
+                                .map { assessmentEventUi ->
+                                    val totalAssessment = getTotalAssessmentFromEvent(
+                                        eventId = assessmentEventUi.id
+                                    )
+                                    assessmentEventUi.copy(totalAssessment = totalAssessment)
+                                }
+
+                            state.value = state.value.copy(
+                                assessmentEvents = assessmentEventUiListWithTotalAssessment,
+                                isLoading = false
+                            )
                         }
 
                         is DataResult.Error -> {
@@ -143,6 +179,32 @@ class ClassRoomViewModel(
 
                             is DataResult.Error -> {
                                 continuation.resume(emptyList())
+                            }
+                        }
+                    }
+            }
+        }
+    }
+
+    private suspend fun getTotalAssessmentFromEvent(eventId: Int): Int {
+        return suspendCoroutine { continuation ->
+            viewModelScope.launch(dispatcher) {
+                assessmentRepository.getAssessmentsByEventId(eventId)
+                    .catch { e ->
+                        continuation.resume(0)
+                    }
+                    .collectLatest { result ->
+                        when (result) {
+                            DataResult.Loading -> {
+                                state.value = state.value.copy(isLoading = true)
+                            }
+
+                            is DataResult.Success -> {
+                                continuation.resume(result.data.size)
+                            }
+
+                            is DataResult.Error -> {
+                                continuation.resume(0)
                             }
                         }
                     }
