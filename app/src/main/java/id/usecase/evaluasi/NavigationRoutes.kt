@@ -9,6 +9,9 @@ internal object Home
 internal object CreateClassRoom
 
 @Serializable
+internal data class ClassRoomDetail(val classRoomId: Int)
+
+@Serializable
 internal data class CreateCategories(val classRoomId: Int)
 
 @Serializable

@@ -17,6 +17,7 @@ import id.usecase.assessment.presentation.screens.assessment.AssessmentScreenRoo
 import id.usecase.assessment.presentation.screens.class_room.create.CreateClassRoomScreenRoot
 import id.usecase.assessment.presentation.screens.class_room.create.categories.AddCategoriesScreenRoot
 import id.usecase.assessment.presentation.screens.class_room.create.students.AddStudentsScreenRoot
+import id.usecase.assessment.presentation.screens.class_room.detail.ClassRoomScreenRoot
 import id.usecase.assessment.presentation.screens.home.HomeScreenRoot
 import id.usecase.designsystem.EvaluasiTheme
 
@@ -64,6 +65,21 @@ fun MyNavigation() {
                 onClassHasCreated = { classRoom ->
                     navController.navigate(CreateCategories(classRoom.id))
                 }
+            )
+        }
+
+        composable<ClassRoomDetail> { backStackEntry ->
+            val classRoomDetail: ClassRoomDetail = backStackEntry.toRoute()
+            val classRoomId = classRoomDetail.classRoomId
+
+            ClassRoomScreenRoot(
+                modifier = Modifier.fillMaxSize(),
+                classRoomId = classRoomId,
+                onBackPressed = { navController.popBackStack() },
+                onBioEditClicked = { navController.navigate(CreateClassRoom) },
+                onCategoryEditClicked = { navController.navigate(CreateCategories(classRoomId)) },
+                onAddAssessmentClicked = { navController.navigate(AddAssessmentEvent(classRoomId)) },
+                onStudentEditClicked = { navController.navigate(AddStudents(classRoomId)) }
             )
         }
 
