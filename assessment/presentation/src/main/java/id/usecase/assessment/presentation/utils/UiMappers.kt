@@ -11,7 +11,7 @@ import id.usecase.core.domain.assessment.model.assessment.event.Event
 import id.usecase.core.domain.assessment.model.classroom.ClassRoom
 import id.usecase.core.domain.assessment.model.student.Student
 
-fun ClassRoom.toDomainForm(): ClassRoomUi = ClassRoomUi(
+fun ClassRoom.toUi(): ClassRoomUi = ClassRoomUi(
     id = id,
     className = name,
     subject = subject,

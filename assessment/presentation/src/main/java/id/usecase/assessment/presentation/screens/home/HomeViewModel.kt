@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import id.usecase.assessment.domain.AssessmentRepository
 import id.usecase.assessment.domain.ClassRoomRepository
-import id.usecase.assessment.presentation.utils.toDomainForm
+import id.usecase.assessment.presentation.utils.toUi
 import id.usecase.core.domain.assessment.DataResult
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.catch
@@ -47,7 +47,7 @@ class HomeViewModel(
                         is DataResult.Success -> {
                             state = state.copy(
                                 isLoading = false,
-                                classRooms = result.data.map { it.toDomainForm() }
+                                classRooms = result.data.map { it.toUi() }
                             )
                         }
 

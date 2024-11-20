@@ -14,6 +14,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -44,6 +45,7 @@ import java.util.Locale
 @Composable
 fun CreateClassRoomScreenRoot(
     modifier: Modifier = Modifier,
+    classRoomId: Int? = null,
     onBackPressed: () -> Unit,
     onClassHasCreated: (classRoom: ClassRoomUi) -> Unit,
     viewModel: CreateClassRoomViewModel = koinViewModel()
@@ -70,6 +72,16 @@ fun CreateClassRoomScreenRoot(
                     )
                     showStartDatePicker.value = false
                 }
+            )
+        }
+    }
+
+    LaunchedEffect(key1 = Unit) {
+        if (classRoomId != null) {
+            viewModel.onAction(
+                action = CreateClassRoomAction.LoadClassRoomDetail(
+                    classRoomId = classRoomId
+                )
             )
         }
     }

@@ -8,11 +8,13 @@ import androidx.lifecycle.viewModelScope
 import id.usecase.assessment.domain.ClassRoomRepository
 import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.screens.class_room.create.CreateClassRoomEvent.*
-import id.usecase.assessment.presentation.utils.toDomainForm
+import id.usecase.assessment.presentation.utils.toUi
 import id.usecase.core.domain.assessment.DataResult
 import id.usecase.core.domain.assessment.model.classroom.ClassRoom
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -33,6 +35,7 @@ class CreateClassRoomViewModel(
 
     fun onAction(action: CreateClassRoomAction) {
         when (action) {
+            is CreateClassRoomAction.LoadClassRoomDetail -> loadClassRoomDetail(action.classRoomId)
             CreateClassRoomAction.CreateClassRoom -> createClassRoom()
             is CreateClassRoomAction.SetStartDate -> state.value = state.value.copy(
                 startDate = TextFieldState(
@@ -42,12 +45,51 @@ class CreateClassRoomViewModel(
         }
     }
 
+    private fun loadClassRoomDetail(classRoomId: Int) {
+        viewModelScope.launch(dispatcher) {
+            repository.getClassRoomById(classRoomId)
+                .catch { e ->
+                    state.value = state.value.copy(isLoading = false)
+                    _events.send(
+                        OnErrorOccurred(
+                            e.message ?: application.getString(R.string.unknown_error)
+                        )
+                    )
+                }
+                .collectLatest { result ->
+                    when (result) {
+                        DataResult.Loading -> state.value = state.value.copy(isLoading = true)
+                        is DataResult.Success -> {
+                            state.value = state.value.copy(
+                                isLoading = false,
+                                classRoom = result.data,
+                                classRoomName = TextFieldState(
+                                    initialText = result.data?.name ?: ""
+                                ),
+                                subject = TextFieldState(
+                                    initialText = result.data?.subject ?: ""
+                                ),
+                                startDate = TextFieldState(
+                                    initialText = result.data?.startPeriod.toString()
+                                ),
+                                endDate = TextFieldState(
+                                    initialText = result.data?.endPeriod?.toString() ?: ""
+                                )
+                            )
+                        }
+
+                        is DataResult.Error -> TODO()
+                    }
+                }
+        }
+    }
+
     private fun createClassRoom() {
         viewModelScope.launch(dispatcher) {
             state.value = state.value.copy(isLoading = true)
             val result = repository.upsertClassRoom(
                 ClassRoom(
-                    id = 0,
+                    id = state.value.classRoom?.id ?: 0,
                     name = state.value.classRoomName.text.toString(),
                     subject = state.value.subject.text.toString(),
                     startPeriod = LocalDate
@@ -74,7 +116,7 @@ class CreateClassRoomViewModel(
 
                 is DataResult.Success -> {
                     state.value = state.value.copy(isLoading = false)
-                    result.data?.toDomainForm()?.let {
+                    result.data?.toUi()?.let {
                         _events.send(OnClassRoomCreated(it))
                     }
                 }
