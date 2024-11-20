@@ -49,6 +49,7 @@ fun ClassRoomScreenRoot(
     onCategoryEditClicked: () -> Unit,
     onAddAssessmentClicked: () -> Unit,
     onStudentEditClicked: () -> Unit,
+    onAlertClicked: () -> Unit,
     viewModel: ClassRoomViewModel = koinViewModel()
 ) {
     val openAlertDialog = remember { mutableStateOf(false) }
@@ -97,7 +98,8 @@ fun ClassRoomScreenRoot(
         onBioEditClicked = onBioEditClicked,
         onCategoryEditClicked = onCategoryEditClicked,
         onAddAssessmentClicked = onAddAssessmentClicked,
-        onStudentEditClicked = onStudentEditClicked
+        onStudentEditClicked = onStudentEditClicked,
+        onAlertClicked = onAlertClicked
     )
 }
 
@@ -110,7 +112,8 @@ fun ClassRoomScreen(
     onBioEditClicked: () -> Unit,
     onCategoryEditClicked: () -> Unit,
     onAddAssessmentClicked: () -> Unit,
-    onStudentEditClicked: () -> Unit
+    onStudentEditClicked: () -> Unit,
+    onAlertClicked: () -> Unit
 ) {
     var fabHeight by remember {
         mutableIntStateOf(0)
@@ -130,6 +133,9 @@ fun ClassRoomScreen(
                 trailingIcon = ImageVector.vectorResource(
                     R.drawable.ic_students
                 ),
+                onTrailingIconClicked = {
+                    onStudentEditClicked()
+                }
             )
         },
         bottomBar = {
@@ -165,7 +171,7 @@ fun ClassRoomScreen(
                             R.drawable.ic_information
                         ),
                         onClick = {
-                            onStudentEditClicked()
+                            onAlertClicked()
                         },
                         contentDescription = "Class Room Alerts"
                     ),
@@ -255,6 +261,7 @@ private fun ClassRoomPreview() {
             onCategoryEditClicked = { },
             onStudentEditClicked = { },
             onAddAssessmentClicked = { },
+            onAlertClicked = { },
             state = state
         )
     }
