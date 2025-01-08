@@ -15,7 +15,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.model.ClassRoomUi
 import id.usecase.assessment.presentation.screens.home.item.ClassRoomCard
@@ -38,18 +38,14 @@ import id.usecase.designsystem.components.app_bar.EvaluasiTopAppBar
 import id.usecase.designsystem.components.button.EvaluasiFloatingActionButton
 import org.koin.androidx.compose.koinViewModel
 
-private const val TAG = "HomeScreen"
-
 @Composable
 fun HomeScreenRoot(
     onClassRoomChosen: (Int) -> Unit,
     onCreateClassRoomClicked: () -> Unit,
     homeViewModel: HomeViewModel = koinViewModel()
 ) {
-    LaunchedEffect(Unit) {
-        // Load class room data
-        homeViewModel.onAction(HomeAction.LoadClassRoom)
-    }
+    // States
+    val state by homeViewModel.state.collectAsStateWithLifecycle()
 
     // Error dialog state
     val errorMessage = remember { mutableStateOf<String?>(null) }
@@ -69,7 +65,7 @@ fun HomeScreenRoot(
     HomeScreen(
         modifier = Modifier.fillMaxSize(),
         errorMessage = errorMessage.value,
-        classRoomList = homeViewModel.state.classRooms,
+        classRoomList = state.classRooms,
         onCreateClassRoomClicked = onCreateClassRoomClicked,
         onClassRoomChosen = onClassRoomChosen,
     )

@@ -22,7 +22,7 @@ fun CategoryCard(
 ) {
     Card(
         modifier = modifier,
-        shape = MaterialTheme.shapes.medium,
+        shape = MaterialTheme.shapes.small,
         content = {
             Column(
                 modifier = Modifier.padding(20.dp)

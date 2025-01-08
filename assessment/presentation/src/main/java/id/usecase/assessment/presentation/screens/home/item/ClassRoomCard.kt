@@ -23,7 +23,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.model.ClassRoomUi
-import id.usecase.core.domain.assessment.utils.toFormattedDate
 import id.usecase.designsystem.components.button.EvaluasiButton
 
 @Composable
@@ -34,6 +33,7 @@ fun ClassRoomCard(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.small,
         onClick = { onDetailClickedListener(item) },
         content = {
             Column(
@@ -101,9 +101,7 @@ fun ClassRoomCard(
                             )
                         )
                         Text(
-                            text = item.startPeriod
-                                .toLong()
-                                .toFormattedDate(),
+                            text = item.startPeriod,
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
@@ -119,9 +117,7 @@ fun ClassRoomCard(
                                 )
                             )
                             Text(
-                                text = item.endPeriod
-                                    .toLong()
-                                    .toFormattedDate(),
+                                text = item.endPeriod,
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }

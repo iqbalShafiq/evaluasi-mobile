@@ -23,7 +23,8 @@ fun StudentAssessmentCard(
     state: StudentAssessmentState
 ) {
     Card(
-        modifier = modifier
+        modifier = modifier,
+        shape = MaterialTheme.shapes.small
     ) {
         Column(
             modifier = Modifier

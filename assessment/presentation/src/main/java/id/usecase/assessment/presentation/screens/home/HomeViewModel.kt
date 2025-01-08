@@ -1,8 +1,5 @@
 package id.usecase.assessment.presentation.screens.home
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import id.usecase.assessment.domain.AssessmentRepository
@@ -10,9 +7,12 @@ import id.usecase.assessment.domain.ClassRoomRepository
 import id.usecase.assessment.presentation.utils.toUi
 import id.usecase.core.domain.assessment.DataResult
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
@@ -22,8 +22,12 @@ class HomeViewModel(
     private val _events = Channel<HomeEvent>()
     val events = _events.receiveAsFlow()
 
-    var state by mutableStateOf(HomeState())
-        private set
+    private val _state = MutableStateFlow(HomeState())
+    val state = _state.asStateFlow()
+
+    init {
+        onAction(action = HomeAction.LoadClassRoom)
+    }
 
     fun onAction(action: HomeAction) {
         when (action) {
@@ -35,32 +39,34 @@ class HomeViewModel(
         viewModelScope.launch {
             classRoomRepository.getClassRooms()
                 .catch { e ->
-                    state = state.copy(isLoading = false)
+                    _state.update {
+                        it.copy(isLoading = false)
+                    }
                     _events.send(HomeEvent.OnErrorOccurred(e))
                 }
                 .collectLatest { result ->
                     when (result) {
                         DataResult.Loading -> {
-                            state = state.copy(isLoading = true)
+                            _state.update { it.copy(isLoading = true) }
                         }
 
                         is DataResult.Success -> {
-                            state = state.copy(
-                                isLoading = false,
-                                classRooms = result.data.map { it.toUi() }
-                            )
+                            _state.update {
+                                it.copy(
+                                    isLoading = false,
+                                    classRooms = result.data.map { it.toUi() }
+                                )
+                            }
                         }
 
                         is DataResult.Error -> {
-                            state = state.copy(isLoading = false)
+                            _state.update {
+                                it.copy(isLoading = false)
+                            }
                             _events.send(HomeEvent.OnErrorOccurred(result.exception))
                         }
                     }
                 }
         }
-    }
-
-    companion object {
-        private val TAG = HomeViewModel::class.java.simpleName
     }
 }
