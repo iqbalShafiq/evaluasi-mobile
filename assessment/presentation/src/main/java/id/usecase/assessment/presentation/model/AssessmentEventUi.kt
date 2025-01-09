@@ -9,5 +9,7 @@ data class AssessmentEventUi(
     val classId: Int,
     val eventDate: String,
     val createdTime: String,
-    val lastModifiedTime: String
+    val lastModifiedTime: String,
+    val isInProgress: Boolean = false,
+    val completionProgress: Float = 0f
 )

@@ -70,7 +70,10 @@ dependencies {
     implementation(libs.koin.androidx.compose)
 
     // chart
-    implementation (libs.compose.charts)
+    implementation(libs.compose.charts)
+    implementation(libs.vico.compose)
+    implementation(libs.vico.compose.m3)
+    implementation(libs.vico.core)
 
     // testing
     implementation(libs.androidx.core.ktx)
