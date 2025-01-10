@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
@@ -46,7 +45,7 @@ fun EvaluasiTextField(
     if (clickAction && isPressed) onClick()
 
     BasicTextField(
-        modifier =  if (clickAction) {
+        modifier = if (clickAction) {
             modifier.pointerInput(Unit) {}
         } else {
             modifier
@@ -77,7 +76,7 @@ fun EvaluasiTextField(
                         .padding(top = 4.dp)
                         .background(
                             color = containerColor,
-                            shape = RoundedCornerShape(12.dp)
+                            shape = MaterialTheme.shapes.small
                         )
                         .padding(horizontal = 16.dp, vertical = 12.dp)
                 ) {

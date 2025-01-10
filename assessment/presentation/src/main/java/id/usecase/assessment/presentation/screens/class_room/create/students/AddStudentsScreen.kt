@@ -16,19 +16,25 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,11 +46,13 @@ import id.usecase.assessment.presentation.screens.class_room.create.students.ite
 import id.usecase.assessment.presentation.screens.class_room.create.students.item.AddStudentItemState
 import id.usecase.core.presentation.ui.ObserveAsEvents
 import id.usecase.designsystem.EvaluasiTheme
+import id.usecase.designsystem.components.app_bar.ActionItem
 import id.usecase.designsystem.components.app_bar.EvaluasiTopAppBar
 import id.usecase.designsystem.components.button.ButtonType
 import id.usecase.designsystem.components.button.EvaluasiButton
 import id.usecase.designsystem.components.dialog.StandardAlertDialog
 import id.usecase.designsystem.components.dialog.StandardLoadingDialog
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -56,7 +64,6 @@ fun AddStudentsScreenRoot(
     openAutoFillScanner: () -> Unit,
     viewModel: AddStudentsViewModel = koinViewModel()
 ) {
-
     val openAlertDialog = remember { mutableStateOf(false) }
     val errorMessage = remember { mutableStateOf("") }
 
@@ -124,17 +131,37 @@ fun AddStudentsScreen(
     onAction: (AddStudentsAction) -> Unit,
     state: AddStudentsState
 ) {
+    val students = remember { mutableStateListOf<AddStudentItemState>() }
+
     Scaffold(
         topBar = {
             EvaluasiTopAppBar(
                 title = "Add Students",
                 navigationIcon = ImageVector.vectorResource(R.drawable.rounded_arrow_back),
                 navigationIconTint = MaterialTheme.colorScheme.onSurface,
-                onNavigationClicked = onBackPressed
+                onNavigationClicked = onBackPressed,
+                trailingIcons = listOf(
+                    ActionItem(
+                        icon = Icons.Rounded.Clear,
+                        contentDescription = "Cross X",
+                        onClick = {
+
+                        }
+                    ),
+                    ActionItem(
+                        icon = ImageVector.vectorResource(R.drawable.content_paste_24px),
+                        contentDescription = "Cross X",
+                        onClick = {
+
+                        }
+                    ),
+                )
             )
         },
         content = { innerPadding ->
-            val students = remember { mutableStateListOf<AddStudentItemState>() }
+            val scope = rememberCoroutineScope()
+            var progressVisible by remember { mutableStateOf(false) }
+
             students.clear()
             students.addAll(state.studentList)
 
@@ -157,10 +184,23 @@ fun AddStudentsScreen(
                             height = Dimension.fillToConstraints
                         }
                 ) {
+                    LinearProgressIndicator(
+                        progress = { students.count { it.isValid }.toFloat() / students.size },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(4.dp)
+                            .alpha(if (progressVisible) 1f else 0f)
+                    )
+
                     Text(
-                        modifier = Modifier,
                         text = "Students",
                         style = MaterialTheme.typography.titleSmall
+                    )
+                    Text(
+                        text = "${students.count { it.isValid }}/${students.size} students ready",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = 4.dp)
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -209,28 +249,24 @@ fun AddStudentsScreen(
                 ) {
                     EvaluasiButton(
                         modifier = Modifier.weight(1f),
-                        text = "Auto Fill Student",
-                        buttonType = ButtonType.INVERSE,
-                        onClick = openAutoFillScanner
-                    )
-
-                    Spacer(modifier = Modifier.width(16.dp))
-
-                    EvaluasiButton(
-                        modifier = Modifier.weight(1f),
                         text = "Create Class",
                         buttonType = ButtonType.PRIMARY,
+                        enabled = students.all { it.isValid },
                         onClick = {
-                            onAction(
-                                AddStudentsAction.AddStudents(
-                                    students = students
-                                        .filterIndexed { index, student ->
-                                            index != students.size - 1 ||
-                                                student.name.text.isNotEmpty()
-                                        },
-                                    classRoomId = classRoomId
+                            scope.launch {
+                                progressVisible = true
+                                onAction(
+                                    AddStudentsAction.AddStudents(
+                                        students = students
+                                            .filterIndexed { index, student ->
+                                                index != students.size - 1 ||
+                                                        student.name.text.isNotEmpty()
+                                            },
+                                        classRoomId = classRoomId
+                                    )
                                 )
-                            )
+                                progressVisible = false
+                            }
                         }
                     )
                 }

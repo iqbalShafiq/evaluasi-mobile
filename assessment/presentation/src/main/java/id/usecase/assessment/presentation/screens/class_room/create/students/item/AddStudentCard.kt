@@ -1,5 +1,6 @@
 package id.usecase.assessment.presentation.screens.class_room.create.students.item
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,11 +17,16 @@ import id.usecase.designsystem.components.text_field.EvaluasiTextField
 @Composable
 fun AddStudentCard(
     modifier: Modifier = Modifier,
-    state: AddStudentItemState
+    state: AddStudentItemState,
 ) {
-
     Card(
-        modifier = modifier
+        modifier = modifier,
+        border = BorderStroke(
+            width = 1.dp,
+            color = if (state.isValid) MaterialTheme.colorScheme.primary
+            else MaterialTheme.colorScheme.outline
+        ),
+        shape = MaterialTheme.shapes.small
     ) {
         Column(
             modifier = Modifier
@@ -56,7 +62,7 @@ fun AddStudentCard(
 private fun AddStudentCardPreview() {
     EvaluasiTheme {
         AddStudentCard(
-            state = AddStudentItemState()
+            state = AddStudentItemState(isValid = true)
         )
     }
 }

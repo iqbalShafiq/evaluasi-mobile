@@ -5,9 +5,16 @@ package id.usecase.designsystem.components.app_bar
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -19,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,9 +38,8 @@ fun EvaluasiTopAppBar(
     subtitle: String? = null,
     navigationIcon: ImageVector? = null,
     navigationIconTint: Color? = null,
-    trailingIcon: ImageVector? = null,
+    trailingIcons: List<ActionItem> = emptyList(),
     onNavigationClicked: () -> Unit = {},
-    onTrailingIconClicked: () -> Unit = {},
     centeredTitle: Boolean = false,
     centeredSubtitle: Boolean = false,
     scrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(),
@@ -78,15 +85,21 @@ fun EvaluasiTopAppBar(
             }
         },
         actions = {
-            trailingIcon?.let {
-                Image(
-                    modifier = Modifier
-                        .padding(end = 16.dp)
-                        .clickable { onTrailingIconClicked() },
-                    imageVector = trailingIcon,
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
-                    contentDescription = stringResource(R.string.trailing_icon)
-                )
+            Row {
+                LazyRow {
+                    items(
+                        items = trailingIcons,
+                        key = { it.icon.name }
+                    ) { actionItem ->
+                        IconButton(onClick = actionItem.onClick) {
+                            Icon(
+                                imageVector = actionItem.icon,
+                                contentDescription = actionItem.contentDescription,
+                                tint = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    }
+                }
             }
         },
         scrollBehavior = scrollBehavior
@@ -98,6 +111,18 @@ fun EvaluasiTopAppBar(
 private fun EvaluasiTopAppBarPreview() {
     EvaluasiTopAppBar(
         title = "Test",
-        subtitle = "Subtitle!"
+        subtitle = "Subtitle!",
+        trailingIcons = listOf(
+            ActionItem(
+                icon = ImageVector.vectorResource(id = R.drawable.ic_test_icon),
+                contentDescription = "Search",
+                onClick = {}
+            ),
+            ActionItem(
+                icon = Icons.Filled.AddCircle,
+                contentDescription = "Add",
+                onClick = {}
+            )
+        )
     )
 }

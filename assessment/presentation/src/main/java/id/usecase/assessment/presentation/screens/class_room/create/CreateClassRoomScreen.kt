@@ -22,7 +22,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.DateRange
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.MailOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -41,7 +40,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -172,12 +170,6 @@ fun CreateClassRoomScreen(
     state: CreateClassRoomState
 ) {
     val scrollState = rememberScrollState()
-    var classRoomName by remember {
-        mutableStateOf("")
-    }
-    var subject by remember {
-        mutableStateOf("")
-    }
 
     Scaffold(
         modifier = modifier,
@@ -224,9 +216,9 @@ fun CreateClassRoomScreen(
 
                             OutlinedTextField(
                                 modifier = Modifier.fillMaxWidth(),
-                                value = classRoomName,
+                                value = state.classRoomName,
                                 shape = MaterialTheme.shapes.small,
-                                onValueChange = { classRoomName = it },
+                                onValueChange = { onAction(CreateClassRoomAction.SetClassRoomName(it)) },
                                 label = { Text(text = "Class Name") },
                                 placeholder = { Text("e.g., Class 10A Mathematics") },
                                 leadingIcon = {
@@ -343,9 +335,9 @@ fun CreateClassRoomScreen(
                             // Class Description
                             OutlinedTextField(
                                 modifier = Modifier.fillMaxWidth(),
-                                value = state.description.text,
+                                value = state.description,
                                 shape = MaterialTheme.shapes.small,
-                                onValueChange = { /* update value */ },
+                                onValueChange = { onAction(CreateClassRoomAction.SetDescription(it)) },
                                 label = { Text("Class Description") },
                                 placeholder = { Text("Add a description for your class") },
                                 minLines = 3,

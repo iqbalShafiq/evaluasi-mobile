@@ -122,8 +122,15 @@ fun ClassRoomScreen(
                 title = "Class Room Detail",
                 navigationIcon = ImageVector.vectorResource(R.drawable.rounded_arrow_back),
                 onNavigationClicked = onBackPressed,
-                trailingIcon = ImageVector.vectorResource(R.drawable.ic_students),
-                onTrailingIconClicked = { onStudentEditClicked() }
+                trailingIcons = listOf(
+                    ActionItem(
+                        icon = ImageVector.vectorResource(R.drawable.ic_students),
+                        onClick = {
+                            onStudentEditClicked()
+                        },
+                        contentDescription = "Edit Student"
+                    )
+                )
             )
         },
         bottomBar = {

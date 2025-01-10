@@ -16,6 +16,7 @@ fun EvaluasiButton(
     modifier: Modifier = Modifier,
     text: String,
     onClick: () -> Unit,
+    enabled: Boolean = true,
     buttonType: ButtonType = ButtonType.SURFACE
 ) {
     val buttonColor = when (buttonType) {
@@ -37,7 +38,8 @@ fun EvaluasiButton(
         colors = ButtonDefaults.buttonColors().copy(
             containerColor = buttonColor,
             contentColor = contentColor
-        )
+        ),
+        enabled = enabled
     ) {
         Text(
             text = text

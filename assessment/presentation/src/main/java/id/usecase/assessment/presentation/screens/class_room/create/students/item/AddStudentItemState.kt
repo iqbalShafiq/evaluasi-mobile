@@ -5,4 +5,5 @@ import androidx.compose.foundation.text.input.TextFieldState
 data class AddStudentItemState(
     val identifier: TextFieldState = TextFieldState(),
     val name: TextFieldState = TextFieldState(),
+    val isValid: Boolean = false
 )
