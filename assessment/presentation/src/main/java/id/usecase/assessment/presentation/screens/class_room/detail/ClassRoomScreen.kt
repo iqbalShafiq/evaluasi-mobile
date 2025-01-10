@@ -3,16 +3,12 @@
 package id.usecase.assessment.presentation.screens.class_room.detail
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,13 +19,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.model.AssessmentEventUi
-import id.usecase.assessment.presentation.screens.class_room.detail.assessment_history.AssessmentHistoryCard
+import id.usecase.assessment.presentation.screens.class_room.detail.analytics.AnalyticsTab
+import id.usecase.assessment.presentation.screens.class_room.detail.assessment_history.AssessmentHistoryTab
+import id.usecase.assessment.presentation.screens.class_room.detail.class_overview.ClassOverviewTab
 import id.usecase.core.presentation.ui.ObserveAsEvents
 import id.usecase.designsystem.EvaluasiTheme
 import id.usecase.designsystem.components.app_bar.ActionItem
@@ -103,6 +99,7 @@ fun ClassRoomScreenRoot(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClassRoomScreen(
     modifier: Modifier = Modifier,
@@ -115,27 +112,18 @@ fun ClassRoomScreen(
     onStudentEditClicked: () -> Unit,
     onAlertClicked: () -> Unit
 ) {
-    var fabHeight by remember {
-        mutableIntStateOf(0)
-    }
-
-    val heightInDp = with(LocalDensity.current) { fabHeight.toDp() }
+    var selectedTab by remember { mutableIntStateOf(0) }
+    val tabs = listOf("Overview", "Assessment History", "Analytics")
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
             EvaluasiTopAppBar(
                 title = "Class Room Detail",
-                navigationIcon = ImageVector.vectorResource(
-                    R.drawable.rounded_arrow_back
-                ),
+                navigationIcon = ImageVector.vectorResource(R.drawable.rounded_arrow_back),
                 onNavigationClicked = onBackPressed,
-                trailingIcon = ImageVector.vectorResource(
-                    R.drawable.ic_students
-                ),
-                onTrailingIconClicked = {
-                    onStudentEditClicked()
-                }
+                trailingIcon = ImageVector.vectorResource(R.drawable.ic_students),
+                onTrailingIconClicked = { onStudentEditClicked() }
             )
         },
         bottomBar = {
@@ -183,41 +171,23 @@ fun ClassRoomScreen(
                 modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize()
-                    .padding(horizontal = 24.dp)
             ) {
-                Text(
-                    modifier = Modifier,
-                    text = "Assessment History",
-                    style = MaterialTheme.typography.titleMedium,
-                )
-
-                if (state.assessmentEvents.isEmpty()) {
-                    Text(
-                        modifier = Modifier.padding(vertical = 12.dp),
-                        text = "Assessment has not been taken yet",
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            color = MaterialTheme.colorScheme.error
-                        ),
-                    )
+                // Tab Row
+                TabRow(selectedTabIndex = selectedTab) {
+                    tabs.forEachIndexed { index, title ->
+                        Tab(
+                            selected = selectedTab == index,
+                            onClick = { selectedTab = index },
+                            text = { Text(title) }
+                        )
+                    }
                 }
 
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 12.dp),
-                    contentPadding = PaddingValues(bottom = heightInDp)
-                ) {
-                    items(state.assessmentEvents) { assessmentEvent ->
-                        AssessmentHistoryCard(
-                            modifier = Modifier,
-                            eventUi = assessmentEvent,
-                            onDetailClicked = {
-                                onDetailAssessmentEventClicked(assessmentEvent)
-                            },
-                            onAlertClicked = { }
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
+                // Content based on selected tab
+                when (selectedTab) {
+                    0 -> ClassOverviewTab(state)
+                    1 -> AssessmentHistoryTab(state, onDetailAssessmentEventClicked)
+                    2 -> AnalyticsTab(state)
                 }
             }
         }
