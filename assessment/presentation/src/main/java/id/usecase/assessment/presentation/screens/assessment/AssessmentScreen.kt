@@ -7,11 +7,10 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -152,9 +151,7 @@ fun AssessmentScreen(
             EvaluasiTopAppBar(
                 modifier = Modifier.padding(horizontal = 8.dp),
                 title = stringResource(R.string.create_assessment),
-                navigationIcon = ImageVector.vectorResource(
-                    R.drawable.rounded_arrow_back
-                ),
+                navigationIcon = ImageVector.vectorResource(R.drawable.rounded_arrow_back),
                 onNavigationClicked = onBackPressed
             )
         },
@@ -176,43 +173,58 @@ fun AssessmentScreen(
                             height = Dimension.fillToConstraints
                         }
                 ) {
+                    // Assessment Details Section
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp),
+                        text = "Assessment Details",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+
+                    // Assessment Name Field
                     EvaluasiTextField(
                         modifier = Modifier.fillMaxWidth(),
-                        label = "Assessment Name",
+                        label = "Title",
                         placeholder = "Type name",
                         state = state.assessmentNameField,
                         inputType = KeyboardType.Text
                     )
 
+                    // Category Field
                     EvaluasiTextField(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 12.dp),
-                        label = "Assessment Date",
-                        placeholder = "Pick date",
-                        state = state.assessmentNameField,
-                        inputType = KeyboardType.Text
-                    )
-
-                    EvaluasiTextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 12.dp),
+                            .padding(top = 8.dp),
                         label = "Category",
                         placeholder = "Choose category",
-                        state = state.assessmentNameField,
+                        state = state.categoryField,
                         inputType = KeyboardType.Text
                     )
 
+                    // Assessment Date Field
+                    EvaluasiTextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp),
+                        label = "Assessment Date",
+                        placeholder = "Pick date",
+                        state = state.startDateField,
+                        inputType = KeyboardType.Text
+                    )
+
+                    // Students Section
                     Text(
-                        modifier = Modifier.padding(top = 12.dp),
-                        text = "Students",
-                        style = MaterialTheme.typography.labelMedium
+                        modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
+                        text = "Student Scores",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.primary
                     )
 
                     LazyColumn(
-                        modifier = Modifier
-                            .padding(top = 8.dp)
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         items(assessments.size) { index ->
                             val assessment = assessments[index]
@@ -222,47 +234,49 @@ fun AssessmentScreen(
                                 exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
                             ) {
                                 StudentAssessmentCard(
+                                    modifier = Modifier.fillMaxWidth(),
                                     state = assessment
                                 )
 
-                                if (
-                                    index == assessments.size - 1 &&
+                                if (index == assessments.size - 1 &&
                                     assessment.score.text.isNotEmpty()
-                                ) assessments.add(StudentAssessmentState())
+                                ) {
+                                    assessments.add(StudentAssessmentState())
+                                }
 
-                                if (
-                                    index != assessments.size - 1 &&
+                                if (index != assessments.size - 1 &&
                                     assessment.score.text.isEmpty()
-                                ) assessments.removeAt(index)
+                                ) {
+                                    assessments.removeAt(index)
+                                }
                             }
-
-                            Spacer(modifier = Modifier.height(12.dp))
                         }
                     }
-
-                    Spacer(modifier = Modifier.weight(1f))
                 }
 
+                // Save Button
                 EvaluasiButton(
                     modifier = Modifier
                         .fillMaxWidth()
                         .constrainAs(button) {
                             bottom.linkTo(parent.bottom)
                         }
-                        .padding(vertical = 12.dp),
+                        .padding(vertical = 16.dp),
                     text = "Save Assessment",
                     onClick = {
                         onAction(
                             AssessmentAction.SaveAssessmentEvent(
-                                assessments = assessments
-                                    .filterIndexed { index, assessment ->
-                                        index != assessments.size - 1 ||
-                                                assessment.score.text.isNotEmpty()
-                                    }
+                                assessments = assessments.filterIndexed { index, assessment ->
+                                    index != assessments.size - 1 ||
+                                            assessment.score.text.isNotEmpty()
+                                }
                             )
                         )
                     },
-                    buttonType = ButtonType.INVERSE
+                    buttonType = ButtonType.INVERSE,
+                    enabled = state.assessmentNameField.text.isNotEmpty() &&
+                            state.startDateField.text.isNotEmpty() &&
+                            state.categoryField.text.isNotEmpty()
                 )
             }
         }

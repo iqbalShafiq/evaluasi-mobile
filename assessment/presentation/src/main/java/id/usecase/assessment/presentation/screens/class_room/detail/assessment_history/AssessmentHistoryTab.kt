@@ -30,32 +30,12 @@ import androidx.compose.ui.unit.dp
 import id.usecase.assessment.presentation.model.AssessmentEventUi
 import id.usecase.assessment.presentation.screens.class_room.detail.ClassRoomState
 import id.usecase.assessment.presentation.screens.class_room.detail.assessment_history.components.AssessmentSummaryItem
+import id.usecase.assessment.presentation.screens.class_room.detail.assessment_history.components.MonthlySummaryItem
 import id.usecase.core.presentation.ui.isCurrentMonth
 import id.usecase.core.presentation.ui.isLastMonth
 import id.usecase.core.presentation.ui.isOlderThanLastMonth
 import id.usecase.designsystem.EvaluasiTheme
 import id.usecase.designsystem.components.chip.FilterChipGroup
-
-@Composable
-fun MonthlySummaryItem(
-    label: String,
-    count: Int
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = count.toString(),
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.primary
-        )
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    }
-}
 
 @Composable
 private fun EmptyAssessmentState() {
@@ -105,7 +85,8 @@ fun AssessmentHistoryTab(
             ElevatedCard(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp)
+                    .padding(bottom = 16.dp),
+                shape = MaterialTheme.shapes.small
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp)
@@ -114,11 +95,12 @@ fun AssessmentHistoryTab(
                         text = "Monthly Summary",
                         style = MaterialTheme.typography.titleMedium
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Spacer(modifier = Modifier.height(12.dp))
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         MonthlySummaryItem(
                             label = "This Month",

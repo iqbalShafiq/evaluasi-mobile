@@ -3,9 +3,13 @@ package id.usecase.assessment.presentation.screens.assessment.students
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,80 +26,75 @@ fun StudentAssessmentCard(
     modifier: Modifier = Modifier,
     state: StudentAssessmentState
 ) {
-    Card(
+    ElevatedCard(
         modifier = modifier,
-        shape = MaterialTheme.shapes.small
+        shape = MaterialTheme.shapes.small,
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp)
+                .padding(16.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column {
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Student ID",
-                        style = MaterialTheme.typography.labelMedium
-                    )
-
-                    Text(
-                        modifier = Modifier.padding(top = 4.dp),
-                        text = state.data?.studentId.toString(),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-
-                Column {
-                    Text(
-                        text = "Student Name",
-                        style = MaterialTheme.typography.labelMedium
-                    )
-
-                    Text(
-                        modifier = Modifier.padding(top = 4.dp),
                         text = state.data?.studentName.toString(),
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = "ID: ${state.data?.studentId}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
-                Column {
+                // Average Score with emphasize
+                Column(
+                    horizontalAlignment = Alignment.End
+                ) {
                     Text(
-                        text = "Average Score",
-                        style = MaterialTheme.typography.labelMedium
+                        text = "Average",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-
                     Text(
-                        modifier = Modifier.padding(top = 4.dp),
-                        text = state.data?.avgScore.toString(),
-                        style = MaterialTheme.typography.bodyMedium
+                        text = "${state.data?.avgScore}",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = if ((state.data?.avgScore ?: 0.0) >= 75)
+                            MaterialTheme.colorScheme.primary
+                        else
+                            MaterialTheme.colorScheme.error
                     )
                 }
             }
 
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Score input with better visual hierarchy
             EvaluasiTextField(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 12.dp),
-                label = "Score",
-                placeholder = "Type score",
+                    .fillMaxWidth(),
+                label = "Assessment Score",
+                placeholder = "Enter score (0-100)",
                 state = state.score,
-                inputType = KeyboardType.Number,
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
+                inputType = KeyboardType.Number
             )
+
+            Spacer(modifier = Modifier.height(8.dp))
 
             EvaluasiTextField(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 12.dp),
+                    .fillMaxWidth(),
                 label = "Comments",
-                placeholder = "Type comments (optional)",
+                placeholder = "Add comments (optional)",
                 state = state.comments,
-                inputType = KeyboardType.Number,
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
+                inputType = KeyboardType.Text
             )
         }
     }

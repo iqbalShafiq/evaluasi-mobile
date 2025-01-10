@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -30,7 +31,7 @@ fun RecentAlertCard(
     alert: AlertUi,
     onClicked: (AlertUi) -> Unit
 ) {
-    Card(
+    ElevatedCard(
         modifier = modifier.fillMaxWidth(),
         onClick = { onClicked(alert) },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),

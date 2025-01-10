@@ -52,7 +52,10 @@ fun formatTimeAgo(dateString: String): String {
             diff < 1000 * 60 -> "Just now"
             diff < 1000 * 60 * 60 -> "${diff / (1000 * 60)}m ago"
             diff < 1000 * 60 * 60 * 24 -> "${diff / (1000 * 60 * 60)}h ago"
-            else -> "${diff / (1000 * 60 * 60 * 24)}d ago"
+            diff < 1000 * 60 * 60 * 24 * 7 -> "${diff / (1000L * 60 * 60 * 24)}d ago"
+            diff < 1000L * 60 * 60 * 24 * 30 -> "${diff / (1000L * 60 * 60 * 24 * 7)}w ago"
+            diff < 1000L * 60 * 60 * 24 * 365 -> "${diff / (1000L * 60 * 60 * 24 * 30)}mo ago"
+            else -> "${diff / (1000L * 60 * 60 * 24 * 365)}y ago"
         }
     } catch (e: Exception) {
         e.printStackTrace()

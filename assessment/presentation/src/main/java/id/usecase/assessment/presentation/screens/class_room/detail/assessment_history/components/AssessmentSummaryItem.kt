@@ -7,12 +7,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.automirrored.rounded.List
 import androidx.compose.material.icons.rounded.DateRange
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
@@ -26,8 +24,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.model.AssessmentEventUi
 import id.usecase.core.presentation.ui.formatDate
 import id.usecase.core.presentation.ui.formatTimeAgo
@@ -42,7 +42,8 @@ fun AssessmentSummaryItem(
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp),
-        onClick = onDetailClicked
+        onClick = onDetailClicked,
+        shape = MaterialTheme.shapes.small
     ) {
         Column(
             modifier = Modifier
@@ -103,16 +104,16 @@ fun AssessmentSummaryItem(
                     value = formatDate(assessment.eventDate)
                 )
 
-                // Total Questions
+                // Total Participants
                 AssessmentInfoColumn(
-                    icon = Icons.AutoMirrored.Rounded.List,
-                    label = "Questions",
+                    icon = ImageVector.vectorResource(id = R.drawable.ic_students),
+                    label = "Participants",
                     value = assessment.totalAssessment.toString()
                 )
 
                 // Last Modified
                 AssessmentInfoColumn(
-                    icon = Icons.AutoMirrored.Rounded.List,
+                    icon = Icons.Rounded.DateRange,
                     label = "Last Modified",
                     value = formatTimeAgo(assessment.lastModifiedTime)
                 )
@@ -130,40 +131,6 @@ fun AssessmentSummaryItem(
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun AssessmentInfoColumn(
-    modifier: Modifier = Modifier,
-    icon: ImageVector,
-    label: String,
-    value: String
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            modifier = Modifier.size(20.dp),
-            tint = MaterialTheme.colorScheme.primary
-        )
-
-        Spacer(modifier = Modifier.height(4.dp))
-
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface
-        )
     }
 }
 
