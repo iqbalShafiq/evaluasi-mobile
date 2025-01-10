@@ -8,7 +8,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,8 +15,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -40,6 +40,7 @@ import id.usecase.assessment.presentation.screens.class_room.create.categories.i
 import id.usecase.assessment.presentation.screens.class_room.create.categories.item.CategoryItemState
 import id.usecase.core.presentation.ui.ObserveAsEvents
 import id.usecase.designsystem.EvaluasiTheme
+import id.usecase.designsystem.components.app_bar.ActionItem
 import id.usecase.designsystem.components.app_bar.EvaluasiTopAppBar
 import id.usecase.designsystem.components.button.ButtonType
 import id.usecase.designsystem.components.button.EvaluasiButton
@@ -108,6 +109,7 @@ fun AddCategoriesScreenRoot(
         classRoomId = classRoomId,
         state = viewModel.state.value,
         onBackPressed = onBackPressed,
+        onClearStudentPressed = {},
         onAction = { action ->
             viewModel.onAction(action = action)
         }
@@ -120,6 +122,7 @@ fun AddCategoriesScreen(
     classRoomId: Int,
     state: AddCategoriesState,
     onBackPressed: () -> Unit,
+    onClearStudentPressed: () -> Unit,
     onAction: (AddCategoriesAction) -> Unit
 ) {
     Scaffold(
@@ -131,7 +134,14 @@ fun AddCategoriesScreen(
                     id = R.drawable.rounded_arrow_back
                 ),
                 navigationIconTint = MaterialTheme.colorScheme.onSurface,
-                onNavigationClicked = onBackPressed
+                trailingIcons = listOf(
+                    ActionItem(
+                        icon = Icons.Rounded.Clear,
+                        contentDescription = "Cross X",
+                        onClick = onClearStudentPressed
+                    ),
+                ),
+                onNavigationClicked = onBackPressed,
             )
         },
         content = { innerPadding ->
@@ -213,21 +223,11 @@ fun AddCategoriesScreen(
                             end.linkTo(parent.end)
                         }
                         .padding(vertical = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceEvenly
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     EvaluasiButton(
-                        modifier = Modifier.weight(1f),
-                        text = "Back",
-                        buttonType = ButtonType.INVERSE,
-                        onClick = onBackPressed
-                    )
-
-                    Spacer(modifier = Modifier.width(16.dp))
-
-                    EvaluasiButton(
-                        modifier = Modifier.weight(1f),
-                        text = "Next",
+                        modifier = Modifier.fillMaxWidth(),
+                        text = "Set Category",
                         buttonType = ButtonType.PRIMARY,
                         onClick = {
                             onAction(
@@ -262,6 +262,7 @@ private fun AddCategoriesPreview() {
         AddCategoriesScreen(
             state = state,
             onBackPressed = { },
+            onClearStudentPressed = { },
             onAction = { },
             classRoomId = 0
         )

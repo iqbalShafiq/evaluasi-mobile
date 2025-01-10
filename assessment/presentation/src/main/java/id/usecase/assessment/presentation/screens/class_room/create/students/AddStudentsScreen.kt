@@ -114,7 +114,8 @@ fun AddStudentsScreenRoot(
         modifier = modifier,
         classRoomId = classRoomId,
         onBackPressed = onBackPressed,
-        openAutoFillScanner = openAutoFillScanner,
+        onClearStudentPressed = {},
+        onPastePressed = openAutoFillScanner,
         state = viewModel.state.value,
         onAction = { action ->
             viewModel.onAction(action)
@@ -127,7 +128,8 @@ fun AddStudentsScreen(
     modifier: Modifier = Modifier,
     classRoomId: Int,
     onBackPressed: () -> Unit,
-    openAutoFillScanner: () -> Unit,
+    onClearStudentPressed: () -> Unit,
+    onPastePressed: () -> Unit,
     onAction: (AddStudentsAction) -> Unit,
     state: AddStudentsState
 ) {
@@ -144,16 +146,12 @@ fun AddStudentsScreen(
                     ActionItem(
                         icon = Icons.Rounded.Clear,
                         contentDescription = "Cross X",
-                        onClick = {
-
-                        }
+                        onClick = onClearStudentPressed
                     ),
                     ActionItem(
                         icon = ImageVector.vectorResource(R.drawable.content_paste_24px),
-                        contentDescription = "Cross X",
-                        onClick = {
-
-                        }
+                        contentDescription = "Clipboard",
+                        onClick = onPastePressed
                     ),
                 )
             )
@@ -244,11 +242,10 @@ fun AddStudentsScreen(
                             end.linkTo(parent.end)
                         }
                         .padding(vertical = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceEvenly
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     EvaluasiButton(
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.fillMaxWidth(),
                         text = "Create Class",
                         buttonType = ButtonType.PRIMARY,
                         enabled = students.all { it.isValid },
@@ -284,7 +281,8 @@ private fun AddStudentsPreview() {
             state = state,
             classRoomId = 0,
             onBackPressed = { },
-            openAutoFillScanner = { },
+            onClearStudentPressed = { },
+            onPastePressed = { },
             onAction = { }
         )
     }

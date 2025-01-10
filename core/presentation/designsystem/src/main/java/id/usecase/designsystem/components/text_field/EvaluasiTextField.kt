@@ -76,7 +76,7 @@ fun EvaluasiTextField(
                         .padding(top = 4.dp)
                         .background(
                             color = containerColor,
-                            shape = MaterialTheme.shapes.small
+                            shape = MaterialTheme.shapes.extraSmall
                         )
                         .padding(horizontal = 16.dp, vertical = 12.dp)
                 ) {
