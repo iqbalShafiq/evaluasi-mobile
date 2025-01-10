@@ -1,18 +1,20 @@
 package id.usecase.assessment.presentation.screens.class_room.create
 
 import android.app.Application
-import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import id.usecase.assessment.domain.ClassRoomRepository
 import id.usecase.assessment.presentation.R
-import id.usecase.assessment.presentation.screens.class_room.create.CreateClassRoomEvent.*
+import id.usecase.assessment.presentation.screens.class_room.create.CreateClassRoomEvent.OnClassRoomCreated
+import id.usecase.assessment.presentation.screens.class_room.create.CreateClassRoomEvent.OnErrorOccurred
 import id.usecase.assessment.presentation.utils.toUi
 import id.usecase.core.domain.assessment.DataResult
 import id.usecase.core.domain.assessment.model.classroom.ClassRoom
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -30,17 +32,31 @@ class CreateClassRoomViewModel(
     private val _events = Channel<CreateClassRoomEvent>()
     val events = _events.receiveAsFlow()
 
-    var state = mutableStateOf(CreateClassRoomState())
-        private set
+    private val _state = MutableStateFlow(CreateClassRoomState())
+    val state = _state.asStateFlow()
 
     fun onAction(action: CreateClassRoomAction) {
         when (action) {
             is CreateClassRoomAction.LoadClassRoomDetail -> loadClassRoomDetail(action.classRoomId)
             CreateClassRoomAction.CreateClassRoom -> createClassRoom()
-            is CreateClassRoomAction.SetStartDate -> state.value = state.value.copy(
-                startDate = TextFieldState(
-                    initialText = action.startDate
-                )
+            is CreateClassRoomAction.SetStartDate -> _state.value = _state.value.copy(
+                startDate = action.text
+            )
+
+            is CreateClassRoomAction.SetDescription -> _state.value = _state.value.copy(
+                description = action.text
+            )
+
+            is CreateClassRoomAction.SetClassRoomName -> _state.value = _state.value.copy(
+                classRoomName = action.text
+            )
+
+            is CreateClassRoomAction.SetEndDate -> _state.value = _state.value.copy(
+                endDate = action.text
+            )
+
+            is CreateClassRoomAction.SetSubject -> _state.value = _state.value.copy(
+                subject = action.text
             )
         }
     }
@@ -49,7 +65,7 @@ class CreateClassRoomViewModel(
         viewModelScope.launch(dispatcher) {
             repository.getClassRoomById(classRoomId)
                 .catch { e ->
-                    state.value = state.value.copy(isLoading = false)
+                    _state.value = _state.value.copy(isLoading = false)
                     _events.send(
                         OnErrorOccurred(
                             e.message ?: application.getString(R.string.unknown_error)
@@ -58,22 +74,22 @@ class CreateClassRoomViewModel(
                 }
                 .collectLatest { result ->
                     when (result) {
-                        DataResult.Loading -> state.value = state.value.copy(isLoading = true)
+                        DataResult.Loading -> _state.value = _state.value.copy(isLoading = true)
                         is DataResult.Success -> {
-                            state.value = state.value.copy(
+                            _state.value = _state.value.copy(
                                 isLoading = false,
                                 classRoom = result.data,
-                                classRoomName = TextFieldState(
-                                    initialText = result.data?.name ?: ""
+                                classRoomName = TextFieldValue(
+                                    text = result.data?.name ?: ""
                                 ),
-                                subject = TextFieldState(
-                                    initialText = result.data?.subject ?: ""
+                                subject = TextFieldValue(
+                                    text = result.data?.subject ?: ""
                                 ),
-                                startDate = TextFieldState(
-                                    initialText = result.data?.startPeriod.toString()
+                                startDate = TextFieldValue(
+                                    text = result.data?.startPeriod.toString()
                                 ),
-                                endDate = TextFieldState(
-                                    initialText = result.data?.endPeriod?.toString() ?: ""
+                                endDate = TextFieldValue(
+                                    text = result.data?.endPeriod?.toString() ?: ""
                                 )
                             )
                         }
@@ -86,18 +102,18 @@ class CreateClassRoomViewModel(
 
     private fun createClassRoom() {
         viewModelScope.launch(dispatcher) {
-            state.value = state.value.copy(isLoading = true)
+            _state.value = _state.value.copy(isLoading = true)
             val result = repository.upsertClassRoom(
                 ClassRoom(
-                    id = state.value.classRoom?.id ?: 0,
-                    name = state.value.classRoomName.text.toString(),
-                    subject = state.value.subject.text.toString(),
+                    id = _state.value.classRoom?.id ?: 0,
+                    name = _state.value.classRoomName.text,
+                    subject = _state.value.subject.text,
                     startPeriod = LocalDate
-                        .parse(state.value.startDate.text.toString())
+                        .parse(_state.value.startDate.text)
                         .atTime(0, 0, 0, 0)
                         .toEpochSecond(ZoneOffset.UTC),
-                    endPeriod = if (state.value.endDate.text.isNotEmpty()) LocalDate
-                        .parse(state.value.endDate.text.toString())
+                    endPeriod = if (_state.value.endDate.text.isNotEmpty()) LocalDate
+                        .parse(_state.value.endDate.text)
                         .atTime(23, 59, 59)
                         .toEpochSecond(ZoneOffset.UTC) else null,
                     createdTime = LocalDateTime
@@ -111,18 +127,18 @@ class CreateClassRoomViewModel(
 
             when (result) {
                 DataResult.Loading -> {
-                    state.value = state.value.copy(isLoading = true)
+                    _state.value = _state.value.copy(isLoading = true)
                 }
 
                 is DataResult.Success -> {
-                    state.value = state.value.copy(isLoading = false)
+                    _state.value = _state.value.copy(isLoading = false)
                     result.data?.toUi()?.let {
                         _events.send(OnClassRoomCreated(it))
                     }
                 }
 
                 is DataResult.Error -> {
-                    state.value = state.value.copy(isLoading = false)
+                    _state.value = _state.value.copy(isLoading = false)
                     _events.send(
                         OnErrorOccurred(
                             result.exception.message ?: application.getString(
