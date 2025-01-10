@@ -175,14 +175,14 @@ private fun AssessmentSummaryItemPreview() {
             id = 1,
             name = "Assessment Name",
             categoryName = "Category Name",
-            eventDate = "2021-09-01T00:00:00Z",
+            eventDate = "2021-09-01 00:00:00",
             totalAssessment = 10,
-            lastModifiedTime = "2021-09-01T00:00:00Z",
+            lastModifiedTime = "2021-09-01 00:00:00",
             isInProgress = false,
             completionProgress = 0.5f,
             categoryId = 1,
             classId = 1,
-            createdTime = "2021-09-01T00:00:00Z"
+            createdTime = "2021-09-01 00:00:00"
         ),
         onDetailClicked = { }
     )
