@@ -35,7 +35,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import id.usecase.assessment.presentation.model.ClassRoomUi
@@ -48,6 +51,7 @@ fun ClassRoomCard(
     item: ClassRoomUi
 ) {
     var isExpanded by remember { mutableStateOf(false) }
+    var textColor by remember { mutableStateOf(Color.Black) }
 
     Card(
         modifier = modifier
@@ -64,7 +68,7 @@ fun ClassRoomCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
-                .animateContentSize() // Animasi expand/collapse
+                .animateContentSize()
         ) {
             // Header section
             Row(
@@ -78,14 +82,23 @@ fun ClassRoomCard(
                     // Subject Icon
                     Surface(
                         shape = CircleShape,
-                        color = MaterialTheme.colorScheme.primaryContainer,
+                        color = Color(
+                            red = (0..255).random() / 255f,
+                            green = (0..255).random() / 255f,
+                            blue = (0..255).random() / 255f
+                        ).also { surfaceColor ->
+                            textColor = if (surfaceColor.luminance() > 0.5f) {
+                                MaterialTheme.colorScheme.onSurface
+                            } else MaterialTheme.colorScheme.inverseOnSurface
+                        },
                         modifier = Modifier.size(40.dp)
                     ) {
                         Text(
                             text = item.subject.first().toString(),
                             modifier = Modifier.padding(8.dp),
                             style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                            color = textColor,
+                            textAlign = TextAlign.Center
                         )
                     }
 

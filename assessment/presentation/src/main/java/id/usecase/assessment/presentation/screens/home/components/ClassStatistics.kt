@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.AccountBox
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -19,28 +17,32 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import id.usecase.assessment.presentation.R
+import id.usecase.designsystem.EvaluasiTheme
 
 @Composable
 fun StatisticsHeader(
+    modifier: Modifier = Modifier,
     totalClasses: Int,
     totalStudents: Int
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 16.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly
+        modifier = modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
     ) {
         StatisticItem(
+            modifier = Modifier.weight(1f),
             count = totalClasses,
-            label = "Classes",
-            icon = Icons.Rounded.AccountBox
+            label = "Total Classes",
+            icon = ImageVector.vectorResource(id = R.drawable.school)
         )
         StatisticItem(
+            modifier = Modifier.weight(1f),
             count = totalStudents,
-            label = "Students",
+            label = "Total Students",
             icon = ImageVector.vectorResource(id = R.drawable.ic_students)
         )
     }
@@ -48,12 +50,13 @@ fun StatisticsHeader(
 
 @Composable
 fun StatisticItem(
+    modifier: Modifier = Modifier,
     count: Int,
     label: String,
     icon: ImageVector
 ) {
     Card(
-        modifier = Modifier.padding(8.dp),
+        modifier = modifier,
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
@@ -77,5 +80,16 @@ fun StatisticItem(
                 )
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun StatisticsHeaderPreview() {
+    EvaluasiTheme {
+        StatisticsHeader(
+            totalClasses = 5,
+            totalStudents = 100
+        )
     }
 }

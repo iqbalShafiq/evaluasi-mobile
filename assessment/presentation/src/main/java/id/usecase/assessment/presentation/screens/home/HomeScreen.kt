@@ -125,6 +125,12 @@ fun HomeScreen(
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp)
         ) {
+            Text(
+                text = "Classes Summary",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
             StatisticsHeader(
                 totalClasses = classRoomList.size,
                 totalStudents = classRoomList.sumOf { it.studentCount }
@@ -132,6 +138,12 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            Text(
+                text = "Your Classes",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
             AnimatedVisibility(
                 visible = errorMessage != null,
                 enter = fadeIn() + expandVertically(),
