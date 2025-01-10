@@ -41,7 +41,7 @@ fun ClassOverviewTab(state: ClassRoomState) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(end = 16.dp, start = 16.dp, top = 16.dp)
             .verticalScroll(scrollState)
     ) {
         // Class Statistics Card
@@ -80,6 +80,8 @@ fun ClassOverviewTab(state: ClassRoomState) {
                         icon = R.drawable.ic_information
                     )
                 }
+
+                Spacer(modifier = Modifier.padding(vertical = 8.dp))
             }
         }
 

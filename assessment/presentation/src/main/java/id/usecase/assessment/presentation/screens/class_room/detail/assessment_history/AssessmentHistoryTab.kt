@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import id.usecase.assessment.presentation.model.AssessmentEventUi
 import id.usecase.assessment.presentation.screens.class_room.detail.ClassRoomState
+import id.usecase.assessment.presentation.screens.class_room.detail.assessment_history.components.AssessmentSummaryItem
 import id.usecase.core.presentation.ui.isCurrentMonth
 import id.usecase.core.presentation.ui.isLastMonth
 import id.usecase.core.presentation.ui.isOlderThanLastMonth
@@ -165,12 +166,14 @@ fun AssessmentHistoryTab(
                         }
                     }
                 ) { assessment ->
-                    AssessmentSummaryItem( // Menggunakan AssessmentSummaryItem yang baru
+                    AssessmentSummaryItem(
                         assessment = assessment,
                         onDetailClicked = { onDetailAssessmentEventClicked(assessment) }
                     )
                 }
             }
+
+            Spacer(modifier = Modifier.padding(vertical = 8.dp))
         }
     }
 }

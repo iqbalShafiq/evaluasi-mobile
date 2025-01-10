@@ -88,6 +88,8 @@ fun AnalyticsTab(state: ClassRoomState) {
                 CategoryAnalysisChart(state.categoryAnalysis)
             }
         }
+
+        Spacer(modifier = Modifier.padding(vertical = 8.dp))
     }
 }
 

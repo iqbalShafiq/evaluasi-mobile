@@ -1,4 +1,4 @@
-package id.usecase.assessment.presentation.screens.class_room.detail.assessment_history
+package id.usecase.assessment.presentation.screens.class_room.detail.assessment_history.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

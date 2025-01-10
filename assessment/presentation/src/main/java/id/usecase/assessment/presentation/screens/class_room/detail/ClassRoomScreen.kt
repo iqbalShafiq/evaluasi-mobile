@@ -169,8 +169,8 @@ fun ClassRoomScreen(
         content = { innerPadding ->
             Column(
                 modifier = Modifier
-                    .padding(innerPadding)
                     .fillMaxSize()
+                    .padding(innerPadding)
             ) {
                 // Tab Row
                 TabRow(selectedTabIndex = selectedTab) {
