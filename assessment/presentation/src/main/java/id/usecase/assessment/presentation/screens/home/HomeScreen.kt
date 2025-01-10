@@ -2,7 +2,14 @@
 
 package id.usecase.assessment.presentation.screens.home
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -10,6 +17,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -31,9 +40,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.model.ClassRoomUi
-import id.usecase.assessment.presentation.screens.home.item.ClassRoomCard
+import id.usecase.assessment.presentation.screens.home.components.ClassRoomCard
+import id.usecase.assessment.presentation.screens.home.components.StatisticsHeader
 import id.usecase.core.presentation.ui.ObserveAsEvents
 import id.usecase.designsystem.EvaluasiTheme
+import id.usecase.designsystem.components.app_bar.ActionItem
 import id.usecase.designsystem.components.app_bar.EvaluasiTopAppBar
 import id.usecase.designsystem.components.button.EvaluasiFloatingActionButton
 import org.koin.androidx.compose.koinViewModel
@@ -79,75 +90,85 @@ fun HomeScreen(
     onCreateClassRoomClicked: () -> Unit,
     onClassRoomChosen: (Int) -> Unit
 ) {
-    var fabHeight by remember {
-        mutableIntStateOf(0)
-    }
-
+    var fabHeight by remember { mutableIntStateOf(0) }
     val heightInDp = with(LocalDensity.current) { fabHeight.toDp() }
 
     Scaffold(
         modifier = modifier,
         topBar = {
             EvaluasiTopAppBar(
-                title = stringResource(R.string.evaluasi)
+                title = stringResource(R.string.evaluasi),
+                trailingIcons = listOf(
+                    ActionItem(
+                        icon = Icons.Default.Search,
+                        contentDescription = "Search",
+                        onClick = { /* TODO: Open settings */ }
+                    )
+                )
             )
         },
         floatingActionButton = {
             EvaluasiFloatingActionButton(
-                modifier = Modifier.onGloballyPositioned {
-                    fabHeight = it.size.height
-                },
+                modifier = Modifier
+                    .onGloballyPositioned { fabHeight = it.size.height },
                 text = "Add New Class",
                 icon = ImageVector.vectorResource(id = R.drawable.ic_add),
                 iconContentDescription = "Add button",
-                onClickListener = {
-                    onCreateClassRoomClicked()
-                }
+                onClickListener = onCreateClassRoomClicked
             )
-        },
-        content = { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
-                    .padding(innerPadding)
-                    .padding(horizontal = 24.dp)
-            ) {
-                Text(text = "Your class rooms", style = MaterialTheme.typography.titleMedium)
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(innerPadding)
+                .padding(horizontal = 16.dp)
+        ) {
+            StatisticsHeader(
+                totalClasses = classRoomList.size,
+                totalStudents = classRoomList.sumOf { it.studentCount }
+            )
 
+            Spacer(modifier = Modifier.height(16.dp))
+
+            AnimatedVisibility(
+                visible = errorMessage != null,
+                enter = fadeIn() + expandVertically(),
+                exit = fadeOut() + shrinkVertically()
+            ) {
                 errorMessage?.let {
                     Text(
-                        text = errorMessage,
+                        text = it,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.padding(top = 12.dp)
+                        modifier = Modifier.padding(bottom = 12.dp)
                     )
                 }
+            }
 
-                Spacer(modifier = Modifier.height(12.dp))
-
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(bottom = heightInDp + 16.dp)
-                ) {
-                    items(
-                        count = classRoomList.size,
-                        key = { index -> classRoomList[index].id },
-                        itemContent = { index ->
-                            ClassRoomCard(
-                                onDetailClickedListener = {
-                                    onClassRoomChosen(classRoomList[index].id)
-                                },
-                                item = classRoomList[index]
-                            )
-
-                            Spacer(modifier = Modifier.height(16.dp))
-                        }
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .animateContentSize(),
+                contentPadding = PaddingValues(bottom = heightInDp + 16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(
+                    count = classRoomList.size,
+                    key = { index -> classRoomList[index].id }
+                ) { index ->
+                    ClassRoomCard(
+                        modifier = Modifier.animateItem(),
+                        onDetailClickedListener = {
+                            onClassRoomChosen(classRoomList[index].id)
+                        },
+                        item = classRoomList[index]
                     )
                 }
             }
         }
-    )
+    }
 }
 
 @Preview
