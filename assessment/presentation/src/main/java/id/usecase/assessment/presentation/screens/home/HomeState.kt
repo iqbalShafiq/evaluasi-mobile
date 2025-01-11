@@ -4,5 +4,6 @@ import id.usecase.assessment.presentation.model.ClassRoomUi
 
 data class HomeState(
     val isLoading: Boolean = false,
+    val querySearch: String = "",
     val classRooms: List<ClassRoomUi> = emptyList()
 )

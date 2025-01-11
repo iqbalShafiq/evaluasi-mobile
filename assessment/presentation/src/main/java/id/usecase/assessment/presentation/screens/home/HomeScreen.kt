@@ -14,14 +14,20 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,8 +38,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -76,6 +82,7 @@ fun HomeScreenRoot(
     HomeScreen(
         modifier = Modifier.fillMaxSize(),
         errorMessage = errorMessage.value,
+        state = state,
         classRoomList = state.classRooms,
         onCreateClassRoomClicked = onCreateClassRoomClicked,
         onClassRoomChosen = onClassRoomChosen,
@@ -86,26 +93,101 @@ fun HomeScreenRoot(
 fun HomeScreen(
     modifier: Modifier = Modifier,
     errorMessage: String? = null,
+    state: HomeState,
     classRoomList: List<ClassRoomUi>,
     onCreateClassRoomClicked: () -> Unit,
     onClassRoomChosen: (Int) -> Unit
 ) {
+    val context = LocalContext.current
     var fabHeight by remember { mutableIntStateOf(0) }
     val heightInDp = with(LocalDensity.current) { fabHeight.toDp() }
+    var expanded by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier,
         topBar = {
-            EvaluasiTopAppBar(
-                title = stringResource(R.string.evaluasi),
-                trailingIcons = listOf(
-                    ActionItem(
-                        icon = Icons.Default.Search,
-                        contentDescription = "Search",
-                        onClick = { /* TODO: Open settings */ }
+            AnimatedVisibility(
+                visible = !expanded,
+                enter = fadeIn() + expandVertically(),
+                exit = fadeOut() + shrinkVertically()
+            ) {
+                EvaluasiTopAppBar(
+                    title = context.getString(R.string.evaluasi),
+                    trailingIcons = listOf(
+                        ActionItem(
+                            icon = Icons.Rounded.Search,
+                            contentDescription = "Search",
+                            onClick = { expanded = true }
+                        )
                     )
                 )
-            )
+            }
+
+            AnimatedVisibility(
+                visible = expanded,
+                enter = fadeIn() + expandVertically(),
+                exit = fadeOut() + shrinkVertically()
+            ) {
+                SearchBar(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    inputField = {
+                        SearchBarDefaults.InputField(
+                            query = state.querySearch,
+                            onQueryChange = { /* TODO: Handle search query change */ },
+                            onSearch = { expanded = false },
+                            expanded = expanded,
+                            onExpandedChange = { expanded = it },
+                            placeholder = { Text("Hinted search text") },
+                            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                            trailingIcon = {
+                                Icon(
+                                    Icons.Default.MoreVert,
+                                    contentDescription = null
+                                )
+                            },
+                        )
+                    },
+                    expanded = expanded,
+                    onExpandedChange = { expanded = it },
+                ) {
+                    AnimatedVisibility(
+                        visible = errorMessage != null,
+                        enter = fadeIn() + expandVertically(),
+                        exit = fadeOut() + shrinkVertically()
+                    ) {
+                        errorMessage?.let {
+                            Text(
+                                text = it,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.padding(bottom = 12.dp)
+                            )
+                        }
+                    }
+
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .animateContentSize(),
+                        contentPadding = PaddingValues(bottom = heightInDp + 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(
+                            count = classRoomList.size,
+                            key = { index -> classRoomList[index].id }
+                        ) { index ->
+                            ClassRoomCard(
+                                modifier = Modifier.animateItem(),
+                                onDetailClickedListener = {
+                                    onClassRoomChosen(classRoomList[index].id)
+                                },
+                                item = classRoomList[index]
+                            )
+                        }
+                    }
+                }
+            }
         },
         floatingActionButton = {
             EvaluasiFloatingActionButton(
@@ -227,7 +309,8 @@ private fun HomeScreenPreview() {
                 )
             ),
             onCreateClassRoomClicked = { },
-            onClassRoomChosen = { }
+            onClassRoomChosen = { },
+            state = HomeState()
         )
     }
 }

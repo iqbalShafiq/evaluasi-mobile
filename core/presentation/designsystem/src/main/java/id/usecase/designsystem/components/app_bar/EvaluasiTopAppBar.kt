@@ -49,15 +49,15 @@ fun EvaluasiTopAppBar(
         modifier = modifier.fillMaxWidth(),
         navigationIcon = {
             navigationIcon?.let {
-                Image(
-                    modifier = Modifier
-                        .padding(start = 16.dp)
-                        .clickable { onNavigationClicked() },
-                    imageVector = navigationIcon,
-                    colorFilter = navigationIconTint?.let { ColorFilter.tint(it) }
-                        ?: ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
-                    contentDescription = stringResource(R.string.navigation_icon)
-                )
+                IconButton(
+                    onClick = onNavigationClicked
+                ) {
+                    Icon(
+                        imageVector = navigationIcon,
+                        contentDescription = stringResource(R.string.navigation_icon),
+                        tint = navigationIconTint ?: MaterialTheme.colorScheme.onSurface
+                    )
+                }
             }
         },
         title = {
@@ -112,6 +112,7 @@ private fun EvaluasiTopAppBarPreview() {
     EvaluasiTopAppBar(
         title = "Test",
         subtitle = "Subtitle!",
+        navigationIcon = ImageVector.vectorResource(id = R.drawable.ic_test_icon),
         trailingIcons = listOf(
             ActionItem(
                 icon = ImageVector.vectorResource(id = R.drawable.ic_test_icon),
