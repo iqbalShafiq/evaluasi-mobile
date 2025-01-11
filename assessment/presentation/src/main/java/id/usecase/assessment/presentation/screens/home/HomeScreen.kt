@@ -169,7 +169,8 @@ fun HomeScreen(
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
-                            .animateContentSize(),
+                            .animateContentSize()
+                            .padding(16.dp),
                         contentPadding = PaddingValues(bottom = heightInDp + 16.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
