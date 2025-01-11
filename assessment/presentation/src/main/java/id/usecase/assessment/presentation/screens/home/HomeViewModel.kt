@@ -32,6 +32,7 @@ class HomeViewModel(
     fun onAction(action: HomeAction) {
         when (action) {
             HomeAction.LoadClassRoom -> loadClassRoom()
+            is HomeAction.UpdateTextField -> _state.update { action.state }
         }
     }
 

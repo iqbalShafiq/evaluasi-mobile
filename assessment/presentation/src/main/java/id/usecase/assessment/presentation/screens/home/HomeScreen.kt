@@ -87,6 +87,7 @@ fun HomeScreenRoot(
         classRoomList = state.classRooms,
         onCreateClassRoomClicked = onCreateClassRoomClicked,
         onClassRoomChosen = onClassRoomChosen,
+        onAction = homeViewModel::onAction
     )
 }
 
@@ -97,7 +98,8 @@ fun HomeScreen(
     state: HomeState,
     classRoomList: List<ClassRoomUi>,
     onCreateClassRoomClicked: () -> Unit,
-    onClassRoomChosen: (Int) -> Unit
+    onClassRoomChosen: (Int) -> Unit,
+    onAction: (HomeAction) -> Unit
 ) {
     val context = LocalContext.current
     var fabHeight by remember { mutableIntStateOf(0) }
@@ -135,7 +137,15 @@ fun HomeScreen(
                     inputField = {
                         SearchBarDefaults.InputField(
                             query = state.querySearch,
-                            onQueryChange = { /* TODO: Handle search query change */ },
+                            onQueryChange = {
+                                onAction(
+                                    HomeAction.UpdateTextField(
+                                        state = state.copy(
+                                            querySearch = it
+                                        )
+                                    )
+                                )
+                            },
                             onSearch = { expanded = false },
                             expanded = expanded,
                             onExpandedChange = { expanded = it },
@@ -316,7 +326,8 @@ private fun HomeScreenPreview() {
             ),
             onCreateClassRoomClicked = { },
             onClassRoomChosen = { },
-            state = HomeState()
+            state = HomeState(),
+            onAction = {}
         )
     }
 }

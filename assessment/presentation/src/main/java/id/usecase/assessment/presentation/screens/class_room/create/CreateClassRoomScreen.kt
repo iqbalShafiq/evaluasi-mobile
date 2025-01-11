@@ -84,12 +84,14 @@ fun CreateClassRoomScreenRoot(
                 },
                 onDateSelected = {
                     viewModel.onAction(
-                        CreateClassRoomAction.SetStartDate(
-                            text = TextFieldValue(
-                                text = SimpleDateFormat(
-                                    "yyyy-MM-dd",
-                                    Locale.getDefault()
-                                ).format(it)
+                        CreateClassRoomAction.UpdateTextField(
+                            state = state.copy(
+                                startDate = TextFieldValue(
+                                    SimpleDateFormat(
+                                        "yyyy-MM-dd",
+                                        Locale.getDefault()
+                                    ).format(it)
+                                )
                             )
                         )
                     )
@@ -218,7 +220,15 @@ fun CreateClassRoomScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 value = state.classRoomName,
                                 shape = MaterialTheme.shapes.small,
-                                onValueChange = { onAction(CreateClassRoomAction.SetClassRoomName(it)) },
+                                onValueChange = {
+                                    onAction(
+                                        CreateClassRoomAction.UpdateTextField(
+                                            state = state.copy(
+                                                classRoomName = it
+                                            )
+                                        )
+                                    )
+                                },
                                 label = { Text(text = "Class Name") },
                                 placeholder = { Text("e.g., Class 10A Mathematics") },
                                 leadingIcon = {
@@ -236,7 +246,15 @@ fun CreateClassRoomScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 value = state.subject,
                                 shape = MaterialTheme.shapes.small,
-                                onValueChange = { onAction(CreateClassRoomAction.SetSubject(it)) },
+                                onValueChange = {
+                                    onAction(
+                                        CreateClassRoomAction.UpdateTextField(
+                                            state = state.copy(
+                                                subject = it
+                                            )
+                                        )
+                                    )
+                                },
                                 label = { Text("Subject") },
                                 placeholder = { Text("e.g., Mathematics") },
                                 leadingIcon = {
@@ -274,7 +292,13 @@ fun CreateClassRoomScreen(
                                 value = state.startDate,
                                 shape = MaterialTheme.shapes.small,
                                 onValueChange = {
-                                    onAction(CreateClassRoomAction.SetStartDate(it))
+                                    onAction(
+                                        CreateClassRoomAction.UpdateTextField(
+                                            state = state.copy(
+                                                startDate = it
+                                            )
+                                        )
+                                    )
                                 },
                                 label = { Text("Start Date") },
                                 readOnly = true,
@@ -296,7 +320,13 @@ fun CreateClassRoomScreen(
                                 value = state.endDate,
                                 shape = MaterialTheme.shapes.small,
                                 onValueChange = {
-                                    onAction(CreateClassRoomAction.SetEndDate(it))
+                                    onAction(
+                                        CreateClassRoomAction.UpdateTextField(
+                                            state = state.copy(
+                                                endDate = it
+                                            )
+                                        )
+                                    )
                                 },
                                 label = { Text("End Date") },
                                 readOnly = true,
@@ -337,7 +367,15 @@ fun CreateClassRoomScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 value = state.description,
                                 shape = MaterialTheme.shapes.small,
-                                onValueChange = { onAction(CreateClassRoomAction.SetDescription(it)) },
+                                onValueChange = {
+                                    onAction(
+                                        CreateClassRoomAction.UpdateTextField(
+                                            state = state.copy(
+                                                description = it
+                                            )
+                                        )
+                                    )
+                                },
                                 label = { Text("Class Description") },
                                 placeholder = { Text("Add a description for your class") },
                                 minLines = 3,

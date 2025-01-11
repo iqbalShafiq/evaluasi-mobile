@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -39,25 +40,7 @@ class CreateClassRoomViewModel(
         when (action) {
             is CreateClassRoomAction.LoadClassRoomDetail -> loadClassRoomDetail(action.classRoomId)
             CreateClassRoomAction.CreateClassRoom -> createClassRoom()
-            is CreateClassRoomAction.SetStartDate -> _state.value = _state.value.copy(
-                startDate = action.text
-            )
-
-            is CreateClassRoomAction.SetDescription -> _state.value = _state.value.copy(
-                description = action.text
-            )
-
-            is CreateClassRoomAction.SetClassRoomName -> _state.value = _state.value.copy(
-                classRoomName = action.text
-            )
-
-            is CreateClassRoomAction.SetEndDate -> _state.value = _state.value.copy(
-                endDate = action.text
-            )
-
-            is CreateClassRoomAction.SetSubject -> _state.value = _state.value.copy(
-                subject = action.text
-            )
+            is CreateClassRoomAction.UpdateTextField -> _state.update { action.state }
         }
     }
 
@@ -65,7 +48,10 @@ class CreateClassRoomViewModel(
         viewModelScope.launch(dispatcher) {
             repository.getClassRoomById(classRoomId)
                 .catch { e ->
-                    _state.value = _state.value.copy(isLoading = false)
+                    _state.update {
+                        it.copy(isLoading = false)
+                    }
+
                     _events.send(
                         OnErrorOccurred(
                             e.message ?: application.getString(R.string.unknown_error)
@@ -74,7 +60,10 @@ class CreateClassRoomViewModel(
                 }
                 .collectLatest { result ->
                     when (result) {
-                        DataResult.Loading -> _state.value = _state.value.copy(isLoading = true)
+                        DataResult.Loading -> _state.update {
+                            it.copy(isLoading = true)
+                        }
+
                         is DataResult.Success -> {
                             _state.value = _state.value.copy(
                                 isLoading = false,
@@ -94,7 +83,19 @@ class CreateClassRoomViewModel(
                             )
                         }
 
-                        is DataResult.Error -> TODO()
+                        is DataResult.Error -> {
+                            _state.update {
+                                it.copy(isLoading = false)
+                            }
+
+                            _events.send(
+                                OnErrorOccurred(
+                                    result.exception.message ?: application.getString(
+                                        R.string.unknown_error
+                                    )
+                                )
+                            )
+                        }
                     }
                 }
         }
