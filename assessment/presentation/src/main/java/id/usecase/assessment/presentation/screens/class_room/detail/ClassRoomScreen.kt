@@ -5,6 +5,8 @@ package id.usecase.assessment.presentation.screens.class_room.detail
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
@@ -113,13 +115,13 @@ fun ClassRoomScreen(
     onAlertClicked: () -> Unit
 ) {
     var selectedTab by remember { mutableIntStateOf(0) }
-    val tabs = listOf("Overview", "Assessment History", "Analytics")
+    val tabs = listOf("Overview", "Assessments", "Analytics")
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
             EvaluasiTopAppBar(
-                title = "Class Room Detail",
+                title = state.classRoom?.name ?: "Detail",
                 navigationIcon = ImageVector.vectorResource(R.drawable.rounded_arrow_back),
                 onNavigationClicked = onBackPressed,
                 trailingIcons = listOf(
@@ -129,7 +131,14 @@ fun ClassRoomScreen(
                             onStudentEditClicked()
                         },
                         contentDescription = "Edit Student"
-                    )
+                    ),
+                    ActionItem(
+                        icon = Icons.Rounded.Settings,
+                        onClick = {
+                            onStudentEditClicked()
+                        },
+                        contentDescription = "Settings"
+                    ),
                 )
             )
         },

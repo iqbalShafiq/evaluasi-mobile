@@ -22,11 +22,16 @@ import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
+import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
+import com.patrykandpatrick.vico.core.entry.FloatEntry
 import com.patrykandpatrick.vico.core.entry.entryModelOf
 import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.screens.class_room.detail.ClassRoomState
 import id.usecase.assessment.presentation.screens.class_room.detail.class_overview.components.StatisticItem
 import id.usecase.designsystem.EvaluasiTheme
+import java.time.Month
+import java.time.format.TextStyle
+import java.util.Locale
 
 @Composable
 fun ClassOverviewTab(state: ClassRoomState) {
@@ -44,7 +49,6 @@ fun ClassOverviewTab(state: ClassRoomState) {
             .padding(end = 16.dp, start = 16.dp, top = 16.dp)
             .verticalScroll(scrollState)
     ) {
-        // Class Statistics Card
         ElevatedCard(
             modifier = Modifier
                 .fillMaxWidth()
@@ -85,7 +89,6 @@ fun ClassOverviewTab(state: ClassRoomState) {
             }
         }
 
-        // Performance Trend Chart
         ElevatedCard(
             modifier = Modifier
                 .fillMaxWidth()
@@ -99,13 +102,23 @@ fun ClassOverviewTab(state: ClassRoomState) {
                     style = MaterialTheme.typography.titleMedium
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-
-                // Line Chart for performance trend
                 Chart(
                     chart = lineChart(),
                     model = entryModelOf(*performanceTrendData),
-                    startAxis = rememberStartAxis(),
-                    bottomAxis = rememberBottomAxis(),
+                    startAxis = rememberStartAxis(
+                        title = "Avg Score",
+                        valueFormatter = { value, _ -> value.toInt().toString() },
+                        itemPlacer = AxisItemPlacer.Vertical.default(
+                            maxItemCount = 6
+                        )
+                    ),
+                    bottomAxis = rememberBottomAxis(
+                        title = "Month",
+                        valueFormatter = { value, _ ->
+                            Month.of(value.toInt())
+                                .getDisplayName(TextStyle.SHORT, Locale.getDefault())
+                        }
+                    ),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(200.dp)
@@ -113,7 +126,6 @@ fun ClassOverviewTab(state: ClassRoomState) {
             }
         }
 
-        // Category Distribution Chart
         ElevatedCard(
             modifier = Modifier
                 .fillMaxWidth()
@@ -127,12 +139,16 @@ fun ClassOverviewTab(state: ClassRoomState) {
                     style = MaterialTheme.typography.titleMedium
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-
-                // Column Chart for category distribution
                 Chart(
                     chart = columnChart(),
                     model = entryModelOf(*categoryDistributionData),
-                    startAxis = rememberStartAxis(),
+                    startAxis = rememberStartAxis(
+                        title = "Score",
+                        valueFormatter = { value, _ -> value.toInt().toString() },
+                        itemPlacer = AxisItemPlacer.Vertical.default(
+                            maxItemCount = 6
+                        )
+                    ),
                     bottomAxis = rememberBottomAxis(),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -152,8 +168,20 @@ private fun ClassOverviewPreview() {
                 totalStudents = 30,
                 assessmentEvents = emptyList(),
                 classAverage = 80.0,
-                performanceTrendData = emptyList(),
-                categoryDistributionData = emptyList()
+                performanceTrendData = listOf(
+                    FloatEntry(1f, 50f),
+                    FloatEntry(2f, 60f),
+                    FloatEntry(3f, 70f),
+                    FloatEntry(4f, 20f),
+                    FloatEntry(5f, 30f),
+                    FloatEntry(6f, 40f),
+                ),
+                categoryDistributionData = listOf(
+                    FloatEntry(1f, 20f),
+                    FloatEntry(2f, 30f),
+                    FloatEntry(3f, 50f),
+                    FloatEntry(4f, 40f),
+                )
             )
         )
     }
