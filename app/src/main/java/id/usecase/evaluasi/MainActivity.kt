@@ -84,7 +84,7 @@ fun MyNavigation() {
                         )
                     )
                 },
-                onBioEditClicked = { navController.navigate(CreateClassRoom) },
+                onSettingClicked = { navController.navigate(CreateClassRoom) },
                 onCategoryEditClicked = { navController.navigate(CreateCategories(classRoomId)) },
                 onAddAssessmentClicked = { navController.navigate(AssessmentEventEditor(classRoomId)) },
                 onStudentEditClicked = { navController.navigate(AddStudents(classRoomId)) },
