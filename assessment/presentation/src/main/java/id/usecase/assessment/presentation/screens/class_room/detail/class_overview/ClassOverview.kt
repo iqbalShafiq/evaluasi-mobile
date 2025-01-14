@@ -86,7 +86,7 @@ fun ClassOverviewTab(
             ElevatedCard(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+                    .padding(bottom = 8.dp)
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp)

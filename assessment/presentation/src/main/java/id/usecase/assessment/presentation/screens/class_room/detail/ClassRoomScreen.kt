@@ -167,7 +167,7 @@ fun ClassRoomScreen(
                     )
             ) {
                 // Tab Row
-                TabRow(modifier = Modifier.padding(bottom = 8.dp), selectedTabIndex = selectedTab) {
+                TabRow(modifier = Modifier.padding(bottom = 16.dp), selectedTabIndex = selectedTab) {
                     tabs.forEachIndexed { index, title ->
                         Tab(
                             selected = selectedTab == index,
@@ -204,6 +204,7 @@ fun ClassRoomScreen(
 @Composable
 private fun ClassRoomPreview() {
     val state = ClassRoomState(
+        totalStudents = 10,
         assessmentEvents = listOf(
             AssessmentEventUi(
                 id = 1,
