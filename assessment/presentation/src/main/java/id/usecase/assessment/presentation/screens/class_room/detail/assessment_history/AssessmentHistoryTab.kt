@@ -3,6 +3,7 @@ package id.usecase.assessment.presentation.screens.class_room.detail.assessment_
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import id.usecase.assessment.presentation.model.AssessmentEventUi
 import id.usecase.assessment.presentation.screens.class_room.detail.ClassRoomState
@@ -71,12 +73,15 @@ private fun EmptyAssessmentState() {
 @Composable
 fun AssessmentHistoryTab(
     state: ClassRoomState,
-    onDetailAssessmentEventClicked: (AssessmentEventUi) -> Unit
+    onDetailAssessmentEventClicked: (AssessmentEventUi) -> Unit,
+    bottomPadding: Dp = 0.dp
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(
+                horizontal = 16.dp
+            )
     ) {
         if (state.assessmentEvents.isEmpty()) {
             EmptyAssessmentState()
@@ -136,7 +141,8 @@ fun AssessmentHistoryTab(
 
             // Assessment List
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(bottom = bottomPadding)
             ) {
                 items(
                     state.assessmentEvents.filter {
@@ -154,8 +160,6 @@ fun AssessmentHistoryTab(
                     )
                 }
             }
-
-            Spacer(modifier = Modifier.padding(vertical = 8.dp))
         }
     }
 }

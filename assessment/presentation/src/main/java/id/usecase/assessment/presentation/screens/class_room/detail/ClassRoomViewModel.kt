@@ -1,9 +1,9 @@
 package id.usecase.assessment.presentation.screens.class_room.detail
 
 import android.app.Application
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.patrykandpatrick.vico.core.entry.FloatEntry
 import id.usecase.assessment.domain.AssessmentRepository
 import id.usecase.assessment.domain.CategoryRepository
 import id.usecase.assessment.domain.ClassRoomRepository
@@ -13,11 +13,15 @@ import id.usecase.assessment.presentation.model.AssessmentEventUi
 import id.usecase.core.domain.assessment.DataResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.Month
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -32,20 +36,29 @@ class ClassRoomViewModel(
     private val _events = Channel<ClassRoomEvent>()
     val events = _events.receiveAsFlow()
 
-    var state = mutableStateOf(ClassRoomState())
-        private set
+    private var _state = MutableStateFlow(ClassRoomState())
+    val state = _state.asStateFlow()
 
     fun onAction(action: ClassRoomAction) {
         when (action) {
-            is ClassRoomAction.LoadClassRoom -> loadClassRoom(action.classRoomId)
+            is ClassRoomAction.LoadClassRoom -> {
+                viewModelScope.launch(dispatcher) {
+                    loadClassRoom(action.classRoomId)
+                    loadAssessmentEvents()
+                    getPerformanceTrend()
+                }
+            }
         }
     }
 
-    private fun loadClassRoom(classRoomId: Int) {
-        viewModelScope.launch(dispatcher) {
+    private suspend fun loadClassRoom(classRoomId: Int) {
+        withContext(dispatcher) {
             classRoomRepository.getClassRoomById(classRoomId)
                 .catch { e ->
-                    state.value = state.value.copy(isLoading = false)
+                    _state.update {
+                        it.copy(isLoading = false)
+                    }
+
                     _events.send(
                         ClassRoomEvent.OnErrorOccurred(
                             message = e.message ?: application.getString(
@@ -56,18 +69,21 @@ class ClassRoomViewModel(
                 }
                 .collectLatest { result ->
                     when (result) {
-                        DataResult.Loading -> state.value = state.value.copy(isLoading = true)
+                        DataResult.Loading -> _state.update {
+                            it.copy(isLoading = true)
+                        }
 
                         is DataResult.Success -> {
-                            state.value = state.value.copy(
-                                classRoom = result.data
-                            )
-
-                            loadEvents(classRoomId)
+                            _state.update {
+                                it.copy(classRoom = result.data)
+                            }
                         }
 
                         is DataResult.Error -> {
-                            state.value = state.value.copy(isLoading = false)
+                            _state.update {
+                                it.copy(isLoading = false)
+                            }
+
                             _events.send(
                                 ClassRoomEvent.OnErrorOccurred(
                                     message = result.exception.message ?: application.getString(
@@ -81,11 +97,15 @@ class ClassRoomViewModel(
         }
     }
 
-    private suspend fun loadEvents(classRoomId: Int) {
+    private suspend fun loadAssessmentEvents() {
         withContext(dispatcher) {
+            val classRoomId = state.value.classRoom?.id ?: return@withContext
             eventRepository.getEventsByClassRoomId(classRoomId)
                 .catch { e ->
-                    state.value = state.value.copy(isLoading = false)
+                    _state.update {
+                        it.copy(isLoading = false)
+                    }
+
                     _events.send(
                         ClassRoomEvent.OnErrorOccurred(
                             message = e.message ?: application.getString(
@@ -96,12 +116,14 @@ class ClassRoomViewModel(
                 }
                 .collectLatest { result ->
                     when (result) {
-                        DataResult.Loading -> state.value = state.value.copy(isLoading = true)
+                        DataResult.Loading -> _state.update {
+                            it.copy(isLoading = true)
+                        }
 
                         is DataResult.Success -> {
-                            state.value = state.value.copy(
-                                events = result.data
-                            )
+                            _state.update {
+                                it.copy(events = result.data)
+                            }
 
                             val categoryNames = getCategoryNames(classRoomId)
 
@@ -123,9 +145,9 @@ class ClassRoomViewModel(
                                 )
                             }
 
-                            state.value = state.value.copy(
-                                assessmentEvents = assessmentEventUiList
-                            )
+                            _state.update {
+                                it.copy(assessmentEvents = assessmentEventUiList)
+                            }
 
                             val assessmentEventUiListWithTotalAssessment = assessmentEventUiList
                                 .map { assessmentEventUi ->
@@ -135,14 +157,19 @@ class ClassRoomViewModel(
                                     assessmentEventUi.copy(totalAssessment = totalAssessment)
                                 }
 
-                            state.value = state.value.copy(
-                                assessmentEvents = assessmentEventUiListWithTotalAssessment,
-                                isLoading = false
-                            )
+                            _state.update {
+                                it.copy(
+                                    assessmentEvents = assessmentEventUiListWithTotalAssessment,
+                                    isLoading = false
+                                )
+                            }
                         }
 
                         is DataResult.Error -> {
-                            state.value = state.value.copy(isLoading = false)
+                            _state.update {
+                                it.copy(isLoading = false)
+                            }
+
                             _events.send(
                                 ClassRoomEvent.OnErrorOccurred(
                                     message = result.exception.message ?: application.getString(
@@ -160,13 +187,15 @@ class ClassRoomViewModel(
         return suspendCoroutine { continuation ->
             viewModelScope.launch(dispatcher) {
                 categoryRepository.getCategoriesByClassRoomId(classRoomId)
-                    .catch { e ->
-                        continuation.resume(emptyList<Pair<Int, String>>())
+                    .catch {
+                        continuation.resume(emptyList())
                     }
                     .collectLatest { result ->
                         when (result) {
                             DataResult.Loading -> {
-                                state.value = state.value.copy(isLoading = true)
+                                _state.update {
+                                    it.copy(isLoading = true)
+                                }
                             }
 
                             is DataResult.Success -> {
@@ -190,13 +219,15 @@ class ClassRoomViewModel(
         return suspendCoroutine { continuation ->
             viewModelScope.launch(dispatcher) {
                 assessmentRepository.getAssessmentsByEventId(eventId)
-                    .catch { e ->
+                    .catch {
                         continuation.resume(0)
                     }
                     .collectLatest { result ->
                         when (result) {
                             DataResult.Loading -> {
-                                state.value = state.value.copy(isLoading = true)
+                                _state.update {
+                                    it.copy(isLoading = true)
+                                }
                             }
 
                             is DataResult.Success -> {
@@ -208,6 +239,28 @@ class ClassRoomViewModel(
                             }
                         }
                     }
+            }
+        }
+    }
+
+    private suspend fun getPerformanceTrend() {
+        withContext(dispatcher) {
+            val groupedPerformanceByMonth = state.value.assessmentEvents.groupBy {
+                val monthYear = it.eventDate.substring(0, 7)
+                val month = monthYear.substring(5)
+                Month.of(month.toInt())
+            }
+            val performanceTrend = groupedPerformanceByMonth.map {
+                FloatEntry(
+                    x = it.key.value.toFloat(),
+                    y = it.value
+                        .map { assessment -> assessment.totalAssessment }
+                        .average()
+                        .toFloat()
+                )
+            }
+            _state.update {
+                it.copy(performanceTrendData = performanceTrend)
             }
         }
     }

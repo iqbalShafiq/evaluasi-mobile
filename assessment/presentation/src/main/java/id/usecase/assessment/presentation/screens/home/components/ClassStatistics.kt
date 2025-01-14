@@ -37,7 +37,7 @@ fun StatisticsHeader(
             modifier = Modifier.weight(1f),
             count = totalClasses,
             label = "Total Classes",
-            icon = ImageVector.vectorResource(id = R.drawable.school)
+            icon = ImageVector.vectorResource(id = R.drawable.ic_school)
         )
         StatisticItem(
             modifier = Modifier.weight(1f),

@@ -34,9 +34,11 @@ fun ClassRoomEntity.toDomainForm() = ClassRoom(
     name = name,
     subject = subject,
     startPeriod = startPeriod,
-    endPeriod = endPeriod,
+    longPeriod = longPeriod,
     createdTime = createdTime,
     lastModifiedTime = lastModifiedTime,
+    schedule = schedule,
+    description = description
 )
 
 fun ClassRoom.toEntity() = ClassRoomEntity(
@@ -44,9 +46,11 @@ fun ClassRoom.toEntity() = ClassRoomEntity(
     name = name,
     subject = subject,
     startPeriod = startPeriod,
-    endPeriod = endPeriod,
+    longPeriod = longPeriod,
     createdTime = createdTime,
     lastModifiedTime = lastModifiedTime,
+    schedule = schedule,
+    description = description
 )
 
 fun CategoryEntity.toDomainForm() = Category(

@@ -18,7 +18,7 @@ fun ClassRoom.toUi(): ClassRoomUi = ClassRoomUi(
     lastAssessment = "",
     studentCount = 0,
     startPeriod = startPeriod.toString(),
-    endPeriod = endPeriod?.toString() ?: ""
+    endPeriod = longPeriod?.toString() ?: ""
 )
 
 fun CategoryItemState.toDomainForm(classRoomId: Int) = Category(

@@ -14,11 +14,13 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
 
+        ksp {
+            arg("room.schemaLocation", "$projectDir/schemas")
+        }
+
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments(
-                    mapOf("room.schemaLocation" to "$projectDir/schemas")
-                )
+                arguments["room.schemaLocation"] = "$projectDir/schemas"
             }
         }
     }

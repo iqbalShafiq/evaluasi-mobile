@@ -131,7 +131,7 @@ fun AddCategoriesScreen(
             EvaluasiTopAppBar(
                 title = "Add Categories",
                 navigationIcon = ImageVector.vectorResource(
-                    id = R.drawable.rounded_arrow_back
+                    id = R.drawable.ic_rounded_arrow_back
                 ),
                 navigationIconTint = MaterialTheme.colorScheme.onSurface,
                 trailingIcons = listOf(
