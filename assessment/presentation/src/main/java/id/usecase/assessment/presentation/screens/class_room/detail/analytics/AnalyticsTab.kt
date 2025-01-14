@@ -30,8 +30,7 @@ fun AnalyticsTab(
     bottomPadding: Dp = 0.dp
 ) {
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(
             start = 16.dp,
             end = 16.dp,
@@ -119,8 +118,18 @@ private fun AnalyticsTabPreview() {
                 categoryAnalysis = listOf(
                     CategoryAnalysis(
                         "Category 1",
-                        0.5f,
+                        50f,
                         5,
+                    ),
+                    CategoryAnalysis(
+                        "Category 2",
+                        90f,
+                        7,
+                    ),
+                    CategoryAnalysis(
+                        "Category 3",
+                        70f,
+                        9,
                     )
                 )
             )

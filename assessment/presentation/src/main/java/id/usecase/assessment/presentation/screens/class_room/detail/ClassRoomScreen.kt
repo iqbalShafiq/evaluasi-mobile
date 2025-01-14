@@ -32,6 +32,8 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.entry.FloatEntry
 import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.model.AssessmentEventUi
+import id.usecase.assessment.presentation.model.CategoryAnalysis
+import id.usecase.assessment.presentation.model.StudentProgress
 import id.usecase.assessment.presentation.screens.class_room.detail.analytics.AnalyticsTab
 import id.usecase.assessment.presentation.screens.class_room.detail.assessment_history.AssessmentHistoryTab
 import id.usecase.assessment.presentation.screens.class_room.detail.class_overview.ClassOverviewTab
@@ -259,6 +261,33 @@ private fun ClassRoomPreview() {
             FloatEntry(0f, 20f),
             FloatEntry(1f, 30f),
             FloatEntry(2f, 50f),
+        ),
+        performanceDistribution = mapOf(
+            "Poor" to 0.2f,
+            "Average" to 0.3f,
+            "Good" to 0.5f
+        ),
+        studentProgress = listOf(
+            StudentProgress("Student 1", 0.5f, "2021-01-01"),
+            StudentProgress("Student 2", 0.7f, "2021-01-01"),
+            StudentProgress("Student 3", 0.9f, "2021-01-01")
+        ),
+        categoryAnalysis = listOf(
+            CategoryAnalysis(
+                "Category 1",
+                50f,
+                5,
+            ),
+            CategoryAnalysis(
+                "Category 2",
+                90f,
+                7,
+            ),
+            CategoryAnalysis(
+                "Category 3",
+                70f,
+                9,
+            )
         )
     )
     EvaluasiTheme {
