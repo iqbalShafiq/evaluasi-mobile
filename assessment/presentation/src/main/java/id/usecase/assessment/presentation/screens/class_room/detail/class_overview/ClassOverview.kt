@@ -49,14 +49,6 @@ fun ClassOverviewTab(
     state: ClassRoomState,
     bottomPadding: Dp = 0.dp
 ) {
-    val categories by remember {
-        mutableStateOf(
-            state.assessmentEvents
-                .map { it.categoryName }
-                .distinct()
-        )
-    }
-
     val performanceTrendData by remember {
         mutableStateOf(
             state.performanceTrendData
@@ -210,7 +202,7 @@ fun ClassOverviewTab(
                         ),
                         bottomAxis = rememberBottomAxis(
                             title = "Category",
-                            valueFormatter = { value, _ -> categories[value.toInt()] }
+                            valueFormatter = { value, _ -> state.categoryList[value.toInt()] }
                         )
                     )
                 }
@@ -280,7 +272,8 @@ private fun ClassOverviewPreview() {
                     FloatEntry(0f, 20f),
                     FloatEntry(1f, 30f),
                     FloatEntry(2f, 50f),
-                )
+                ),
+                categoryList = listOf("Monthly", "Mid", "Final")
             )
         )
     }

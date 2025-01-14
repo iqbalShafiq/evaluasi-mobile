@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.vico.core.entry.FloatEntry
+import id.usecase.assessment.domain.AnalyticsRepository
 import id.usecase.assessment.domain.AssessmentRepository
 import id.usecase.assessment.domain.CategoryRepository
 import id.usecase.assessment.domain.ClassRoomRepository
@@ -21,7 +22,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.time.Month
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -31,7 +31,8 @@ class ClassRoomViewModel(
     private val classRoomRepository: ClassRoomRepository,
     private val categoryRepository: CategoryRepository,
     private val eventRepository: EventRepository,
-    private val assessmentRepository: AssessmentRepository
+    private val assessmentRepository: AssessmentRepository,
+    private val analyticsRepository: AnalyticsRepository
 ) : ViewModel() {
     private val _events = Channel<ClassRoomEvent>()
     val events = _events.receiveAsFlow()
@@ -46,6 +47,8 @@ class ClassRoomViewModel(
                     loadClassRoom(action.classRoomId)
                     loadAssessmentEvents()
                     getPerformanceTrend()
+                    getCategoryDistribution()
+                    getPerformanceDistribution()
                 }
             }
         }
@@ -245,23 +248,76 @@ class ClassRoomViewModel(
 
     private suspend fun getPerformanceTrend() {
         withContext(dispatcher) {
-            val groupedPerformanceByMonth = state.value.assessmentEvents.groupBy {
-                val monthYear = it.eventDate.substring(0, 7)
-                val month = monthYear.substring(5)
-                Month.of(month.toInt())
-            }
-            val performanceTrend = groupedPerformanceByMonth.map {
-                FloatEntry(
-                    x = it.key.value.toFloat(),
-                    y = it.value
-                        .map { assessment -> assessment.totalAssessment }
-                        .average()
-                        .toFloat()
-                )
-            }
-            _state.update {
-                it.copy(performanceTrendData = performanceTrend)
-            }
+            val classRoomId = state.value.classRoom?.id ?: 0
+            if (classRoomId == 0) return@withContext
+            analyticsRepository.getPerformanceTrend(classRoomId)
+                .catch { e ->
+                    _events.send(
+                        ClassRoomEvent.OnErrorOccurred(
+                            message = e.message ?: application.getString(
+                                R.string.unknown_error
+                            )
+                        )
+                    )
+                }
+                .collectLatest { result ->
+                    _state.update {
+                        it.copy(
+                            performanceTrendData = result.map {
+                                FloatEntry(it.first.toFloat(), it.second.toFloat())
+                            }
+                        )
+                    }
+                }
+        }
+    }
+
+    private suspend fun getCategoryDistribution() {
+        withContext(dispatcher) {
+            val classRoomId = state.value.classRoom?.id ?: 0
+            if (classRoomId == 0) return@withContext
+            analyticsRepository.getCategoryDistribution(classRoomId)
+                .catch { e ->
+                    _events.send(
+                        ClassRoomEvent.OnErrorOccurred(
+                            message = e.message ?: application.getString(
+                                R.string.unknown_error
+                            )
+                        )
+                    )
+                }
+                .collectLatest { result ->
+                    _state.update {
+                        it.copy(
+                            categoryList = result.map { it.first },
+                            categoryDistributionData = result.mapIndexed { index, distribution ->
+                                FloatEntry(index.toFloat(), distribution.second)
+                            }
+                        )
+                    }
+                }
+        }
+    }
+
+    private suspend fun getPerformanceDistribution() {
+        withContext(dispatcher) {
+            val classRoomId = state.value.classRoom?.id ?: 0
+            if (classRoomId == 0) return@withContext
+            analyticsRepository.getPerformanceDistribution(classRoomId)
+                .catch { e ->
+                    _events.send(
+                        ClassRoomEvent.OnErrorOccurred(
+                            message = e.message ?: application.getString(
+                                R.string.unknown_error
+                            )
+                        )
+                    )
+                }
+                .collectLatest { result ->
+                    _state.update {
+                        it.copy(performanceDistribution = result)
+                    }
+                }
         }
     }
 }

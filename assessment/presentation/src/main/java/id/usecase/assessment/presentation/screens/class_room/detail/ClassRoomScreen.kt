@@ -171,7 +171,10 @@ fun ClassRoomScreen(
                     )
             ) {
                 // Tab Row
-                TabRow(modifier = Modifier.padding(bottom = 16.dp), selectedTabIndex = selectedTab) {
+                TabRow(
+                    modifier = Modifier.padding(bottom = 16.dp),
+                    selectedTabIndex = selectedTab
+                ) {
                     tabs.forEachIndexed { index, title ->
                         Tab(
                             selected = selectedTab == index,
@@ -276,22 +279,24 @@ private fun ClassRoomPreview() {
         ),
         categoryAnalysis = listOf(
             CategoryAnalysis(
-                "Category 1",
+                "Monthly",
                 50f,
                 5,
             ),
             CategoryAnalysis(
-                "Category 2",
+                "Mid",
                 90f,
                 7,
             ),
             CategoryAnalysis(
-                "Category 3",
+                "Final",
                 70f,
                 9,
             )
-        )
+        ),
+        categoryList = listOf("Monthly", "Mid", "Final")
     )
+
     EvaluasiTheme {
         ClassRoomScreen(
             onBackPressed = { },

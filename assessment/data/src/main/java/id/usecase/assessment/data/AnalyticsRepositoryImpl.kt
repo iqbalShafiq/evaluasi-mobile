@@ -23,6 +23,7 @@ class AnalyticsRepositoryImpl(
         return flow {
             val result = dataSource.getCategoryDistributionByClassRoom(classRoomId)
                 .map { Pair(it.categoryName, it.averageScore) }
+                .sortedBy { it.first }
             emit(result)
         }.flowOn(dispatcher)
     }

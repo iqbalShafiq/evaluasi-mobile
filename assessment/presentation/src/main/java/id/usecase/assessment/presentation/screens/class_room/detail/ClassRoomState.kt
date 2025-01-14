@@ -14,6 +14,7 @@ data class ClassRoomState(
     val classRoom: ClassRoom? = null,
     val totalStudents: Int = 0,
     val classAverage: Double = 0.0,
+    val categoryList: List<String> = emptyList(),
     val performanceTrendData: List<ChartEntry> = emptyList(),
     val categoryDistributionData: List<ChartEntry> = emptyList(),
     val performanceDistribution: Map<String, Float> = emptyMap(),
