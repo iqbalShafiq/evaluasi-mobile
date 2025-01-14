@@ -3,7 +3,6 @@
 package id.usecase.assessment.presentation.screens.class_room.detail
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -22,13 +21,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.core.entry.FloatEntry
 import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.model.AssessmentEventUi
 import id.usecase.assessment.presentation.screens.class_room.detail.analytics.AnalyticsTab
@@ -37,8 +31,8 @@ import id.usecase.assessment.presentation.screens.class_room.detail.class_overvi
 import id.usecase.core.presentation.ui.ObserveAsEvents
 import id.usecase.designsystem.EvaluasiTheme
 import id.usecase.designsystem.components.app_bar.ActionItem
+import id.usecase.designsystem.components.app_bar.EvaluasiBottomAppBar
 import id.usecase.designsystem.components.app_bar.EvaluasiTopAppBar
-import id.usecase.designsystem.components.button.EvaluasiFloatingActionButton
 import id.usecase.designsystem.components.dialog.StandardAlertDialog
 import id.usecase.designsystem.components.dialog.StandardLoadingDialog
 import org.koin.androidx.compose.koinViewModel
@@ -49,7 +43,7 @@ fun ClassRoomScreenRoot(
     classRoomId: Int,
     onBackPressed: () -> Unit,
     onDetailAssessmentEventClicked: (AssessmentEventUi) -> Unit,
-    onSettingClicked: () -> Unit,
+    onBioEditClicked: () -> Unit,
     onCategoryEditClicked: () -> Unit,
     onAddAssessmentClicked: () -> Unit,
     onStudentEditClicked: () -> Unit,
@@ -99,9 +93,11 @@ fun ClassRoomScreenRoot(
         state = viewModel.state.value,
         onBackPressed = onBackPressed,
         onDetailAssessmentEventClicked = onDetailAssessmentEventClicked,
-        onSettingClicked = onSettingClicked,
-        onStudentEditClicked = onStudentEditClicked,
+        onBioEditClicked = onBioEditClicked,
+        onCategoryEditClicked = onCategoryEditClicked,
         onAddAssessmentClicked = onAddAssessmentClicked,
+        onStudentEditClicked = onStudentEditClicked,
+        onAlertClicked = onAlertClicked
     )
 }
 
@@ -112,14 +108,14 @@ fun ClassRoomScreen(
     state: ClassRoomState,
     onBackPressed: () -> Unit,
     onDetailAssessmentEventClicked: (AssessmentEventUi) -> Unit,
-    onSettingClicked: () -> Unit,
-    onStudentEditClicked: () -> Unit,
+    onBioEditClicked: () -> Unit,
+    onCategoryEditClicked: () -> Unit,
     onAddAssessmentClicked: () -> Unit,
+    onStudentEditClicked: () -> Unit,
+    onAlertClicked: () -> Unit
 ) {
     var selectedTab by remember { mutableIntStateOf(0) }
     val tabs = listOf("Overview", "Assessments", "Analytics")
-    var fabHeight by remember { mutableIntStateOf(0) }
-    val heightInDp = with(LocalDensity.current) { fabHeight.toDp() }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -139,21 +135,51 @@ fun ClassRoomScreen(
                     ActionItem(
                         icon = Icons.Rounded.Settings,
                         onClick = {
-                            onSettingClicked()
+                            onStudentEditClicked()
                         },
                         contentDescription = "Settings"
                     ),
                 )
             )
         },
-        floatingActionButton = {
-            EvaluasiFloatingActionButton(
-                modifier = Modifier
-                    .onGloballyPositioned { fabHeight = it.size.height },
-                text = "Add Assessment",
-                icon = ImageVector.vectorResource(id = R.drawable.ic_edit),
-                iconContentDescription = "Add button",
-                onClickListener = onAddAssessmentClicked
+        bottomBar = {
+            EvaluasiBottomAppBar(
+                modifier = Modifier,
+                navigationIcon = ImageVector.vectorResource(
+                    R.drawable.ic_add
+                ),
+                onNavigationClicked = {
+                    onAddAssessmentClicked()
+                },
+                actionItemList = listOf(
+                    ActionItem(
+                        icon = ImageVector.vectorResource(
+                            R.drawable.ic_edit
+                        ),
+                        onClick = {
+                            onBioEditClicked()
+                        },
+                        contentDescription = "Edit Class Room Bio"
+                    ),
+                    ActionItem(
+                        icon = ImageVector.vectorResource(
+                            R.drawable.ic_category
+                        ),
+                        onClick = {
+                            onCategoryEditClicked()
+                        },
+                        contentDescription = "Edit Categories"
+                    ),
+                    ActionItem(
+                        icon = ImageVector.vectorResource(
+                            R.drawable.ic_information
+                        ),
+                        onClick = {
+                            onAlertClicked()
+                        },
+                        contentDescription = "Class Room Alerts"
+                    ),
+                )
             )
         },
         content = { innerPadding ->
@@ -184,20 +210,6 @@ fun ClassRoomScreen(
     )
 }
 
-@Composable
-fun TabContent(
-    modifier: Modifier = Modifier,
-    paddingBottom: Dp = 0.dp,
-    content: @Composable () -> Unit
-) {
-    Column(
-        modifier = modifier.fillMaxSize()
-    ) {
-        content()
-        Spacer(modifier = Modifier.padding(bottom = paddingBottom + 24.dp))
-    }
-}
-
 @Preview
 @Composable
 private fun ClassRoomPreview() {
@@ -205,67 +217,37 @@ private fun ClassRoomPreview() {
         assessmentEvents = listOf(
             AssessmentEventUi(
                 id = 1,
-                categoryId = 1,
-                classId = 1,
-                name = "Assessment Name",
-                categoryName = "Category Name",
-                createdTime = "2022-07-01 08:00:00",
-                eventDate = "2022-07-01 08:00:00",
+                name = "Assessment 1",
+                eventDate = "03 Oct 2024 12:00:00",
+                createdTime = "03 Oct 2024 12:00:00",
                 totalAssessment = 10,
-                lastModifiedTime = "2022-07-01 08:00:00",
-                isInProgress = false,
-                completionProgress = 0.5f
+                categoryId = 1,
+                categoryName = "Category 1",
+                classId = 1,
+                lastModifiedTime = "03 Oct 2024 12:00:00",
             ),
             AssessmentEventUi(
                 id = 2,
-                categoryId = 1,
-                classId = 1,
-                name = "Assessment Name",
-                categoryName = "Category Name",
-                createdTime = "2022-07-01 08:00:00",
-                eventDate = "2022-07-01 08:00:00",
+                name = "Assessment 2",
+                eventDate = "03 Oct 2024 12:00:00",
+                createdTime = "03 Oct 2024 12:00:00",
                 totalAssessment = 10,
-                lastModifiedTime = "2022-07-01 08:00:00",
-                isInProgress = false,
-                completionProgress = 0.5f
-            ),
-            AssessmentEventUi(
-                id = 3,
                 categoryId = 1,
+                categoryName = "Category 1",
                 classId = 1,
-                name = "Assessment Name",
-                categoryName = "Category Name",
-                createdTime = "2022-07-01 08:00:00",
-                eventDate = "2022-07-01 08:00:00",
-                totalAssessment = 10,
-                lastModifiedTime = "2022-07-01 08:00:00",
-                isInProgress = false,
-                completionProgress = 0.5f
+                lastModifiedTime = "03 Oct 2024 12:00:00",
             )
-        ),
-        classAverage = 80.0,
-        performanceTrendData = listOf(
-            FloatEntry(1f, 50f),
-            FloatEntry(2f, 60f),
-            FloatEntry(3f, 70f),
-            FloatEntry(4f, 20f),
-            FloatEntry(5f, 30f),
-            FloatEntry(6f, 40f),
-        ),
-        categoryDistributionData = listOf(
-            FloatEntry(1f, 20f),
-            FloatEntry(2f, 30f),
-            FloatEntry(3f, 50f),
-            FloatEntry(4f, 40f),
         )
     )
     EvaluasiTheme {
         ClassRoomScreen(
             onBackPressed = { },
             onDetailAssessmentEventClicked = { },
-            onSettingClicked = { },
+            onBioEditClicked = { },
+            onCategoryEditClicked = { },
             onStudentEditClicked = { },
             onAddAssessmentClicked = { },
+            onAlertClicked = { },
             state = state
         )
     }

@@ -2,24 +2,21 @@ package id.usecase.assessment.presentation.screens.class_room.detail.class_overv
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
@@ -29,7 +26,6 @@ import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.entry.FloatEntry
 import com.patrykandpatrick.vico.core.entry.entryModelOf
 import id.usecase.assessment.presentation.R
-import id.usecase.assessment.presentation.model.AssessmentEventUi
 import id.usecase.assessment.presentation.screens.class_room.detail.ClassRoomState
 import id.usecase.assessment.presentation.screens.class_room.detail.class_overview.components.StatisticItem
 import id.usecase.designsystem.EvaluasiTheme
@@ -39,146 +35,125 @@ import java.util.Locale
 
 @Composable
 fun ClassOverviewTab(state: ClassRoomState) {
-    val categories by remember {
-        mutableStateOf(
-            state
-                .assessmentEvents
-                .map { it.categoryName }
-                .distinct()
-        )
-    }
+    val scrollState = rememberScrollState()
+    val performanceTrendData = state.performanceTrendData.map {
+        Pair(it.x, it.y)
+    }.toTypedArray()
+    val categoryDistributionData = state.categoryDistributionData.map {
+        Pair(it.x, it.y)
+    }.toTypedArray()
 
-    val performanceTrendData by remember {
-        mutableStateOf(
-            state.performanceTrendData.map {
-                Pair(it.x, it.y)
-            }.toTypedArray()
-        )
-    }
-
-    val categoryDistributionData by remember {
-        mutableStateOf(
-            state.categoryDistributionData.map {
-                Pair(it.x, it.y)
-            }.toTypedArray()
-        )
-    }
-
-    LazyColumn(
+    Column(
         modifier = Modifier
-            .fillMaxSize(),
-        contentPadding = PaddingValues(end = 16.dp, start = 16.dp, top = 16.dp),
+            .fillMaxSize()
+            .padding(end = 16.dp, start = 16.dp, top = 16.dp)
+            .verticalScroll(scrollState)
     ) {
-        item {
-            ElevatedCard(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+        ElevatedCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
             ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
+                Text(
+                    text = "Class Statistics",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Statistics Grid
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(
-                        text = "Class Statistics",
-                        style = MaterialTheme.typography.titleMedium
+                    StatisticItem(
+                        title = "Students",
+                        value = state.totalStudents.toString(),
+                        icon = R.drawable.ic_students
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Statistics Grid
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        StatisticItem(
-                            title = "Students",
-                            value = state.totalStudents.toString(),
-                            icon = R.drawable.ic_students
-                        )
-                        StatisticItem(
-                            title = "Assessments",
-                            value = state.assessmentEvents.size.toString(),
-                            icon = R.drawable.ic_edit
-                        )
-                        StatisticItem(
-                            title = "Avg Score",
-                            value = "${state.classAverage}%",
-                            icon = R.drawable.ic_information
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.padding(vertical = 8.dp))
+                    StatisticItem(
+                        title = "Assessments",
+                        value = state.assessmentEvents.size.toString(),
+                        icon = R.drawable.ic_edit
+                    )
+                    StatisticItem(
+                        title = "Avg Score",
+                        value = "${state.classAverage}%",
+                        icon = R.drawable.ic_information
+                    )
                 }
+
+                Spacer(modifier = Modifier.padding(vertical = 8.dp))
             }
+        }
 
-            ElevatedCard(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+        ElevatedCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
             ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = "Class Performance Trend",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Chart(
-                        chart = lineChart(),
-                        model = entryModelOf(*performanceTrendData),
-                        startAxis = rememberStartAxis(
-                            title = "Avg Score",
-                            valueFormatter = { value, _ -> value.toInt().toString() },
-                            itemPlacer = AxisItemPlacer.Vertical.default(
-                                maxItemCount = 6
-                            )
-                        ),
-                        bottomAxis = rememberBottomAxis(
-                            title = "Month",
-                            valueFormatter = { value, _ ->
-                                Month.of(value.toInt())
-                                    .getDisplayName(TextStyle.SHORT, Locale.getDefault())
-                            }
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                    )
-                }
+                Text(
+                    text = "Class Performance Trend",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Chart(
+                    chart = lineChart(),
+                    model = entryModelOf(*performanceTrendData),
+                    startAxis = rememberStartAxis(
+                        title = "Avg Score",
+                        valueFormatter = { value, _ -> value.toInt().toString() },
+                        itemPlacer = AxisItemPlacer.Vertical.default(
+                            maxItemCount = 6
+                        )
+                    ),
+                    bottomAxis = rememberBottomAxis(
+                        title = "Month",
+                        valueFormatter = { value, _ ->
+                            Month.of(value.toInt())
+                                .getDisplayName(TextStyle.SHORT, Locale.getDefault())
+                        }
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                )
             }
+        }
 
-            ElevatedCard(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+        ElevatedCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
             ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = "Assessment Categories",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Chart(
-                        chart = columnChart(),
-                        model = entryModelOf(*categoryDistributionData),
-                        startAxis = rememberStartAxis(
-                            title = "Score",
-                            valueFormatter = { value, _ -> value.toInt().toString() },
-                            itemPlacer = AxisItemPlacer.Vertical.default(
-                                maxItemCount = 6
-                            )
-                        ),
-                        bottomAxis = rememberBottomAxis(
-                            title = "Category",
-                            valueFormatter = { value, _ -> categories[value.toInt()] }
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                    )
-                }
+                Text(
+                    text = "Assessment Categories",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Chart(
+                    chart = columnChart(),
+                    model = entryModelOf(*categoryDistributionData),
+                    startAxis = rememberStartAxis(
+                        title = "Score",
+                        valueFormatter = { value, _ -> value.toInt().toString() },
+                        itemPlacer = AxisItemPlacer.Vertical.default(
+                            maxItemCount = 6
+                        )
+                    ),
+                    bottomAxis = rememberBottomAxis(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                )
             }
         }
     }
@@ -191,47 +166,7 @@ private fun ClassOverviewPreview() {
         ClassOverviewTab(
             state = ClassRoomState(
                 totalStudents = 30,
-                assessmentEvents = listOf(
-                    AssessmentEventUi(
-                        id = 1,
-                        categoryId = 1,
-                        classId = 1,
-                        name = "Assessment Name",
-                        categoryName = "Monthly",
-                        createdTime = "2022-07-01 08:00:00",
-                        eventDate = "2022-07-01 08:00:00",
-                        totalAssessment = 10,
-                        lastModifiedTime = "2022-07-01 08:00:00",
-                        isInProgress = false,
-                        completionProgress = 0.5f
-                    ),
-                    AssessmentEventUi(
-                        id = 2,
-                        categoryId = 1,
-                        classId = 1,
-                        name = "Assessment Name",
-                        categoryName = "Mid",
-                        createdTime = "2022-07-01 08:00:00",
-                        eventDate = "2022-07-01 08:00:00",
-                        totalAssessment = 10,
-                        lastModifiedTime = "2022-07-01 08:00:00",
-                        isInProgress = false,
-                        completionProgress = 0.5f
-                    ),
-                    AssessmentEventUi(
-                        id = 3,
-                        categoryId = 1,
-                        classId = 1,
-                        name = "Assessment Name",
-                        categoryName = "Final",
-                        createdTime = "2022-07-01 08:00:00",
-                        eventDate = "2022-07-01 08:00:00",
-                        totalAssessment = 10,
-                        lastModifiedTime = "2022-07-01 08:00:00",
-                        isInProgress = false,
-                        completionProgress = 0.5f
-                    )
-                ),
+                assessmentEvents = emptyList(),
                 classAverage = 80.0,
                 performanceTrendData = listOf(
                     FloatEntry(1f, 50f),
@@ -242,9 +177,10 @@ private fun ClassOverviewPreview() {
                     FloatEntry(6f, 40f),
                 ),
                 categoryDistributionData = listOf(
-                    FloatEntry(0f, 20f),
-                    FloatEntry(1f, 30f),
-                    FloatEntry(2f, 50f),
+                    FloatEntry(1f, 20f),
+                    FloatEntry(2f, 30f),
+                    FloatEntry(3f, 50f),
+                    FloatEntry(4f, 40f),
                 )
             )
         )

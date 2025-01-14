@@ -1,13 +1,13 @@
 package id.usecase.assessment.presentation.screens.class_room.detail.analytics
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,70 +25,71 @@ import id.usecase.designsystem.EvaluasiTheme
 
 @Composable
 fun AnalyticsTab(state: ClassRoomState) {
-    LazyColumn(
+    val scrollState = rememberScrollState()
+    Column(
         modifier = Modifier
-            .fillMaxSize(),
-        contentPadding = PaddingValues(16.dp)
+            .fillMaxSize()
+            .padding(16.dp)
+            .verticalScroll(scrollState)
     ) {
-        item {
-
-            // Performance Distribution Card
-            ElevatedCard(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+        // Performance Distribution Card
+        ElevatedCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
             ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = "Performance Distribution",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Performance Distribution",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Spacer(modifier = Modifier.height(16.dp))
 
-                    PerformanceDistributionChart(state.performanceDistribution)
-                }
-            }
-
-            // Student Progress Card
-            ElevatedCard(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = "Student Progress",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    StudentProgressList(state.studentProgress)
-                }
-            }
-
-            // Category Analysis Card
-            ElevatedCard(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = "Category Analysis",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    CategoryAnalysisChart(state.categoryAnalysis)
-                }
+                PerformanceDistributionChart(state.performanceDistribution)
             }
         }
+
+        // Student Progress Card
+        ElevatedCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    text = "Student Progress",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                StudentProgressList(state.studentProgress)
+            }
+        }
+
+        // Category Analysis Card
+        ElevatedCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    text = "Category Analysis",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                CategoryAnalysisChart(state.categoryAnalysis)
+            }
+        }
+
+        Spacer(modifier = Modifier.padding(vertical = 8.dp))
     }
 }
 
