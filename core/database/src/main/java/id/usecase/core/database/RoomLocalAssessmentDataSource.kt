@@ -1,11 +1,15 @@
 package id.usecase.core.database
 
+import id.usecase.core.database.dao.AnalyticsDao
 import id.usecase.core.database.dao.AssessmentDao
 import id.usecase.core.database.dao.CategoryDao
 import id.usecase.core.database.dao.ClassRoomDao
 import id.usecase.core.database.dao.EventDao
 import id.usecase.core.database.dao.StudentDao
 import id.usecase.core.domain.assessment.LocalAssessmentDataSource
+import id.usecase.core.domain.assessment.model.analytics.CategoryScore
+import id.usecase.core.domain.assessment.model.analytics.MonthlyScore
+import id.usecase.core.domain.assessment.model.analytics.PerformanceScore
 import id.usecase.core.domain.assessment.model.assessment.Assessment
 import id.usecase.core.domain.assessment.model.assessment.category.Category
 import id.usecase.core.domain.assessment.model.assessment.event.Event
@@ -21,7 +25,8 @@ class RoomLocalAssessmentDataSource(
     private val eventDao: EventDao,
     private val assessmentDao: AssessmentDao,
     private val studentDao: StudentDao,
-    private val dispatcher: CoroutineDispatcher
+    private val dispatcher: CoroutineDispatcher,
+    private val analyticsDao: AnalyticsDao
 ) : LocalAssessmentDataSource {
     override suspend fun upsertClassRoom(classRoom: ClassRoom): ClassRoom? {
         return withContext(dispatcher) {
@@ -220,6 +225,27 @@ class RoomLocalAssessmentDataSource(
     override suspend fun deleteAssessment(assessment: Assessment) {
         withContext(dispatcher) {
             assessmentDao.delete(assessment.toEntity())
+        }
+    }
+
+    override suspend fun getPerformanceTrendByClassRoom(classRoomId: Int): List<MonthlyScore> {
+        return withContext(dispatcher) {
+            val result = analyticsDao.getPerformanceTrendByClassRoom(classRoomId)
+            result.map { it.toDomainForm() }
+        }
+    }
+
+    override suspend fun getCategoryDistributionByClassRoom(classRoomId: Int): List<CategoryScore> {
+        return withContext(dispatcher) {
+            val result = analyticsDao.getCategoryDistributionByClassRoom(classRoomId)
+            result.map { it.toDomainForm() }
+        }
+    }
+
+    override suspend fun getPerformanceDistributionByClassRoom(classRoomId: Int): List<PerformanceScore> {
+        return withContext(dispatcher) {
+            val result = analyticsDao.getPerformanceDistributionByClassRoom(classRoomId)
+            result.map { it.toDomainForm() }
         }
     }
 }

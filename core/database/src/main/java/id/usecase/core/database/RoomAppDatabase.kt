@@ -3,6 +3,7 @@ package id.usecase.core.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import id.usecase.core.database.dao.AnalyticsDao
 import id.usecase.core.database.dao.AssessmentDao
 import id.usecase.core.database.dao.CategoryDao
 import id.usecase.core.database.dao.ClassRoomDao
@@ -26,10 +27,11 @@ import id.usecase.core.database.type_converters.IntListConverter
     version = 1
 )
 @TypeConverters(IntListConverter::class)
-abstract class RoomAppDatabase: RoomDatabase() {
+abstract class RoomAppDatabase : RoomDatabase() {
     abstract fun eventDao(): EventDao
     abstract fun assessmentDao(): AssessmentDao
     abstract fun studentDao(): StudentDao
     abstract fun categoryDao(): CategoryDao
     abstract fun classRoomDao(): ClassRoomDao
+    abstract fun analyticsDao(): AnalyticsDao
 }

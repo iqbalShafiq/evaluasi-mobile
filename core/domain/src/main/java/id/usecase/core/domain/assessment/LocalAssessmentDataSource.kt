@@ -1,5 +1,8 @@
 package id.usecase.core.domain.assessment
 
+import id.usecase.core.domain.assessment.model.analytics.CategoryScore
+import id.usecase.core.domain.assessment.model.analytics.MonthlyScore
+import id.usecase.core.domain.assessment.model.analytics.PerformanceScore
 import id.usecase.core.domain.assessment.model.assessment.Assessment
 import id.usecase.core.domain.assessment.model.assessment.category.Category
 import id.usecase.core.domain.assessment.model.assessment.event.Event
@@ -36,4 +39,8 @@ interface LocalAssessmentDataSource {
     suspend fun getAssessmentById(assessmentId: Int): Assessment?
     suspend fun getAverageScoreByStudentId(studentId: Int): Double
     suspend fun deleteAssessment(assessment: Assessment)
+
+    suspend fun getPerformanceTrendByClassRoom(classRoomId: Int): List<MonthlyScore>
+    suspend fun getCategoryDistributionByClassRoom(classRoomId: Int): List<CategoryScore>
+    suspend fun getPerformanceDistributionByClassRoom(classRoomId: Int): List<PerformanceScore>
 }

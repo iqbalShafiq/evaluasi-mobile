@@ -5,11 +5,17 @@ import id.usecase.core.database.entities.CategoryEntity
 import id.usecase.core.database.entities.ClassRoomEntity
 import id.usecase.core.database.entities.EventEntity
 import id.usecase.core.database.entities.StudentEntity
+import id.usecase.core.domain.assessment.model.analytics.CategoryScore
+import id.usecase.core.domain.assessment.model.analytics.MonthlyScore
+import id.usecase.core.domain.assessment.model.analytics.PerformanceScore
 import id.usecase.core.domain.assessment.model.assessment.Assessment
 import id.usecase.core.domain.assessment.model.assessment.category.Category
 import id.usecase.core.domain.assessment.model.assessment.event.Event
 import id.usecase.core.domain.assessment.model.classroom.ClassRoom
 import id.usecase.core.domain.assessment.model.student.Student
+import id.usecase.core.database.model.analytics.CategoryScore as CategoryScoreDb
+import id.usecase.core.database.model.analytics.MonthlyScore as MonthlyScoreDb
+import id.usecase.core.database.model.analytics.PerformanceScore as PerformanceScoreDb
 
 fun StudentEntity.toDomainForm() = Student(
     id = id,
@@ -105,4 +111,19 @@ fun Assessment.toEntity() = AssessmentEntity(
     eventId = eventId,
     createdTime = createdTime,
     lastModifiedTime = lastModifiedTime
+)
+
+fun MonthlyScoreDb.toDomainForm() = MonthlyScore(
+    month = month,
+    averageScore = averageScore
+)
+
+fun CategoryScoreDb.toDomainForm() = CategoryScore(
+    categoryName = categoryName,
+    averageScore = averageScore
+)
+
+fun PerformanceScoreDb.toDomainForm() = PerformanceScore(
+    performanceLevel = performanceLevel,
+    averageScore = averageScore
 )
