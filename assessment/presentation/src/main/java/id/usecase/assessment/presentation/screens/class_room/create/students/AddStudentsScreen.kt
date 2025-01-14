@@ -8,7 +8,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -139,7 +138,7 @@ fun AddStudentsScreen(
         topBar = {
             EvaluasiTopAppBar(
                 title = "Add Students",
-                navigationIcon = ImageVector.vectorResource(R.drawable.rounded_arrow_back),
+                navigationIcon = ImageVector.vectorResource(R.drawable.ic_rounded_arrow_back),
                 navigationIconTint = MaterialTheme.colorScheme.onSurface,
                 onNavigationClicked = onBackPressed,
                 trailingIcons = listOf(
@@ -149,7 +148,7 @@ fun AddStudentsScreen(
                         onClick = onClearStudentPressed
                     ),
                     ActionItem(
-                        icon = ImageVector.vectorResource(R.drawable.content_paste_24px),
+                        icon = ImageVector.vectorResource(R.drawable.ic_clipboard),
                         contentDescription = "Clipboard",
                         onClick = onPastePressed
                     ),

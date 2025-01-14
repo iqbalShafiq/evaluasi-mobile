@@ -151,7 +151,7 @@ fun AssessmentScreen(
             EvaluasiTopAppBar(
                 modifier = Modifier.padding(horizontal = 8.dp),
                 title = stringResource(R.string.create_assessment),
-                navigationIcon = ImageVector.vectorResource(R.drawable.rounded_arrow_back),
+                navigationIcon = ImageVector.vectorResource(R.drawable.ic_rounded_arrow_back),
                 onNavigationClicked = onBackPressed
             )
         },

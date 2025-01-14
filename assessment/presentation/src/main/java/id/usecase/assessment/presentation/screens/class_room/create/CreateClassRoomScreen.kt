@@ -179,7 +179,7 @@ fun CreateClassRoomScreen(
             EvaluasiTopAppBar(
                 modifier = Modifier.fillMaxWidth(),
                 title = if (state.isEditing) "Edit Class Room" else "Create Class Room",
-                navigationIcon = ImageVector.vectorResource(R.drawable.rounded_arrow_back),
+                navigationIcon = ImageVector.vectorResource(R.drawable.ic_rounded_arrow_back),
                 navigationIconTint = MaterialTheme.colorScheme.onSurface,
                 onNavigationClicked = onBackPressed
             )

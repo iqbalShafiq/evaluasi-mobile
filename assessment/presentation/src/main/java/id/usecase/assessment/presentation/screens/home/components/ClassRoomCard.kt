@@ -164,7 +164,7 @@ fun ClassRoomCard(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                imageVector = ImageVector.vectorResource(id = R.drawable.history),
+                                imageVector = ImageVector.vectorResource(id = R.drawable.ic_history),
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(16.dp)
