@@ -41,7 +41,7 @@ import id.usecase.designsystem.components.app_bar.EvaluasiTopAppBar
 import id.usecase.designsystem.components.button.ButtonType
 import id.usecase.designsystem.components.button.EvaluasiButton
 import id.usecase.designsystem.components.dialog.StandardAlertDialog
-import id.usecase.designsystem.components.dialog.StandardDatePicker
+import id.usecase.designsystem.components.dialog.EvaluasiDatePicker
 import id.usecase.designsystem.components.dialog.StandardLoadingDialog
 import id.usecase.designsystem.components.text_field.EvaluasiTextField
 import org.koin.androidx.compose.koinViewModel
@@ -74,7 +74,7 @@ fun AssessmentScreenRoot(
 
     when {
         showStartDatePicker.value -> {
-            StandardDatePicker(
+            EvaluasiDatePicker(
                 onDismiss = {
                     showStartDatePicker.value = false
                 },

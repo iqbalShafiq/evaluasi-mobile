@@ -19,10 +19,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.outlined.AccountCircle
-import androidx.compose.material.icons.outlined.DateRange
-import androidx.compose.material.icons.outlined.MailOutline
+import androidx.compose.material.icons.rounded.DateRange
+import androidx.compose.material.icons.rounded.Email
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
@@ -31,7 +29,6 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -40,10 +37,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,8 +54,9 @@ import id.usecase.core.presentation.ui.ObserveAsEvents
 import id.usecase.designsystem.EvaluasiTheme
 import id.usecase.designsystem.components.app_bar.EvaluasiTopAppBar
 import id.usecase.designsystem.components.dialog.StandardAlertDialog
-import id.usecase.designsystem.components.dialog.StandardDatePicker
+import id.usecase.designsystem.components.dialog.EvaluasiDatePicker
 import id.usecase.designsystem.components.dialog.StandardLoadingDialog
+import id.usecase.designsystem.components.text_field.EvaluasiTextField
 import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
 import java.time.DayOfWeek
@@ -71,16 +71,27 @@ fun CreateClassRoomScreenRoot(
     viewModel: CreateClassRoomViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val openAlertDialog = remember { mutableStateOf(false) }
-    val openLoadingDialog = remember { mutableStateOf(false) }
-    val errorMessage = remember { mutableStateOf("") }
-    val showStartDatePicker = remember { mutableStateOf(false) }
+    var openAlertDialog by remember { mutableStateOf(false) }
+    var openLoadingDialog by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
+    var showStartDatePicker by remember { mutableStateOf(false) }
+
+    // Load class room detail
+    LaunchedEffect(key1 = Unit) {
+        if (classRoomId != null) {
+            viewModel.onAction(
+                action = CreateClassRoomAction.LoadClassRoomDetail(
+                    classRoomId = classRoomId
+                )
+            )
+        }
+    }
 
     when {
-        showStartDatePicker.value -> {
-            StandardDatePicker(
+        showStartDatePicker -> {
+            EvaluasiDatePicker(
                 onDismiss = {
-                    showStartDatePicker.value = false
+                    showStartDatePicker = false
                 },
                 onDateSelected = {
                     viewModel.onAction(
@@ -95,54 +106,42 @@ fun CreateClassRoomScreenRoot(
                             )
                         )
                     )
-                    showStartDatePicker.value = false
+                    showStartDatePicker = false
                 }
             )
         }
     }
 
-    LaunchedEffect(key1 = Unit) {
-        if (classRoomId != null) {
-            viewModel.onAction(
-                action = CreateClassRoomAction.LoadClassRoomDetail(
-                    classRoomId = classRoomId
-                )
-            )
-        }
-    }
-
-    ObserveAsEvents(
-        flow = viewModel.events
-    ) { event ->
+    ObserveAsEvents(flow = viewModel.events) { event ->
         when (event) {
             is CreateClassRoomEvent.OnErrorOccurred -> {
-                openAlertDialog.value = true
-                errorMessage.value = event.message
+                openAlertDialog = true
+                errorMessage = event.message
             }
 
             is CreateClassRoomEvent.OnClassRoomCreated -> {
-                openLoadingDialog.value = false
+                openLoadingDialog = false
                 onClassHasCreated(event.classRoomUi)
             }
         }
     }
 
-    if (openAlertDialog.value) {
+    if (openAlertDialog) {
         StandardAlertDialog(
             onDismissRequest = {
-                openAlertDialog.value = false
+                openAlertDialog = false
             },
             onConfirmation = {
-                openAlertDialog.value = false
+                openAlertDialog = false
             },
             dialogTitle = "Error",
-            dialogText = errorMessage.value,
+            dialogText = errorMessage,
             icon = ImageVector.vectorResource(id.usecase.designsystem.R.drawable.ic_test_icon),
             iconDescription = "Error icon"
         )
     }
 
-    if (openLoadingDialog.value) {
+    if (openLoadingDialog) {
         StandardLoadingDialog()
     }
 
@@ -151,10 +150,10 @@ fun CreateClassRoomScreenRoot(
         onBackPressed = onBackPressed,
         onCreatePressed = {
             viewModel.onAction(CreateClassRoomAction.CreateClassRoom)
-            openLoadingDialog.value = true
+            openLoadingDialog = true
         },
         showStartDatePicker = {
-            showStartDatePicker.value = true
+            showStartDatePicker = true
         },
         state = state,
         onAction = viewModel::onAction
@@ -216,10 +215,9 @@ fun CreateClassRoomScreen(
 
                             Spacer(modifier = Modifier.height(8.dp))
 
-                            OutlinedTextField(
+                            EvaluasiTextField(
                                 modifier = Modifier.fillMaxWidth(),
                                 value = state.classRoomName,
-                                shape = MaterialTheme.shapes.small,
                                 onValueChange = {
                                     onAction(
                                         CreateClassRoomAction.UpdateTextField(
@@ -229,23 +227,21 @@ fun CreateClassRoomScreen(
                                         )
                                     )
                                 },
-                                label = { Text(text = "Class Name") },
-                                placeholder = { Text("e.g., Class 10A Mathematics") },
+                                label = "Class Name",
+                                placeHolder = "e.g., Class 10A Mathematics",
                                 leadingIcon = {
                                     Icon(
-                                        imageVector = Icons.Outlined.AccountCircle,
+                                        imageVector = ImageVector.vectorResource(R.drawable.ic_school),
                                         contentDescription = null
                                     )
-                                },
-                                singleLine = true
+                                }
                             )
 
-                            Spacer(modifier = Modifier.height(4.dp))
+                            Spacer(modifier = Modifier.height(8.dp))
 
-                            OutlinedTextField(
+                            EvaluasiTextField(
                                 modifier = Modifier.fillMaxWidth(),
                                 value = state.subject,
-                                shape = MaterialTheme.shapes.small,
                                 onValueChange = {
                                     onAction(
                                         CreateClassRoomAction.UpdateTextField(
@@ -255,15 +251,14 @@ fun CreateClassRoomScreen(
                                         )
                                     )
                                 },
-                                label = { Text("Subject") },
-                                placeholder = { Text("e.g., Mathematics") },
+                                label = "Subject",
+                                placeHolder = "e.g., Mathematics",
                                 leadingIcon = {
                                     Icon(
-                                        imageVector = Icons.Outlined.MailOutline,
+                                        imageVector = Icons.Rounded.Email,
                                         contentDescription = null
                                     )
-                                },
-                                singleLine = true
+                                }
                             )
                         }
                     }
@@ -287,10 +282,9 @@ fun CreateClassRoomScreen(
 
                             Spacer(modifier = Modifier.height(8.dp))
 
-                            OutlinedTextField(
+                            EvaluasiTextField(
                                 modifier = Modifier.fillMaxWidth(),
                                 value = state.startDate,
-                                shape = MaterialTheme.shapes.small,
                                 onValueChange = {
                                     onAction(
                                         CreateClassRoomAction.UpdateTextField(
@@ -300,45 +294,34 @@ fun CreateClassRoomScreen(
                                         )
                                     )
                                 },
-                                label = { Text("Start Date") },
+                                label = "Start Date",
                                 readOnly = true,
                                 trailingIcon = {
                                     IconButton(onClick = showStartDatePicker) {
                                         Icon(
-                                            imageVector = Icons.Filled.DateRange,
+                                            imageVector = Icons.Rounded.DateRange,
                                             contentDescription = "Select date"
                                         )
                                     }
-                                },
-                                singleLine = true
+                                }
                             )
 
-                            Spacer(modifier = Modifier.height(4.dp))
+                            Spacer(modifier = Modifier.height(8.dp))
 
-                            OutlinedTextField(
+                            EvaluasiTextField(
                                 modifier = Modifier.fillMaxWidth(),
-                                value = state.endDate,
-                                shape = MaterialTheme.shapes.small,
+                                value = state.longPeriod,
                                 onValueChange = {
                                     onAction(
                                         CreateClassRoomAction.UpdateTextField(
                                             state = state.copy(
-                                                endDate = it
+                                                longPeriod = it
                                             )
                                         )
                                     )
                                 },
-                                label = { Text("End Date") },
-                                readOnly = true,
-                                trailingIcon = {
-                                    IconButton(onClick = showStartDatePicker) {
-                                        Icon(
-                                            imageVector = Icons.Filled.DateRange,
-                                            contentDescription = "Select date"
-                                        )
-                                    }
-                                },
-                                singleLine = true
+                                label = "Long Period",
+                                keyboardType = KeyboardType.Number,
                             )
                         }
                     }
@@ -363,10 +346,9 @@ fun CreateClassRoomScreen(
                             Spacer(modifier = Modifier.height(8.dp))
 
                             // Class Description
-                            OutlinedTextField(
+                            EvaluasiTextField(
                                 modifier = Modifier.fillMaxWidth(),
                                 value = state.description,
-                                shape = MaterialTheme.shapes.small,
                                 onValueChange = {
                                     onAction(
                                         CreateClassRoomAction.UpdateTextField(
@@ -376,31 +358,39 @@ fun CreateClassRoomScreen(
                                         )
                                     )
                                 },
-                                label = { Text("Class Description") },
-                                placeholder = { Text("Add a description for your class") },
+                                label = "Class Description",
+                                placeHolder = "Add a description for your class",
                                 minLines = 3,
                                 maxLines = 5
                             )
 
                             Spacer(modifier = Modifier.height(12.dp))
 
-                            // Meeting Schedule
+                            // Class Schedule
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "Meeting Schedule",
+                                    text = "Class Schedule",
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                                 Switch(
-                                    checked = state.hasMeetingSchedule,
-                                    onCheckedChange = { /* update value */ }
+                                    checked = state.hasSchedule,
+                                    onCheckedChange = {
+                                        onAction(
+                                            CreateClassRoomAction.UpdateTextField(
+                                                state = state.copy(
+                                                    hasSchedule = it
+                                                )
+                                            )
+                                        )
+                                    }
                                 )
                             }
 
-                            AnimatedVisibility(visible = state.hasMeetingSchedule) {
+                            AnimatedVisibility(visible = state.hasSchedule) {
                                 Column {
                                     Spacer(modifier = Modifier.height(8.dp))
 
@@ -413,46 +403,22 @@ fun CreateClassRoomScreen(
                                         DayOfWeek.entries.forEach { day ->
                                             FilterChip(
                                                 selected = day in state.selectedDays,
-                                                onClick = { /* update selected days */ },
+                                                onClick = {
+                                                    onAction(
+                                                        CreateClassRoomAction.UpdateTextField(
+                                                            state = state.copy(
+                                                                selectedDays = if (day in state.selectedDays) {
+                                                                    state.selectedDays - day
+                                                                } else {
+                                                                    state.selectedDays + day
+                                                                }
+                                                            )
+                                                        )
+                                                    )
+                                                },
                                                 label = { Text(day.name.substring(0, 3)) }
                                             )
                                         }
-                                    }
-
-                                    Spacer(modifier = Modifier.height(8.dp))
-
-                                    // Meeting Time
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                    ) {
-                                        OutlinedTextField(
-                                            modifier = Modifier.weight(1f),
-                                            value = state.startTime,
-                                            onValueChange = { },
-                                            label = { Text("Start Time") },
-                                            readOnly = true,
-                                            leadingIcon = {
-                                                Icon(
-                                                    imageVector = Icons.Outlined.DateRange,
-                                                    contentDescription = null
-                                                )
-                                            }
-                                        )
-
-                                        OutlinedTextField(
-                                            modifier = Modifier.weight(1f),
-                                            value = state.endTime,
-                                            onValueChange = { },
-                                            label = { Text("End Time") },
-                                            readOnly = true,
-                                            leadingIcon = {
-                                                Icon(
-                                                    imageVector = Icons.Outlined.DateRange,
-                                                    contentDescription = null
-                                                )
-                                            }
-                                        )
                                     }
                                 }
                             }
@@ -493,16 +459,31 @@ fun CreateClassRoomScreen(
 @Composable
 private fun CreateClassRoomPreview() {
     EvaluasiTheme {
-        val showStartDatePicker = remember { mutableStateOf(false) }
+        var showStartDatePicker by remember { mutableStateOf(false) }
+        var state by remember {
+            mutableStateOf(
+                CreateClassRoomState(
+                    classRoomName = TextFieldValue(),
+                    subject = TextFieldValue(),
+                    startDate = TextFieldValue(),
+                    students = listOf(
+                        AddStudentItemState(
+                            identifier = TextFieldState(),
+                            name = TextFieldState()
+                        )
+                    )
+                )
+            )
+        }
 
         when {
-            showStartDatePicker.value -> {
-                StandardDatePicker(
+            showStartDatePicker -> {
+                EvaluasiDatePicker(
                     onDismiss = {
-                        showStartDatePicker.value = false
+                        showStartDatePicker = false
                     },
                     onDateSelected = {
-                        showStartDatePicker.value = false
+                        showStartDatePicker = false
                     }
                 )
             }
@@ -511,21 +492,19 @@ private fun CreateClassRoomPreview() {
         CreateClassRoomScreen(
             onBackPressed = { },
             onCreatePressed = { },
-            state = CreateClassRoomState(
-                classRoomName = TextFieldValue(),
-                subject = TextFieldValue(),
-                startDate = TextFieldValue(),
-                students = listOf(
-                    AddStudentItemState(
-                        identifier = TextFieldState(),
-                        name = TextFieldState()
-                    )
-                )
-            ),
+            state = state,
             showStartDatePicker = {
-                showStartDatePicker.value = true
+                showStartDatePicker = true
             },
-            onAction = { }
+            onAction = { action ->
+                when (action) {
+                    CreateClassRoomAction.CreateClassRoom -> TODO()
+                    is CreateClassRoomAction.LoadClassRoomDetail -> TODO()
+                    is CreateClassRoomAction.UpdateTextField -> {
+                        state = action.state
+                    }
+                }
+            }
         )
     }
 }

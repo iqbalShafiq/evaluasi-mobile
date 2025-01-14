@@ -17,10 +17,9 @@ class ClassRoomRepositoryImpl(
     override suspend fun upsertClassRoom(classRoom: ClassRoom): DataResult<ClassRoom?> {
         return withContext(dispatcher) {
             try {
-                val classRoom = dataSource.upsertClassRoom(classRoom)
-                return@withContext DataResult.Success(classRoom)
+                val newClassRoom = dataSource.upsertClassRoom(classRoom)
+                return@withContext DataResult.Success(newClassRoom)
             } catch (e: Exception) {
-                throw e
                 return@withContext DataResult.Error(e)
             }
         }
@@ -73,7 +72,6 @@ class ClassRoomRepositoryImpl(
                 dataSource.deleteClassRoom(classRoom)
                 return@withContext DataResult.Success(Unit)
             } catch (e: Exception) {
-                throw e
                 return@withContext DataResult.Error(e)
             }
         }

@@ -10,14 +10,12 @@ data class CreateClassRoomState(
     val classRoomName: TextFieldValue = TextFieldValue(),
     val subject: TextFieldValue = TextFieldValue(),
     val startDate: TextFieldValue = TextFieldValue(),
-    val endDate: TextFieldValue = TextFieldValue(),
+    val longPeriod: TextFieldValue = TextFieldValue(),
     val description: TextFieldValue = TextFieldValue(),
     val students: List<AddStudentItemState> = emptyList(),
-    val hasMeetingSchedule: Boolean = false,
-    val selectedDays: Set<DayOfWeek> = emptySet(),
-    val startTime: String = "",
-    val endTime: String = "",
     val isEditing: Boolean = false,
     val isLoading: Boolean = false,
-    val isFormValid: Boolean = false
+    val isFormValid: Boolean = false,
+    val hasSchedule: Boolean = false,
+    val selectedDays: Set<DayOfWeek> = emptySet()
 )

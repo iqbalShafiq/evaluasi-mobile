@@ -39,8 +39,23 @@ class CreateClassRoomViewModel(
     fun onAction(action: CreateClassRoomAction) {
         when (action) {
             is CreateClassRoomAction.LoadClassRoomDetail -> loadClassRoomDetail(action.classRoomId)
+            is CreateClassRoomAction.UpdateTextField -> {
+                _state.update { action.state }
+                if (
+                    _state.value.classRoomName.text.isNotEmpty() &&
+                    _state.value.subject.text.isNotEmpty() &&
+                    _state.value.startDate.text.isNotEmpty()
+                ) {
+                    _state.update {
+                        it.copy(isFormValid = true)
+                    }
+                } else {
+                    _state.update {
+                        it.copy(isFormValid = false)
+                    }
+                }
+            }
             CreateClassRoomAction.CreateClassRoom -> createClassRoom()
-            is CreateClassRoomAction.UpdateTextField -> _state.update { action.state }
         }
     }
 
@@ -77,9 +92,12 @@ class CreateClassRoomViewModel(
                                 startDate = TextFieldValue(
                                     text = result.data?.startPeriod.toString()
                                 ),
-                                endDate = TextFieldValue(
-                                    text = result.data?.endPeriod?.toString() ?: ""
-                                )
+                                longPeriod = TextFieldValue(
+                                    text = result.data?.longPeriod?.toString() ?: ""
+                                ),
+                                description = TextFieldValue(
+                                    text = result.data?.description ?: ""
+                                ),
                             )
                         }
 
@@ -103,26 +121,24 @@ class CreateClassRoomViewModel(
 
     private fun createClassRoom() {
         viewModelScope.launch(dispatcher) {
-            _state.value = _state.value.copy(isLoading = true)
             val result = repository.upsertClassRoom(
                 ClassRoom(
                     id = _state.value.classRoom?.id ?: 0,
                     name = _state.value.classRoomName.text,
                     subject = _state.value.subject.text,
+                    description = _state.value.description.text,
                     startPeriod = LocalDate
                         .parse(_state.value.startDate.text)
                         .atTime(0, 0, 0, 0)
                         .toEpochSecond(ZoneOffset.UTC),
-                    endPeriod = if (_state.value.endDate.text.isNotEmpty()) LocalDate
-                        .parse(_state.value.endDate.text)
-                        .atTime(23, 59, 59)
-                        .toEpochSecond(ZoneOffset.UTC) else null,
+                    longPeriod = _state.value.longPeriod.text.toLongOrNull(),
                     createdTime = LocalDateTime
                         .now()
                         .toEpochSecond(ZoneOffset.UTC),
                     lastModifiedTime = LocalDateTime
                         .now()
-                        .toEpochSecond(ZoneOffset.UTC)
+                        .toEpochSecond(ZoneOffset.UTC),
+                    schedule = _state.value.selectedDays.map { it.value }
                 )
             )
 
