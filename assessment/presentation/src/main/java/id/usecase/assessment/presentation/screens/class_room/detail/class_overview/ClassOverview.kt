@@ -51,8 +51,7 @@ fun ClassOverviewTab(
 ) {
     val categories by remember {
         mutableStateOf(
-            state
-                .assessmentEvents
+            state.assessmentEvents
                 .map { it.categoryName }
                 .distinct()
         )
@@ -60,9 +59,9 @@ fun ClassOverviewTab(
 
     val performanceTrendData by remember {
         mutableStateOf(
-            state.performanceTrendData.map {
-                Pair(it.x, it.y)
-            }.toTypedArray()
+            state.performanceTrendData
+                .map { Pair(it.x, it.y) }
+                .toTypedArray()
         )
     }
 
@@ -166,8 +165,10 @@ fun ClassOverviewTab(
                         bottomAxis = rememberBottomAxis(
                             title = "Month",
                             valueFormatter = { value, _ ->
-                                Month.of(value.toInt())
-                                    .getDisplayName(TextStyle.SHORT, Locale.getDefault())
+                                if (value in 1f..12f) {
+                                    Month.of(value.toInt())
+                                        .getDisplayName(TextStyle.SHORT, Locale.getDefault())
+                                } else ""
                             }
                         ),
                     )

@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.patrykandpatrick.vico.core.entry.FloatEntry
 import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.model.AssessmentEventUi
@@ -57,6 +58,7 @@ fun ClassRoomScreenRoot(
     onStudentEditClicked: () -> Unit,
     viewModel: ClassRoomViewModel = koinViewModel()
 ) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val openAlertDialog = remember { mutableStateOf(false) }
     val errorMessage = remember { mutableStateOf("") }
 
@@ -91,13 +93,13 @@ fun ClassRoomScreenRoot(
         )
     }
 
-    if (viewModel.state.value.isLoading) {
+    if (state.isLoading) {
         StandardLoadingDialog()
     }
 
     ClassRoomScreen(
         modifier = modifier,
-        state = viewModel.state.value,
+        state = state,
         onBackPressed = onBackPressed,
         onDetailAssessmentEventClicked = onDetailAssessmentEventClicked,
         onSettingClicked = onSettingClicked,
