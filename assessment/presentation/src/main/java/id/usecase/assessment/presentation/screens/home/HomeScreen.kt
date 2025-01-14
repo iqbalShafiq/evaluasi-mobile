@@ -66,7 +66,7 @@ fun HomeScreenRoot(
     val state by homeViewModel.state.collectAsStateWithLifecycle()
 
     // Error dialog state
-    val errorMessage = remember { mutableStateOf<String?>(null) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
     // Observe events
     ObserveAsEvents(
@@ -74,7 +74,7 @@ fun HomeScreenRoot(
     ) { event ->
         when (event) {
             is HomeEvent.OnErrorOccurred -> {
-                errorMessage.value = event.error.message ?: "An error occurred"
+                errorMessage = event.error.message ?: "An error occurred"
             }
         }
     }
@@ -82,7 +82,7 @@ fun HomeScreenRoot(
     // Render home screen
     HomeScreen(
         modifier = Modifier.fillMaxSize(),
-        errorMessage = errorMessage.value,
+        errorMessage = errorMessage,
         state = state,
         classRoomList = state.classRooms,
         onCreateClassRoomClicked = onCreateClassRoomClicked,
