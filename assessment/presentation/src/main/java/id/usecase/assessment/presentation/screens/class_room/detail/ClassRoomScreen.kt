@@ -3,7 +3,6 @@
 package id.usecase.assessment.presentation.screens.class_room.detail
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -26,8 +25,6 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.entry.FloatEntry
 import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.model.AssessmentEventUi
@@ -50,10 +47,8 @@ fun ClassRoomScreenRoot(
     onBackPressed: () -> Unit,
     onDetailAssessmentEventClicked: (AssessmentEventUi) -> Unit,
     onSettingClicked: () -> Unit,
-    onCategoryEditClicked: () -> Unit,
     onAddAssessmentClicked: () -> Unit,
     onStudentEditClicked: () -> Unit,
-    onAlertClicked: () -> Unit,
     viewModel: ClassRoomViewModel = koinViewModel()
 ) {
     val openAlertDialog = remember { mutableStateOf(false) }
@@ -182,20 +177,6 @@ fun ClassRoomScreen(
             }
         }
     )
-}
-
-@Composable
-fun TabContent(
-    modifier: Modifier = Modifier,
-    paddingBottom: Dp = 0.dp,
-    content: @Composable () -> Unit
-) {
-    Column(
-        modifier = modifier.fillMaxSize()
-    ) {
-        content()
-        Spacer(modifier = Modifier.padding(bottom = paddingBottom + 24.dp))
-    }
 }
 
 @Preview
