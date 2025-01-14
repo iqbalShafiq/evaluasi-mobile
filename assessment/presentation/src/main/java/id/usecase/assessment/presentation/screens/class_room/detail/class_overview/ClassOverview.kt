@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
@@ -44,7 +45,10 @@ import java.time.format.TextStyle
 import java.util.Locale
 
 @Composable
-fun ClassOverviewTab(state: ClassRoomState) {
+fun ClassOverviewTab(
+    state: ClassRoomState,
+    bottomPadding: Dp = 0.dp
+) {
     val categories by remember {
         mutableStateOf(
             state
@@ -71,9 +75,12 @@ fun ClassOverviewTab(state: ClassRoomState) {
     }
 
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize(),
-        contentPadding = PaddingValues(end = 16.dp, start = 16.dp, top = 16.dp),
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(
+            end = 16.dp,
+            start = 16.dp,
+            bottom = bottomPadding
+        ),
     ) {
         item {
             ElevatedCard(

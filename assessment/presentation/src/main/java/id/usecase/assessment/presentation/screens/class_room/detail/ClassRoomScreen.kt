@@ -3,6 +3,8 @@
 package id.usecase.assessment.presentation.screens.class_room.detail
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -23,8 +25,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.entry.FloatEntry
 import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.model.AssessmentEventUi
@@ -155,10 +159,15 @@ fun ClassRoomScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding)
+                    .padding(
+                        start = innerPadding.calculateStartPadding(LocalLayoutDirection.current),
+                        top = innerPadding.calculateTopPadding(),
+                        end = innerPadding.calculateEndPadding(LocalLayoutDirection.current),
+                        bottom = innerPadding.calculateBottomPadding()
+                    )
             ) {
                 // Tab Row
-                TabRow(selectedTabIndex = selectedTab) {
+                TabRow(modifier = Modifier.padding(bottom = 8.dp), selectedTabIndex = selectedTab) {
                     tabs.forEachIndexed { index, title ->
                         Tab(
                             selected = selectedTab == index,
@@ -170,9 +179,21 @@ fun ClassRoomScreen(
 
                 // Content based on selected tab
                 when (selectedTab) {
-                    0 -> ClassOverviewTab(state)
-                    1 -> AssessmentHistoryTab(state, onDetailAssessmentEventClicked)
-                    2 -> AnalyticsTab(state)
+                    0 -> ClassOverviewTab(
+                        state = state,
+                        bottomPadding = heightInDp + 24.dp
+                    )
+
+                    1 -> AssessmentHistoryTab(
+                        state = state,
+                        onDetailAssessmentEventClicked = onDetailAssessmentEventClicked,
+                        bottomPadding = heightInDp + 24.dp
+                    )
+
+                    2 -> AnalyticsTab(
+                        state = state,
+                        bottomPadding = heightInDp + 24.dp
+                    )
                 }
             }
         }

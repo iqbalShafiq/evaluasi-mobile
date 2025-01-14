@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import id.usecase.assessment.presentation.model.CategoryAnalysis
 import id.usecase.assessment.presentation.model.StudentProgress
@@ -24,11 +25,18 @@ import id.usecase.assessment.presentation.screens.class_room.detail.analytics.co
 import id.usecase.designsystem.EvaluasiTheme
 
 @Composable
-fun AnalyticsTab(state: ClassRoomState) {
+fun AnalyticsTab(
+    state: ClassRoomState,
+    bottomPadding: Dp = 0.dp
+) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize(),
-        contentPadding = PaddingValues(16.dp)
+        contentPadding = PaddingValues(
+            start = 16.dp,
+            end = 16.dp,
+            bottom = bottomPadding
+        )
     ) {
         item {
 
