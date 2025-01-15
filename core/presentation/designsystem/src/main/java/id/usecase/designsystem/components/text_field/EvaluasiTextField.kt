@@ -17,7 +17,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 fun EvaluasiTextField(
     modifier: Modifier = Modifier,
     readOnly: Boolean = false,
-    placeHolder: String? = null,
+    placeholder: String? = null,
     leadingIcon: (@Composable () -> Unit)? = null,
     trailingIcon: (@Composable () -> Unit)? = null,
     singleLine: Boolean = true,
@@ -42,7 +42,7 @@ fun EvaluasiTextField(
         label = { Text(text = label) },
         readOnly = readOnly,
         placeholder = {
-            if (placeHolder != null) Text(text = placeHolder)
+            if (placeholder != null) Text(text = placeholder)
         },
         leadingIcon = leadingIcon,
         trailingIcon = trailingIcon,

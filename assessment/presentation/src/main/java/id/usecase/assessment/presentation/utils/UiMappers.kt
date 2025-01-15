@@ -1,10 +1,11 @@
 package id.usecase.assessment.presentation.utils
 
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.ui.text.input.TextFieldValue
 import id.usecase.assessment.presentation.model.AddStudentUi
 import id.usecase.assessment.presentation.model.AssessmentEventUi
 import id.usecase.assessment.presentation.model.ClassRoomUi
-import id.usecase.assessment.presentation.screens.class_room.create.categories.item.CategoryItemState
+import id.usecase.assessment.presentation.screens.class_room.create.categories.components.CategoryItemState
 import id.usecase.assessment.presentation.screens.class_room.create.students.item.AddStudentItemState
 import id.usecase.core.domain.assessment.model.assessment.category.Category
 import id.usecase.core.domain.assessment.model.assessment.event.Event
@@ -31,8 +32,8 @@ fun CategoryItemState.toDomainForm(classRoomId: Int) = Category(
 )
 
 fun Category.toItemState() = CategoryItemState(
-    name = TextFieldState(initialText = name),
-    partPercentage = TextFieldState(initialText = percentage.toString())
+    name = TextFieldValue(text = name),
+    partPercentage = TextFieldValue(text = percentage.toString())
 )
 
 fun AddStudentItemState.toDomainForm(classRoomId: Int) = Student(

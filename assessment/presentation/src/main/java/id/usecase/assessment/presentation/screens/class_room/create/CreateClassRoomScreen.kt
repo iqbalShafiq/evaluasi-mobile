@@ -228,7 +228,7 @@ fun CreateClassRoomScreen(
                                     )
                                 },
                                 label = "Class Name",
-                                placeHolder = "e.g., Class 10A Mathematics",
+                                placeholder = "e.g., Class 10A Mathematics",
                                 leadingIcon = {
                                     Icon(
                                         imageVector = ImageVector.vectorResource(R.drawable.ic_school),
@@ -252,7 +252,7 @@ fun CreateClassRoomScreen(
                                     )
                                 },
                                 label = "Subject",
-                                placeHolder = "e.g., Mathematics",
+                                placeholder = "e.g., Mathematics",
                                 leadingIcon = {
                                     Icon(
                                         imageVector = Icons.Rounded.Email,
@@ -359,7 +359,7 @@ fun CreateClassRoomScreen(
                                     )
                                 },
                                 label = "Class Description",
-                                placeHolder = "Add a description for your class",
+                                placeholder = "Add a description for your class",
                                 minLines = 3,
                                 maxLines = 5
                             )

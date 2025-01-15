@@ -1,14 +1,15 @@
-package id.usecase.assessment.presentation.screens.class_room.create.categories.item
+package id.usecase.assessment.presentation.screens.class_room.create.categories.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import id.usecase.designsystem.components.text_field.EvaluasiTextField
@@ -22,7 +23,10 @@ fun CategoryCard(
 ) {
     Card(
         modifier = modifier,
-        shape = MaterialTheme.shapes.small,
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors().copy(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
+        ),
         content = {
             Column(
                 modifier = Modifier.padding(20.dp)
@@ -31,9 +35,9 @@ fun CategoryCard(
                     modifier = Modifier.fillMaxWidth(),
                     label = "Category Name",
                     placeholder = "Enter category name",
-                    state = state.name,
-                    inputType = KeyboardType.Text,
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    value = state.name,
+                    onValueChange = { },
+                    keyboardType = KeyboardType.Text,
                 )
 
                 EvaluasiTextField(
@@ -42,11 +46,9 @@ fun CategoryCard(
                         .padding(top = 16.dp),
                     label = "Percentage",
                     placeholder = "Enter Percentage (total must be 100)",
-                    state = state.partPercentage,
-                    inputType = KeyboardType.Number,
-                    isError = percentageExceeded,
-                    errorMessage = errorMessage,
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    value = state.partPercentage,
+                    onValueChange = {},
+                    keyboardType = KeyboardType.Number
                 )
 
                 EvaluasiTextField(
@@ -55,9 +57,11 @@ fun CategoryCard(
                         .padding(top = 16.dp),
                     label = "Category Description",
                     placeholder = "Enter category description (optional)",
-                    state = state.description,
-                    inputType = KeyboardType.Text,
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    value = state.description,
+                    onValueChange = {},
+                    keyboardType = KeyboardType.Text,
+                    minLines = 3,
+                    maxLines = 3
                 )
             }
         }
@@ -69,9 +73,9 @@ fun CategoryCard(
 private fun CategoryCardPreview() {
     CategoryCard(
         state = CategoryItemState(
-            name = rememberTextFieldState(),
-            partPercentage = rememberTextFieldState(),
-            description = rememberTextFieldState(),
+            name = TextFieldValue(),
+            partPercentage = TextFieldValue(),
+            description = TextFieldValue(),
         ),
         percentageExceeded = true,
         errorMessage = "Total percentage must be 100"

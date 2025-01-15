@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import id.usecase.assessment.domain.CategoryRepository
 import id.usecase.assessment.presentation.R
-import id.usecase.assessment.presentation.screens.class_room.create.categories.item.CategoryItemState
+import id.usecase.assessment.presentation.screens.class_room.create.categories.components.CategoryItemState
 import id.usecase.assessment.presentation.utils.toDomainForm
 import id.usecase.assessment.presentation.utils.toItemState
 import id.usecase.core.domain.assessment.DataResult

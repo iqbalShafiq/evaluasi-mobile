@@ -36,8 +36,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import id.usecase.assessment.presentation.R
-import id.usecase.assessment.presentation.screens.class_room.create.categories.item.CategoryCard
-import id.usecase.assessment.presentation.screens.class_room.create.categories.item.CategoryItemState
+import id.usecase.assessment.presentation.screens.class_room.create.categories.components.CategoryCard
+import id.usecase.assessment.presentation.screens.class_room.create.categories.components.CategoryItemState
 import id.usecase.core.presentation.ui.ObserveAsEvents
 import id.usecase.designsystem.EvaluasiTheme
 import id.usecase.designsystem.components.app_bar.ActionItem
