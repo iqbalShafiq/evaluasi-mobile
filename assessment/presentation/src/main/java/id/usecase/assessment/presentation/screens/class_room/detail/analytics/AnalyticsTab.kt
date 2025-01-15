@@ -22,6 +22,7 @@ import id.usecase.assessment.presentation.screens.class_room.detail.ClassRoomSta
 import id.usecase.assessment.presentation.screens.class_room.detail.analytics.components.CategoryAnalysisChart
 import id.usecase.assessment.presentation.screens.class_room.detail.analytics.components.PerformanceDistributionChart
 import id.usecase.assessment.presentation.screens.class_room.detail.analytics.components.StudentProgressList
+import id.usecase.assessment.presentation.screens.class_room.detail.components.EmptyDataText
 import id.usecase.designsystem.EvaluasiTheme
 
 @Composable
@@ -38,7 +39,6 @@ fun AnalyticsTab(
         )
     ) {
         item {
-
             // Performance Distribution Card
             ElevatedCard(
                 modifier = Modifier
@@ -52,7 +52,13 @@ fun AnalyticsTab(
                         text = "Performance Distribution",
                         style = MaterialTheme.typography.titleMedium
                     )
+
                     Spacer(modifier = Modifier.height(16.dp))
+
+                    if (state.performanceDistribution.isEmpty()) {
+                        EmptyDataText()
+                        return@ElevatedCard
+                    }
 
                     PerformanceDistributionChart(state.performanceDistribution)
                 }
@@ -71,7 +77,13 @@ fun AnalyticsTab(
                         text = "Student Progress",
                         style = MaterialTheme.typography.titleMedium
                     )
+
                     Spacer(modifier = Modifier.height(16.dp))
+
+                    if (state.studentProgress.isEmpty()) {
+                        EmptyDataText()
+                        return@ElevatedCard
+                    }
 
                     StudentProgressList(state.studentProgress)
                 }
@@ -90,7 +102,13 @@ fun AnalyticsTab(
                         text = "Category Analysis",
                         style = MaterialTheme.typography.titleMedium
                     )
+
                     Spacer(modifier = Modifier.height(16.dp))
+
+                    if (state.categoryAnalysis.isEmpty()) {
+                        EmptyDataText()
+                        return@ElevatedCard
+                    }
 
                     CategoryAnalysisChart(state.categoryAnalysis)
                 }

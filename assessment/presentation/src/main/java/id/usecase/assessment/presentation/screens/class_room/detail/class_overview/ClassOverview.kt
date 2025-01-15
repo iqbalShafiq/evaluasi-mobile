@@ -39,6 +39,7 @@ import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.model.AssessmentEventUi
 import id.usecase.assessment.presentation.screens.class_room.detail.ClassRoomState
 import id.usecase.assessment.presentation.screens.class_room.detail.class_overview.components.StatisticItem
+import id.usecase.assessment.presentation.screens.class_room.detail.components.EmptyDataText
 import id.usecase.designsystem.EvaluasiTheme
 import java.time.Month
 import java.time.format.TextStyle
@@ -88,7 +89,11 @@ fun ClassOverviewTab(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Statistics Grid
+                    if (state.assessmentEvents.isEmpty()) {
+                        EmptyDataText()
+                        return@ElevatedCard
+                    }
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
@@ -110,7 +115,7 @@ fun ClassOverviewTab(
                         )
                     }
 
-                    Spacer(modifier = Modifier.padding(vertical = 8.dp))
+                    Spacer(modifier = Modifier.padding(bottom = 8.dp))
                 }
             }
 
@@ -126,7 +131,14 @@ fun ClassOverviewTab(
                         text = "Class Performance Trend",
                         style = MaterialTheme.typography.titleMedium
                     )
+
                     Spacer(modifier = Modifier.height(16.dp))
+
+                    if (performanceTrendData.isEmpty()) {
+                        EmptyDataText()
+                        return@ElevatedCard
+                    }
+
                     Chart(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -164,6 +176,8 @@ fun ClassOverviewTab(
                             }
                         ),
                     )
+
+                    Spacer(modifier = Modifier.padding(bottom = 8.dp))
                 }
             }
 
@@ -179,7 +193,14 @@ fun ClassOverviewTab(
                         text = "Assessment Categories",
                         style = MaterialTheme.typography.titleMedium
                     )
+
                     Spacer(modifier = Modifier.height(16.dp))
+
+                    if (categoryDistributionData.isEmpty()) {
+                        EmptyDataText()
+                        return@ElevatedCard
+                    }
+
                     Chart(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -205,6 +226,8 @@ fun ClassOverviewTab(
                             valueFormatter = { value, _ -> state.categoryList[value.toInt()] }
                         )
                     )
+
+                    Spacer(modifier = Modifier.padding(bottom = 8.dp))
                 }
             }
         }

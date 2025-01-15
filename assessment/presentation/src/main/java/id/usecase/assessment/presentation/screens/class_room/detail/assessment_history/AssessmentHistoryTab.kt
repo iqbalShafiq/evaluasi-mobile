@@ -53,18 +53,18 @@ private fun EmptyAssessmentState() {
                 modifier = Modifier.size(72.dp),
                 imageVector = Icons.Rounded.Info,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                tint = MaterialTheme.colorScheme.error.copy(alpha = 0.7f)
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = "No Assessments Yet",
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                color = MaterialTheme.colorScheme.error.copy(alpha = 0.5f)
             )
             Text(
                 text = "Start by adding your first assessment",
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                color = MaterialTheme.colorScheme.error.copy(alpha = 0.5f)
             )
         }
     }
@@ -85,80 +85,81 @@ fun AssessmentHistoryTab(
     ) {
         if (state.assessmentEvents.isEmpty()) {
             EmptyAssessmentState()
-        } else {
-            // Monthly Assessment Summary
-            ElevatedCard(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                shape = MaterialTheme.shapes.small
+            return@Column
+        }
+
+        // Monthly Assessment Summary
+        ElevatedCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            shape = MaterialTheme.shapes.small
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
             ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
+                Text(
+                    text = "Monthly Summary",
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(
-                        text = "Monthly Summary",
-                        style = MaterialTheme.typography.titleMedium
+                    MonthlySummaryItem(
+                        label = "This Month",
+                        count = state.assessmentEvents.count {
+                            it.eventDate.isCurrentMonth()
+                        }
                     )
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        MonthlySummaryItem(
-                            label = "This Month",
-                            count = state.assessmentEvents.count {
-                                it.eventDate.isCurrentMonth()
-                            }
-                        )
-                        MonthlySummaryItem(
-                            label = "Last Month",
-                            count = state.assessmentEvents.count {
-                                it.eventDate.isLastMonth()
-                            }
-                        )
-                        MonthlySummaryItem(
-                            label = "Total",
-                            count = state.assessmentEvents.size
-                        )
-                    }
+                    MonthlySummaryItem(
+                        label = "Last Month",
+                        count = state.assessmentEvents.count {
+                            it.eventDate.isLastMonth()
+                        }
+                    )
+                    MonthlySummaryItem(
+                        label = "Total",
+                        count = state.assessmentEvents.size
+                    )
                 }
             }
+        }
 
-            // Filter Chips
-            var selectedFilter by remember { mutableStateOf("All") }
-            val filters = listOf("All", "Recent", "Last Month", "Older")
+        // Filter Chips
+        var selectedFilter by remember { mutableStateOf("All") }
+        val filters = listOf("All", "Recent", "Last Month", "Older")
 
-            FilterChipGroup(
-                selectedFilter = selectedFilter,
-                filters = filters,
-                onFilterSelected = { selectedFilter = it }
-            )
+        FilterChipGroup(
+            selectedFilter = selectedFilter,
+            filters = filters,
+            onFilterSelected = { selectedFilter = it }
+        )
 
-            Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-            // Assessment List
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(bottom = bottomPadding)
-            ) {
-                items(
-                    state.assessmentEvents.filter {
-                        when (selectedFilter) {
-                            "Recent" -> it.eventDate.isCurrentMonth()
-                            "Last Month" -> it.eventDate.isLastMonth()
-                            "Older" -> it.eventDate.isOlderThanLastMonth()
-                            else -> true
-                        }
+        // Assessment List
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(bottom = bottomPadding)
+        ) {
+            items(
+                state.assessmentEvents.filter {
+                    when (selectedFilter) {
+                        "Recent" -> it.eventDate.isCurrentMonth()
+                        "Last Month" -> it.eventDate.isLastMonth()
+                        "Older" -> it.eventDate.isOlderThanLastMonth()
+                        else -> true
                     }
-                ) { assessment ->
-                    AssessmentSummaryItem(
-                        assessment = assessment,
-                        onDetailClicked = { onDetailAssessmentEventClicked(assessment) }
-                    )
                 }
+            ) { assessment ->
+                AssessmentSummaryItem(
+                    assessment = assessment,
+                    onDetailClicked = { onDetailAssessmentEventClicked(assessment) }
+                )
             }
         }
     }

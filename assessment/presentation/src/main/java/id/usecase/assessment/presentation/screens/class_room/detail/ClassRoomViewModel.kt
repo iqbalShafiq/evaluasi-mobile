@@ -250,6 +250,7 @@ class ClassRoomViewModel(
         withContext(dispatcher) {
             val classRoomId = state.value.classRoom?.id ?: 0
             if (classRoomId == 0) return@withContext
+
             analyticsRepository.getPerformanceTrend(classRoomId)
                 .catch { e ->
                     _events.send(
@@ -263,8 +264,8 @@ class ClassRoomViewModel(
                 .collectLatest { result ->
                     _state.update {
                         it.copy(
-                            performanceTrendData = result.map {
-                                FloatEntry(it.first.toFloat(), it.second.toFloat())
+                            performanceTrendData = result.map { trend ->
+                                FloatEntry(trend.first, trend.second)
                             }
                         )
                     }
@@ -276,6 +277,7 @@ class ClassRoomViewModel(
         withContext(dispatcher) {
             val classRoomId = state.value.classRoom?.id ?: 0
             if (classRoomId == 0) return@withContext
+
             analyticsRepository.getCategoryDistribution(classRoomId)
                 .catch { e ->
                     _events.send(
@@ -289,7 +291,7 @@ class ClassRoomViewModel(
                 .collectLatest { result ->
                     _state.update {
                         it.copy(
-                            categoryList = result.map { it.first },
+                            categoryList = result.map { category -> category.first },
                             categoryDistributionData = result.mapIndexed { index, distribution ->
                                 FloatEntry(index.toFloat(), distribution.second)
                             }
@@ -303,6 +305,7 @@ class ClassRoomViewModel(
         withContext(dispatcher) {
             val classRoomId = state.value.classRoom?.id ?: 0
             if (classRoomId == 0) return@withContext
+
             analyticsRepository.getPerformanceDistribution(classRoomId)
                 .catch { e ->
                     _events.send(
