@@ -7,9 +7,11 @@ import id.usecase.core.database.dao.ClassRoomDao
 import id.usecase.core.database.dao.EventDao
 import id.usecase.core.database.dao.StudentDao
 import id.usecase.core.domain.assessment.LocalAssessmentDataSource
+import id.usecase.core.domain.assessment.model.analytics.CategoryAnalysis
 import id.usecase.core.domain.assessment.model.analytics.CategoryScore
 import id.usecase.core.domain.assessment.model.analytics.MonthlyScore
 import id.usecase.core.domain.assessment.model.analytics.PerformanceScore
+import id.usecase.core.domain.assessment.model.analytics.StudentProgress
 import id.usecase.core.domain.assessment.model.assessment.Assessment
 import id.usecase.core.domain.assessment.model.assessment.category.Category
 import id.usecase.core.domain.assessment.model.assessment.event.Event
@@ -245,6 +247,20 @@ class RoomLocalAssessmentDataSource(
     override suspend fun getPerformanceDistributionByClassRoom(classRoomId: Int): List<PerformanceScore> {
         return withContext(dispatcher) {
             val result = analyticsDao.getPerformanceDistributionByClassRoom(classRoomId)
+            result.map { it.toDomainForm() }
+        }
+    }
+
+    override suspend fun getStudentProgressByClassRoom(classRoomId: Int): List<StudentProgress> {
+        return withContext(dispatcher) {
+            val result = analyticsDao.getStudentProgressByClassRoom(classRoomId)
+            result.map { it.toDomainForm() }
+        }
+    }
+
+    override suspend fun getCategoryAnalysisByClassRoom(classRoomId: Int): List<CategoryAnalysis> {
+        return withContext(dispatcher) {
+            val result = analyticsDao.getCategoryAnalysisByClassRoom(classRoomId)
             result.map { it.toDomainForm() }
         }
     }

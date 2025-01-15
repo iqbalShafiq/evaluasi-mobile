@@ -15,7 +15,7 @@ import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.entry.entryModelOf
-import id.usecase.assessment.presentation.model.CategoryAnalysis
+import id.usecase.core.domain.assessment.model.analytics.CategoryAnalysis
 
 @Composable
 fun CategoryAnalysisChart(

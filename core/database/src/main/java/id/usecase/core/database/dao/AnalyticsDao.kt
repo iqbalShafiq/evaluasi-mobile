@@ -2,9 +2,11 @@ package id.usecase.core.database.dao
 
 import androidx.room.Dao
 import androidx.room.Query
+import id.usecase.core.database.model.analytics.CategoryAnalysis
 import id.usecase.core.database.model.analytics.CategoryScore
 import id.usecase.core.database.model.analytics.MonthlyScore
 import id.usecase.core.database.model.analytics.PerformanceScore
+import id.usecase.core.database.model.analytics.StudentProgress
 
 @Dao
 interface AnalyticsDao {
@@ -62,4 +64,39 @@ interface AnalyticsDao {
     """
     )
     suspend fun getPerformanceDistributionByClassRoom(classRoomId: Int): List<PerformanceScore>
+
+    // For Student Progress
+    @Query(
+        """
+        SELECT 
+            s.name as student_name,
+            AVG(COALESCE(a.score, 0.0)) as progress_percentage,
+            MAX(a.created_time) as last_updated
+        FROM students s
+        LEFT JOIN assessments a ON s.id = a.student_id
+        WHERE a.event_id IN (
+            SELECT id FROM events WHERE category_id IN (
+                SELECT id FROM categories WHERE class_room_id = :classRoomId
+            )
+        )
+        GROUP BY s.id, s.name
+    """
+    )
+    suspend fun getStudentProgressByClassRoom(classRoomId: Int): List<StudentProgress>
+
+    // For Category Analysis
+    @Query(
+        """
+        SELECT 
+            c.name as category_name,
+            AVG(COALESCE(a.score, 0.0)) as average_score,
+            COUNT(a.id) as total_assessments
+        FROM categories c
+        LEFT JOIN events e ON c.id = e.category_id
+        LEFT JOIN assessments a ON e.id = a.event_id
+        WHERE c.class_room_id = :classRoomId
+        GROUP BY c.id, c.name
+    """
+    )
+    suspend fun getCategoryAnalysisByClassRoom(classRoomId: Int): List<CategoryAnalysis>
 }

@@ -16,13 +16,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import id.usecase.assessment.presentation.model.CategoryAnalysis
-import id.usecase.assessment.presentation.model.StudentProgress
 import id.usecase.assessment.presentation.screens.class_room.detail.ClassRoomState
 import id.usecase.assessment.presentation.screens.class_room.detail.analytics.components.CategoryAnalysisChart
 import id.usecase.assessment.presentation.screens.class_room.detail.analytics.components.PerformanceDistributionChart
 import id.usecase.assessment.presentation.screens.class_room.detail.analytics.components.StudentProgressList
 import id.usecase.assessment.presentation.screens.class_room.detail.components.EmptyDataText
+import id.usecase.core.domain.assessment.model.analytics.CategoryAnalysis
+import id.usecase.core.domain.assessment.model.analytics.StudentProgress
 import id.usecase.designsystem.EvaluasiTheme
 
 @Composable
@@ -129,9 +129,9 @@ private fun AnalyticsTabPreview() {
                     "Good" to 0.5f
                 ),
                 studentProgress = listOf(
-                    StudentProgress("Student 1", 0.5f, "2021-01-01"),
-                    StudentProgress("Student 2", 0.7f, "2021-01-01"),
-                    StudentProgress("Student 3", 0.9f, "2021-01-01")
+                    StudentProgress("Student 1", 0.5f, 1609459200000L),
+                    StudentProgress("Student 2", 0.7f, 1609459200000L),
+                    StudentProgress("Student 3", 0.9f, 1609459200000L)
                 ),
                 categoryAnalysis = listOf(
                     CategoryAnalysis(

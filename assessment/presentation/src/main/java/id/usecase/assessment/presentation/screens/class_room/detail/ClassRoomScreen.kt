@@ -33,11 +33,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.patrykandpatrick.vico.core.entry.FloatEntry
 import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.model.AssessmentEventUi
-import id.usecase.assessment.presentation.model.CategoryAnalysis
-import id.usecase.assessment.presentation.model.StudentProgress
 import id.usecase.assessment.presentation.screens.class_room.detail.analytics.AnalyticsTab
 import id.usecase.assessment.presentation.screens.class_room.detail.assessment_history.AssessmentHistoryTab
 import id.usecase.assessment.presentation.screens.class_room.detail.class_overview.ClassOverviewTab
+import id.usecase.core.domain.assessment.model.analytics.CategoryAnalysis
+import id.usecase.core.domain.assessment.model.analytics.StudentProgress
 import id.usecase.core.presentation.ui.ObserveAsEvents
 import id.usecase.designsystem.EvaluasiTheme
 import id.usecase.designsystem.components.app_bar.ActionItem
@@ -273,9 +273,9 @@ private fun ClassRoomPreview() {
             "Good" to 0.5f
         ),
         studentProgress = listOf(
-            StudentProgress("Student 1", 0.5f, "2021-01-01"),
-            StudentProgress("Student 2", 0.7f, "2021-01-01"),
-            StudentProgress("Student 3", 0.9f, "2021-01-01")
+            StudentProgress("Student 1", 0.5f, 1609459200000L),
+            StudentProgress("Student 2", 0.7f, 1609459200000L),
+            StudentProgress("Student 3", 0.9f, 1609459200000L)
         ),
         categoryAnalysis = listOf(
             CategoryAnalysis(

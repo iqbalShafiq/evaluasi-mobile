@@ -49,6 +49,8 @@ class ClassRoomViewModel(
                     getPerformanceTrend()
                     getCategoryDistribution()
                     getPerformanceDistribution()
+                    getStudentProgress()
+                    getCategoryAnalysis()
                 }
             }
         }
@@ -319,6 +321,52 @@ class ClassRoomViewModel(
                 .collectLatest { result ->
                     _state.update {
                         it.copy(performanceDistribution = result)
+                    }
+                }
+        }
+    }
+
+    private suspend fun getStudentProgress() {
+        withContext(dispatcher) {
+            val classRoomId = state.value.classRoom?.id ?: 0
+            if (classRoomId == 0) return@withContext
+
+            analyticsRepository.getStudentProgress(classRoomId)
+                .catch { e ->
+                    _events.send(
+                        ClassRoomEvent.OnErrorOccurred(
+                            message = e.message ?: application.getString(
+                                R.string.unknown_error
+                            )
+                        )
+                    )
+                }
+                .collectLatest { result ->
+                    _state.update {
+                        it.copy(studentProgress = result)
+                    }
+                }
+        }
+    }
+
+    private suspend fun getCategoryAnalysis() {
+        withContext(dispatcher) {
+            val classRoomId = state.value.classRoom?.id ?: 0
+            if (classRoomId == 0) return@withContext
+
+            analyticsRepository.getCategoryAnalysis(classRoomId)
+                .catch { e ->
+                    _events.send(
+                        ClassRoomEvent.OnErrorOccurred(
+                            message = e.message ?: application.getString(
+                                R.string.unknown_error
+                            )
+                        )
+                    )
+                }
+                .collectLatest { result ->
+                    _state.update {
+                        it.copy(categoryAnalysis = result)
                     }
                 }
         }

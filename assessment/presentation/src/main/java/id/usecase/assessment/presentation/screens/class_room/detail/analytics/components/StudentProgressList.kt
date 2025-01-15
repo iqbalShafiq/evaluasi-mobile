@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,16 +19,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import id.usecase.assessment.presentation.model.StudentProgress
+import id.usecase.core.domain.assessment.model.analytics.StudentProgress
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun StudentProgressList(
     progress: List<StudentProgress>
 ) {
     LazyColumn(
-        modifier = Modifier.height(200.dp)
+        modifier = Modifier.heightIn(max = 200.dp)
     ) {
-        items(items = progress, key = { it.name }) { studentProgress ->
+        items(items = progress, key = { it.studentName }) { studentProgress ->
             StudentProgressItem(studentProgress)
             HorizontalDivider()
         }
@@ -47,11 +50,16 @@ fun StudentProgressItem(
     ) {
         Column {
             Text(
-                text = progress.name,
+                text = progress.studentName,
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                text = "Last Assessment: ${progress.lastAssessmentDate}",
+                text = "Last Assessment: ${
+                    SimpleDateFormat(
+                        "dd MMM yyyy",
+                        Locale.getDefault()
+                    ).format(progress.lastUpdated)
+                }",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
             )
