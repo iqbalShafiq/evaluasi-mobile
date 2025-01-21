@@ -1,7 +1,6 @@
 package id.usecase.assessment.presentation.screens.assessment
 
 import android.app.Application
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -183,8 +182,8 @@ class AssessmentViewModel(
                         avgScore = avgScore,
                         comments = ""
                     ),
-                    score = TextFieldState(
-                        initialText = studentAssessment?.score?.toString() ?: ""
+                    score = TextFieldValue(
+                        text = studentAssessment?.score?.toString() ?: ""
                     )
                 )
             }

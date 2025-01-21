@@ -127,12 +127,12 @@ class ClassRoomViewModel(
 
                         is DataResult.Success -> {
                             _state.update {
-                                it.copy(events = result.data)
+                                it.copy(events = result.data ?: emptyList())
                             }
 
                             val categoryNames = getCategoryNames(classRoomId)
 
-                            val assessmentEventUiList = result.data.map { event ->
+                            val assessmentEventUiList = result.data?.map { event ->
                                 val categoryName = categoryNames
                                     .find { it.first == event.categoryId }
                                     ?.second ?: ""
@@ -151,11 +151,11 @@ class ClassRoomViewModel(
                             }
 
                             _state.update {
-                                it.copy(assessmentEvents = assessmentEventUiList)
+                                it.copy(assessmentEvents = assessmentEventUiList ?: emptyList())
                             }
 
                             val assessmentEventUiListWithTotalAssessment = assessmentEventUiList
-                                .map { assessmentEventUi ->
+                                ?.map { assessmentEventUi ->
                                     val totalAssessment = getTotalAssessmentFromEvent(
                                         eventId = assessmentEventUi.id
                                     )
@@ -164,7 +164,8 @@ class ClassRoomViewModel(
 
                             _state.update {
                                 it.copy(
-                                    assessmentEvents = assessmentEventUiListWithTotalAssessment,
+                                    assessmentEvents = assessmentEventUiListWithTotalAssessment
+                                        ?: emptyList(),
                                     isLoading = false
                                 )
                             }
@@ -204,11 +205,11 @@ class ClassRoomViewModel(
                             }
 
                             is DataResult.Success -> {
-                                val categories = result.data.map {
+                                val categories = result.data?.map {
                                     Pair(it.id, it.name)
                                 }
 
-                                continuation.resume(categories)
+                                continuation.resume(categories ?: emptyList())
                             }
 
                             is DataResult.Error -> {
@@ -236,7 +237,7 @@ class ClassRoomViewModel(
                             }
 
                             is DataResult.Success -> {
-                                continuation.resume(result.data.size)
+                                continuation.resume(result.data?.size ?: 0)
                             }
 
                             is DataResult.Error -> {

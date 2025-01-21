@@ -55,9 +55,9 @@ class HomeViewModel(
                             _state.update {
                                 it.copy(
                                     isLoading = false,
-                                    classRooms = result.data.map { classRoom ->
+                                    classRooms = result.data?.map { classRoom ->
                                         classRoom.toUi()
-                                    }
+                                    } ?: emptyList()
                                 )
                             }
                         }

@@ -12,9 +12,13 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import id.usecase.assessment.presentation.model.StudentScoreUi
@@ -23,7 +27,9 @@ import id.usecase.designsystem.components.text_field.EvaluasiTextField
 @Composable
 fun StudentAssessmentCard(
     modifier: Modifier = Modifier,
-    state: StudentAssessmentState
+    state: StudentAssessmentState,
+    onScoreChanged: (TextFieldValue) -> Unit,
+    onCommentsChanged: (TextFieldValue) -> Unit
 ) {
     ElevatedCard(
         modifier = modifier,
@@ -72,7 +78,7 @@ fun StudentAssessmentCard(
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             // Score input with better visual hierarchy
             EvaluasiTextField(
@@ -81,10 +87,12 @@ fun StudentAssessmentCard(
                 label = "Assessment Score",
                 placeholder = "Enter score (0-100)",
                 value = state.score,
-                onValueChange = {  },
+                onValueChange = {
+                    onScoreChanged(it)
+                },
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             EvaluasiTextField(
                 modifier = Modifier
@@ -92,7 +100,9 @@ fun StudentAssessmentCard(
                 label = "Comments",
                 placeholder = "Add comments (optional)",
                 value = state.comments,
-                onValueChange = {  }
+                onValueChange = {
+                    onCommentsChanged(it)
+                }
             )
         }
     }
@@ -101,16 +111,27 @@ fun StudentAssessmentCard(
 @Preview
 @Composable
 private fun StudentAssessmentCardPreview() {
-    StudentAssessmentCard(
-        state = StudentAssessmentState(
-            data = StudentScoreUi(
-                studentId = 1,
-                studentName = "John Doe",
-                comments = "Good job",
-                score = 90.0,
-                avgScore = 80.0,
-                assessmentId = 1
+    var state by remember {
+        mutableStateOf(
+            StudentAssessmentState(
+                data = StudentScoreUi(
+                    studentId = 1,
+                    studentName = "John Doe",
+                    comments = "Good job",
+                    score = 90.0,
+                    avgScore = 80.0,
+                    assessmentId = 1
+                )
             )
         )
+    }
+    StudentAssessmentCard(
+        state = state,
+        onScoreChanged = {
+            state = state.copy(score = it)
+        },
+        onCommentsChanged = {
+            state = state.copy(comments = it)
+        }
     )
 }

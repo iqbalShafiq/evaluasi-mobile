@@ -2,13 +2,9 @@
 
 package id.usecase.assessment.presentation.screens.assessment
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -57,9 +53,9 @@ import java.util.Locale
 @Composable
 fun AssessmentScreenRoot(
     modifier: Modifier = Modifier,
+    viewModel: AssessmentViewModel = koinViewModel(),
     classRoomId: Int,
     eventId: Int?,
-    viewModel: AssessmentViewModel = koinViewModel(),
     onBackPressed: () -> Unit,
     onAssessmentHasSaved: () -> Unit
 ) {
@@ -272,34 +268,26 @@ fun AssessmentScreen(
 
                     LazyColumn(
                         modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        contentPadding = PaddingValues(bottom = 12.dp)
                     ) {
                         items(assessments.size) { index ->
                             val assessment = assessments[index]
-                            AnimatedVisibility(
-                                visible = true,
-                                enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
-                                exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
-                            ) {
-                                StudentAssessmentCard(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    state = assessment
-                                )
 
-                                if (
-                                    index == assessments.size - 1 &&
-                                    assessment.score.text.isNotEmpty()
-                                ) {
-                                    assessments.add(StudentAssessmentState())
+                            StudentAssessmentCard(
+                                modifier = Modifier.fillMaxWidth(),
+                                state = assessment,
+                                onScoreChanged = { score ->
+                                    assessments[index] = assessment.copy(
+                                        score = score
+                                    )
+                                },
+                                onCommentsChanged = { comment ->
+                                    assessments[index] = assessment.copy(
+                                        comments = comment
+                                    )
                                 }
-
-                                if (
-                                    index != assessments.size - 1 &&
-                                    assessment.score.text.isEmpty()
-                                ) {
-                                    assessments.removeAt(index)
-                                }
-                            }
+                            )
                         }
                     }
                 }

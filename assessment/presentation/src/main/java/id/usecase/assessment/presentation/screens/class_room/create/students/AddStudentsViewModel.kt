@@ -64,9 +64,9 @@ class AddStudentsViewModel(
                         is DataResult.Success -> {
                             state.value = state.value.copy(
                                 isLoading = false,
-                                studentList = result.data.map {
+                                studentList = result.data?.map {
                                     it.toItemState()
-                                }
+                                } ?: emptyList()
                             )
                         }
 
