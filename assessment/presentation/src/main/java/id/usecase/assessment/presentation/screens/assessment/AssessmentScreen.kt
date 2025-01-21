@@ -304,10 +304,7 @@ fun AssessmentScreen(
                     onClick = {
                         onAction(
                             AssessmentAction.SaveAssessmentEvent(
-                                assessments = assessments.filterIndexed { index, assessment ->
-                                    index != assessments.size - 1 ||
-                                            assessment.score.text.isNotEmpty()
-                                }
+                                assessments = assessments
                             )
                         )
                     },
