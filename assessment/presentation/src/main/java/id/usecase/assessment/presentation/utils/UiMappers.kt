@@ -1,6 +1,5 @@
 package id.usecase.assessment.presentation.utils
 
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.ui.text.input.TextFieldValue
 import id.usecase.assessment.presentation.model.AddStudentUi
 import id.usecase.assessment.presentation.model.AssessmentEventUi
@@ -46,8 +45,8 @@ fun AddStudentItemState.toDomainForm(classRoomId: Int) = Student(
 )
 
 fun Student.toItemState() = AddStudentItemState(
-    identifier = TextFieldState(initialText = id.toString()),
-    name = TextFieldState(initialText = name)
+    identifier = TextFieldValue(text = id.toString()),
+    name = TextFieldValue(text = name)
 )
 
 fun AddStudentItemState.toDomainForm() = AddStudentUi(

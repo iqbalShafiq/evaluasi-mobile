@@ -211,7 +211,22 @@ fun AddStudentsScreen(
                                 enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
                                 exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
                             ) {
-                                AddStudentCard(state = student)
+                                AddStudentCard(
+                                    state = student,
+                                    onIdentifierChanged = { identifier ->
+                                        students[index] = student.copy(
+                                            identifier = identifier,
+                                            isValid = student.name.text.isNotEmpty()
+                                        )
+                                    },
+                                    onNameChanged = { name ->
+                                        students[index] = student.copy(
+                                            name = name,
+                                            isValid = student.identifier.text.isNotEmpty() ||
+                                                    student.name.text.isNotEmpty()
+                                        )
+                                    }
+                                )
 
                                 if (
                                     index == students.size - 1 &&
@@ -247,7 +262,10 @@ fun AddStudentsScreen(
                         modifier = Modifier.fillMaxWidth(),
                         text = "Create Class",
                         buttonType = ButtonType.PRIMARY,
-                        enabled = students.all { it.isValid },
+                        enabled = students
+                            .takeIf { it.size > 1 }
+                            ?.dropLast(1)
+                            ?.all { it.isValid } == true,
                         onClick = {
                             scope.launch {
                                 progressVisible = true

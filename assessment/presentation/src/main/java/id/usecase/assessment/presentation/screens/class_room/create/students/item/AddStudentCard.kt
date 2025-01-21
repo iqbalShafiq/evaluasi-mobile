@@ -5,10 +5,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import id.usecase.designsystem.EvaluasiTheme
@@ -18,14 +20,11 @@ import id.usecase.designsystem.components.text_field.EvaluasiTextField
 fun AddStudentCard(
     modifier: Modifier = Modifier,
     state: AddStudentItemState,
+    onIdentifierChanged: (TextFieldValue) -> Unit,
+    onNameChanged: (TextFieldValue) -> Unit
 ) {
-    Card(
+    ElevatedCard(
         modifier = modifier,
-        border = BorderStroke(
-            width = 1.dp,
-            color = if (state.isValid) MaterialTheme.colorScheme.primary
-            else MaterialTheme.colorScheme.outline
-        ),
         shape = MaterialTheme.shapes.small
     ) {
         Column(
@@ -38,9 +37,11 @@ fun AddStudentCard(
                     .fillMaxWidth(),
                 label = "Identifier",
                 placeholder = "Type identifier (optional)",
-                state = state.identifier,
-                inputType = KeyboardType.Number,
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
+                value = state.identifier,
+                onValueChange = {
+                    onIdentifierChanged(it)
+                },
+                keyboardType = KeyboardType.Number
             )
 
             EvaluasiTextField(
@@ -49,9 +50,11 @@ fun AddStudentCard(
                     .padding(top = 12.dp),
                 label = "Name",
                 placeholder = "Type student name",
-                state = state.name,
-                inputType = KeyboardType.Text,
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
+                value = state.name,
+                onValueChange = {
+                    onNameChanged(it)
+                },
+                keyboardType = KeyboardType.Text
             )
         }
     }
@@ -62,7 +65,9 @@ fun AddStudentCard(
 private fun AddStudentCardPreview() {
     EvaluasiTheme {
         AddStudentCard(
-            state = AddStudentItemState(isValid = true)
+            state = AddStudentItemState(isValid = true),
+            onIdentifierChanged = {},
+            onNameChanged = {}
         )
     }
 }

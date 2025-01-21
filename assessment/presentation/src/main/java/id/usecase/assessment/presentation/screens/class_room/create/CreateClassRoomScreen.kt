@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.DateRange
@@ -53,8 +52,8 @@ import id.usecase.assessment.presentation.screens.class_room.create.students.ite
 import id.usecase.core.presentation.ui.ObserveAsEvents
 import id.usecase.designsystem.EvaluasiTheme
 import id.usecase.designsystem.components.app_bar.EvaluasiTopAppBar
-import id.usecase.designsystem.components.dialog.StandardAlertDialog
 import id.usecase.designsystem.components.dialog.EvaluasiDatePicker
+import id.usecase.designsystem.components.dialog.StandardAlertDialog
 import id.usecase.designsystem.components.dialog.StandardLoadingDialog
 import id.usecase.designsystem.components.text_field.EvaluasiTextField
 import org.koin.androidx.compose.koinViewModel
@@ -320,7 +319,7 @@ fun CreateClassRoomScreen(
                                         )
                                     )
                                 },
-                                label = "Long Period",
+                                label = "Long Period (in Month)",
                                 keyboardType = KeyboardType.Number,
                             )
                         }
@@ -468,8 +467,8 @@ private fun CreateClassRoomPreview() {
                     startDate = TextFieldValue(),
                     students = listOf(
                         AddStudentItemState(
-                            identifier = TextFieldState(),
-                            name = TextFieldState()
+                            identifier = TextFieldValue(),
+                            name = TextFieldValue()
                         )
                     )
                 )
