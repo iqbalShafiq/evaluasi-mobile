@@ -68,8 +68,8 @@ class AddCategoriesViewModel(
                                 isLoading = false,
                                 categories = result
                                     .data
-                                    .map { it.toItemState() }
-                                    .ifEmpty { listOf(CategoryItemState()) }
+                                    ?.map { it.toItemState() }
+                                    ?: listOf(CategoryItemState())
                             )
                         }
 
@@ -97,8 +97,7 @@ class AddCategoriesViewModel(
                 }
             }
 
-            val result = repository.upsertCategories(categoryList)
-            when (result) {
+            when (val result = repository.upsertCategories(categoryList)) {
                 DataResult.Loading -> {
                     state.value = state.value.copy(isLoading = true)
                 }

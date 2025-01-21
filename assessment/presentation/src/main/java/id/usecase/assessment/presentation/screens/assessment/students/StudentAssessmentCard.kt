@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
@@ -66,10 +65,9 @@ fun StudentAssessmentCard(
                     Text(
                         text = "${state.data?.avgScore}",
                         style = MaterialTheme.typography.titleMedium,
-                        color = if ((state.data?.avgScore ?: 0.0) >= 75)
+                        color = if ((state.data?.avgScore ?: 0.0) >= 75) {
                             MaterialTheme.colorScheme.primary
-                        else
-                            MaterialTheme.colorScheme.error
+                        } else MaterialTheme.colorScheme.error
                     )
                 }
             }
@@ -82,8 +80,8 @@ fun StudentAssessmentCard(
                     .fillMaxWidth(),
                 label = "Assessment Score",
                 placeholder = "Enter score (0-100)",
-                state = state.score,
-                inputType = KeyboardType.Number
+                value = state.score,
+                onValueChange = {  },
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -93,8 +91,8 @@ fun StudentAssessmentCard(
                     .fillMaxWidth(),
                 label = "Comments",
                 placeholder = "Add comments (optional)",
-                state = state.comments,
-                inputType = KeyboardType.Text
+                value = state.comments,
+                onValueChange = {  }
             )
         }
     }

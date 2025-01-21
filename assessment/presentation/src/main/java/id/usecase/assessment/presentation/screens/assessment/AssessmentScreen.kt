@@ -13,12 +13,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.DateRange
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,11 +31,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.model.StudentScoreUi
 import id.usecase.assessment.presentation.screens.assessment.students.StudentAssessmentCard
@@ -40,8 +46,8 @@ import id.usecase.designsystem.EvaluasiTheme
 import id.usecase.designsystem.components.app_bar.EvaluasiTopAppBar
 import id.usecase.designsystem.components.button.ButtonType
 import id.usecase.designsystem.components.button.EvaluasiButton
-import id.usecase.designsystem.components.dialog.StandardAlertDialog
 import id.usecase.designsystem.components.dialog.EvaluasiDatePicker
+import id.usecase.designsystem.components.dialog.StandardAlertDialog
 import id.usecase.designsystem.components.dialog.StandardLoadingDialog
 import id.usecase.designsystem.components.text_field.EvaluasiTextField
 import org.koin.androidx.compose.koinViewModel
@@ -57,6 +63,7 @@ fun AssessmentScreenRoot(
     onBackPressed: () -> Unit,
     onAssessmentHasSaved: () -> Unit
 ) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val openAlertDialog = remember { mutableStateOf(false) }
     val errorMessage = remember { mutableStateOf("") }
     val showStartDatePicker = remember { mutableStateOf(false) }
@@ -80,11 +87,15 @@ fun AssessmentScreenRoot(
                 },
                 onDateSelected = {
                     viewModel.onAction(
-                        AssessmentAction.UpdateEventDate(
-                            date = SimpleDateFormat(
-                                "yyyy-MM-dd",
-                                Locale.getDefault()
-                            ).format(it)
+                        AssessmentAction.UpdateForms(
+                            state.copy(
+                                startDateField = TextFieldValue(
+                                    text = SimpleDateFormat(
+                                        "yyyy-MM-dd",
+                                        Locale.getDefault()
+                                    ).format(it)
+                                )
+                            )
                         )
                     )
                     showStartDatePicker.value = false
@@ -124,12 +135,15 @@ fun AssessmentScreenRoot(
         )
     }
 
-    if (viewModel.state.value.isLoading) StandardLoadingDialog()
+    if (state.isLoading) StandardLoadingDialog()
 
     AssessmentScreen(
         modifier = modifier,
-        state = viewModel.state.value,
+        state = state,
         onBackPressed = onBackPressed,
+        showStartDatePicker = {
+            showStartDatePicker.value = true
+        },
         onAction = viewModel::onAction
     )
 }
@@ -139,6 +153,7 @@ fun AssessmentScreen(
     modifier: Modifier = Modifier,
     onBackPressed: () -> Unit,
     state: AssessmentState,
+    showStartDatePicker: () -> Unit,
     onAction: (AssessmentAction) -> Unit
 ) {
     val assessments = remember { mutableStateListOf<StudentAssessmentState>() }
@@ -188,30 +203,63 @@ fun AssessmentScreen(
                         modifier = Modifier.fillMaxWidth(),
                         label = "Title",
                         placeholder = "Type name",
-                        state = state.assessmentNameField,
-                        inputType = KeyboardType.Text
+                        value = state.assessmentNameField,
+                        onValueChange = {
+                            onAction(
+                                AssessmentAction.UpdateForms(
+                                    state.copy(
+                                        assessmentNameField = it
+                                    )
+                                )
+                            )
+                        }
                     )
 
                     // Category Field
                     EvaluasiTextField(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 8.dp),
+                            .padding(top = 12.dp),
                         label = "Category",
                         placeholder = "Choose category",
-                        state = state.categoryField,
-                        inputType = KeyboardType.Text
+                        value = state.categoryField,
+                        onValueChange = {
+                            onAction(
+                                AssessmentAction.UpdateForms(
+                                    state.copy(
+                                        categoryField = it
+                                    )
+                                )
+                            )
+                        }
                     )
 
                     // Assessment Date Field
                     EvaluasiTextField(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 8.dp),
+                            .padding(top = 12.dp),
                         label = "Assessment Date",
                         placeholder = "Pick date",
-                        state = state.startDateField,
-                        inputType = KeyboardType.Text
+                        value = state.startDateField,
+                        onValueChange = {
+                            onAction(
+                                AssessmentAction.UpdateForms(
+                                    state.copy(
+                                        startDateField = it
+                                    )
+                                )
+                            )
+                        },
+                        readOnly = true,
+                        trailingIcon = {
+                            IconButton(onClick = showStartDatePicker) {
+                                Icon(
+                                    imageVector = Icons.Rounded.DateRange,
+                                    contentDescription = "Calendar icon"
+                                )
+                            }
+                        }
                     )
 
                     // Students Section
@@ -238,13 +286,15 @@ fun AssessmentScreen(
                                     state = assessment
                                 )
 
-                                if (index == assessments.size - 1 &&
+                                if (
+                                    index == assessments.size - 1 &&
                                     assessment.score.text.isNotEmpty()
                                 ) {
                                     assessments.add(StudentAssessmentState())
                                 }
 
-                                if (index != assessments.size - 1 &&
+                                if (
+                                    index != assessments.size - 1 &&
                                     assessment.score.text.isEmpty()
                                 ) {
                                     assessments.removeAt(index)
@@ -290,6 +340,7 @@ private fun AssessmentScreenPreview() {
         AssessmentScreen(
             onAction = {},
             onBackPressed = {},
+            showStartDatePicker = {},
             state = AssessmentState(
                 assessmentListField = listOf(
                     StudentAssessmentState(

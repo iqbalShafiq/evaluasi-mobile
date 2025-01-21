@@ -9,9 +9,9 @@ sealed class AssessmentAction {
         val assessments: List<StudentAssessmentState>
     ) : AssessmentAction()
 
-    data class UpdateEventDate(
-        val date: String
-    ): AssessmentAction()
+    data class UpdateForms(
+        val updatedState: AssessmentState
+    ) : AssessmentAction()
 
     data object DeleteAssessmentEvent : AssessmentAction()
 }

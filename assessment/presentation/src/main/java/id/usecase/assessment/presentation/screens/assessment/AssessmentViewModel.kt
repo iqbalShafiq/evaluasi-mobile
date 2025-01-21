@@ -2,7 +2,7 @@ package id.usecase.assessment.presentation.screens.assessment
 
 import android.app.Application
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import id.usecase.assessment.domain.AssessmentRepository
@@ -11,19 +11,25 @@ import id.usecase.assessment.domain.EventRepository
 import id.usecase.assessment.domain.StudentRepository
 import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.model.StudentScoreUi
-import id.usecase.assessment.presentation.screens.assessment.AssessmentEvent.*
+import id.usecase.assessment.presentation.screens.assessment.AssessmentEvent.AssessmentHasSaved
+import id.usecase.assessment.presentation.screens.assessment.AssessmentEvent.OnErrorOccurred
 import id.usecase.assessment.presentation.screens.assessment.students.StudentAssessmentState
 import id.usecase.core.domain.assessment.DataResult
 import id.usecase.core.domain.assessment.model.assessment.Assessment
 import id.usecase.core.domain.assessment.model.assessment.category.Category
 import id.usecase.core.domain.assessment.model.assessment.event.Event
 import id.usecase.core.domain.assessment.model.student.Student
+import id.usecase.core.domain.assessment.utils.FlowResultHandler
+import id.usecase.core.domain.assessment.utils.handleSuccessResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
@@ -38,12 +44,12 @@ class AssessmentViewModel(
     private val eventRepository: EventRepository,
     private val categoryRepository: CategoryRepository,
     private val assessmentRepository: AssessmentRepository
-) : ViewModel() {
+) : ViewModel(), FlowResultHandler {
     private val _events = Channel<AssessmentEvent>()
     val events = _events.receiveAsFlow()
 
-    var state = mutableStateOf(AssessmentState())
-        private set
+    private val _state = MutableStateFlow(AssessmentState())
+    var state = _state.asStateFlow()
 
     fun onAction(action: AssessmentAction) {
         when (action) {
@@ -56,12 +62,8 @@ class AssessmentViewModel(
 
             AssessmentAction.DeleteAssessmentEvent -> deleteAssessmentEvent()
 
-            is AssessmentAction.UpdateEventDate -> {
-                state.value = state.value.copy(
-                    startDateField = TextFieldState(
-                        initialText = action.date
-                    )
-                )
+            is AssessmentAction.UpdateForms -> {
+                _state.update { action.updatedState }
             }
         }
     }
@@ -70,7 +72,7 @@ class AssessmentViewModel(
         withContext(dispatcher) {
             studentRepository.getStudentsByClassRoomId(classRoomId)
                 .catch { e ->
-                    state.value = state.value.copy(isLoading = false)
+                    _state.update { it.copy(isLoading = false) }
                     _events.send(
                         OnErrorOccurred(
                             e.message ?: application.getString(
@@ -81,17 +83,19 @@ class AssessmentViewModel(
                 }
                 .collectLatest { result ->
                     when (result) {
-                        DataResult.Loading -> state.value = state.value.copy(isLoading = true)
+                        DataResult.Loading -> _state.update { it.copy(isLoading = true) }
 
                         is DataResult.Success -> {
-                            state.value = state.value.copy(
-                                isLoading = false,
-                                studentList = result.data
-                            )
+                            _state.update {
+                                it.copy(
+                                    isLoading = false,
+                                    studentList = result.data ?: emptyList()
+                                )
+                            }
                         }
 
                         is DataResult.Error -> {
-                            state.value = state.value.copy(isLoading = false)
+                            _state.update { it.copy(isLoading = false) }
                             _events.send(
                                 OnErrorOccurred(
                                     result.exception.message ?: application.getString(
@@ -108,19 +112,19 @@ class AssessmentViewModel(
     private suspend fun loadAssessmentsByEventId(eventId: Int) {
         withContext(dispatcher) {
             assessmentRepository.getAssessmentsByEventId(eventId)
-                .catch { e ->
+                .catch {
                     onAssessmentHasNotCreatedYet()
                 }
                 .collectLatest { result ->
                     when (result) {
-                        DataResult.Loading -> state.value = state.value.copy(
-                            isLoading = true
-                        )
+                        DataResult.Loading -> _state.update { it.copy(isLoading = true) }
 
-                        is DataResult.Success -> state.value = state.value.copy(
-                            isLoading = false,
-                            assessmentList = result.data
-                        )
+                        is DataResult.Success -> _state.update {
+                            it.copy(
+                                isLoading = false,
+                                assessmentList = result.data ?: emptyList()
+                            )
+                        }
 
                         is DataResult.Error -> onAssessmentHasNotCreatedYet()
                     }
@@ -130,10 +134,12 @@ class AssessmentViewModel(
 
     private suspend fun onAssessmentHasNotCreatedYet() {
         withContext(dispatcher) {
-            state.value = state.value.copy(
-                isLoading = false,
-                assessmentList = emptyList()
-            )
+            _state.update {
+                it.copy(
+                    isLoading = false,
+                    assessmentList = emptyList()
+                )
+            }
         }
     }
 
@@ -141,12 +147,15 @@ class AssessmentViewModel(
         return suspendCoroutine { continuation ->
             viewModelScope.launch(dispatcher) {
                 assessmentRepository.getAverageScoreByStudentId(studentId)
-                    .catch { e ->
+                    .catch {
                         continuation.resume(0.0)
                     }
                     .collectLatest { result ->
                         when (result) {
-                            is DataResult.Success -> continuation.resume(result.data)
+                            is DataResult.Success -> continuation.resume(
+                                value = result.data ?: 0.0
+                            )
+
                             else -> continuation.resume(0.0)
                         }
                     }
@@ -186,7 +195,7 @@ class AssessmentViewModel(
         return suspendCoroutine { continuation ->
             viewModelScope.launch(dispatcher) {
                 categoryRepository.getCategoryById(categoryId)
-                    .catch { e ->
+                    .catch {
                         continuation.resume(null)
                     }
                     .collectLatest { result ->
@@ -205,95 +214,69 @@ class AssessmentViewModel(
             loadAssessmentsByEventId(eventId)
 
             eventRepository.getEventById(eventId)
-                .catch { e ->
-                    state.value = state.value.copy(isLoading = false)
-                    _events.send(
-                        OnErrorOccurred(
-                            e.message ?: application.getString(
-                                R.string.unknown_error
-                            )
+                .handleSuccessResult(
+                    listener = this@AssessmentViewModel,
+                    retryCallback = { loadAssessmentDetail(classRoomId, eventId) },
+                    successCallback = { result ->
+                        val assessmentListField = transformAssessmentToStudentAssessmentState(
+                            state.value.assessmentList,
+                            state.value.studentList
                         )
-                    )
-                }
-                .collectLatest { result ->
-                    when (result) {
-                        DataResult.Loading -> state.value = state.value.copy(isLoading = true)
 
-                        is DataResult.Success -> {
-                            val assessmentListField = transformAssessmentToStudentAssessmentState(
-                                state.value.assessmentList,
-                                state.value.studentList
-                            )
+                        val formattedEventDate = SimpleDateFormat(
+                            "dd MMMM yyyy",
+                            Locale.getDefault()
+                        ).format(result.data?.eventDate)
 
-                            val formattedEventDate = SimpleDateFormat(
-                                "dd MMMM yyyy",
-                                Locale.getDefault()
-                            ).format(result.data?.eventDate)
+                        val category = loadCategoryById(result.data?.categoryId ?: -1)
 
-                            val category = loadCategoryById(result.data?.categoryId ?: -1)
-
-                            state.value = state.value.copy(
+                        _state.update {
+                            it.copy(
                                 isLoading = false,
                                 assessmentEvent = result.data,
-                                assessmentNameField = TextFieldState(
-                                    initialText = result.data?.name ?: ""
+                                assessmentNameField = TextFieldValue(
+                                    text = result.data?.name ?: ""
                                 ),
-                                startDateField = TextFieldState(
-                                    initialText = formattedEventDate
+                                startDateField = TextFieldValue(
+                                    text = formattedEventDate
                                 ),
-                                categoryField = TextFieldState(
-                                    initialText = category?.name ?: ""
+                                categoryField = TextFieldValue(
+                                    text = category?.name ?: ""
                                 ),
                                 assessmentListField = assessmentListField
                             )
                         }
-
-                        is DataResult.Error -> {
-                            state.value = state.value.copy(isLoading = false)
-                            _events.send(
-                                OnErrorOccurred(
-                                    result.exception.message ?: application.getString(
-                                        R.string.unknown_error
-                                    )
-                                )
-                            )
-                        }
                     }
-                }
+                )
         }
     }
 
-    private fun saveEvent(
-        assessments: List<StudentAssessmentState>
-    ) {
+    private fun saveEvent(assessments: List<StudentAssessmentState>) {
         viewModelScope.launch(dispatcher) {
-            state.value = state.value.copy(
-                assessmentListField = assessments
-            )
+            _state.update { it.copy(assessmentListField = assessments) }
 
             val event = Event(
                 id = state.value.assessmentEvent?.id ?: 0,
-                name = state.value.assessmentNameField.text.toString(),
+                name = state.value.assessmentNameField.text,
                 eventDate = System.currentTimeMillis(),
                 categoryId = state.value.category?.id ?: 0,
                 createdTime = System.currentTimeMillis(),
                 lastModifiedTime = System.currentTimeMillis()
             )
 
-            val result = eventRepository.upsertEvent(event)
-            when (result) {
-                DataResult.Loading -> state.value = state.value.copy(isLoading = true)
+            when (val result = eventRepository.upsertEvent(event)) {
+                DataResult.Loading -> _state.update { it.copy(isLoading = true) }
 
                 is DataResult.Success -> {
                     saveAssessments(result.data?.id ?: -1)
-                    state.value = state.value.copy(isLoading = false)
+                    _state.update { it.copy(isLoading = false) }
                 }
 
                 is DataResult.Error -> {
-                    state.value = state.value.copy(isLoading = false)
+                    _state.update { it.copy(isLoading = false) }
                     _events.send(
                         OnErrorOccurred(
-                            result.exception.message ?: application.getString(
+                            errorMessage = result.exception.message ?: application.getString(
                                 R.string.unknown_error
                             )
                         )
@@ -318,20 +301,19 @@ class AssessmentViewModel(
                 }
             }
 
-            val result = assessmentRepository.upsertAssessments(assessmentList)
-            when (result) {
-                DataResult.Loading -> state.value = state.value.copy(isLoading = true)
+            when (val result = assessmentRepository.upsertAssessments(assessmentList)) {
+                DataResult.Loading -> _state.update { it.copy(isLoading = true) }
 
                 is DataResult.Success -> {
-                    state.value = state.value.copy(isLoading = false)
+                    _state.update { it.copy(isLoading = false) }
                     _events.send(AssessmentHasSaved)
                 }
 
                 is DataResult.Error -> {
-                    state.value = state.value.copy(isLoading = false)
+                    _state.update { it.copy(isLoading = false) }
                     _events.send(
                         OnErrorOccurred(
-                            result.exception.message ?: application.getString(
+                            errorMessage = result.exception.message ?: application.getString(
                                 R.string.unknown_error
                             )
                         )
@@ -359,5 +341,25 @@ class AssessmentViewModel(
             eventRepository.deleteEvent(event)
             _events.send(AssessmentHasSaved)
         }
+    }
+
+    override suspend fun onLoading() {
+        _state.update {
+            it.copy(isLoading = true)
+        }
+    }
+
+    override suspend fun onErrorOccurred(errorMessage: String?, retryCallback: (() -> Unit)?) {
+        _state.update {
+            it.copy(isLoading = false)
+        }
+
+        _events.send(
+            OnErrorOccurred(
+                errorMessage = errorMessage ?: application.getString(
+                    R.string.unknown_error
+                )
+            )
+        )
     }
 }
