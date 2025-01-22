@@ -289,7 +289,7 @@ fun AssessmentScreen(
                         text = "${assessments.count { it.score.text.isNotEmpty() }}/${state.assessmentListField.size} assessment of students",
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 4.dp, bottom = 8.dp)
+                        modifier = Modifier.padding(top = 4.dp, bottom = 12.dp)
                     )
 
                     LazyColumn(
