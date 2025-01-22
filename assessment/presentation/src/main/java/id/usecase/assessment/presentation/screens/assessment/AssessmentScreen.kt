@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -14,6 +15,7 @@ import androidx.compose.material.icons.rounded.DateRange
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -24,6 +26,8 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -171,19 +175,34 @@ fun AssessmentScreen(
                 modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp)
             ) {
                 val (content, button) = createRefs()
+                val (progress) = createRefs()
+                LinearProgressIndicator(
+                    progress = {
+                        assessments.count {
+                            it.score.text.isNotEmpty()
+                        } / state.assessmentListField.size.toFloat()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(4.dp)
+                        .constrainAs(progress) {
+                            top.linkTo(parent.top)
+                        }
+                )
 
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
+                        .padding(end = 16.dp, start = 16.dp, top = 16.dp)
                         .constrainAs(content) {
-                            top.linkTo(parent.top)
+                            top.linkTo(progress.bottom)
                             bottom.linkTo(button.top)
                             height = Dimension.fillToConstraints
                         }
                 ) {
+
                     // Assessment Details Section
                     Text(
                         modifier = Modifier
@@ -260,10 +279,17 @@ fun AssessmentScreen(
 
                     // Students Section
                     Text(
-                        modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
+                        modifier = Modifier.padding(top = 16.dp),
                         text = "Student Scores",
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.primary
+                    )
+
+                    Text(
+                        text = "${assessments.count { it.score.text.isNotEmpty() }}/${state.assessmentListField.size} assessment of students",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = 4.dp, bottom = 8.dp)
                     )
 
                     LazyColumn(
@@ -299,7 +325,7 @@ fun AssessmentScreen(
                         .constrainAs(button) {
                             bottom.linkTo(parent.bottom)
                         }
-                        .padding(vertical = 16.dp),
+                        .padding(16.dp),
                     text = "Save Assessment",
                     onClick = {
                         onAction(

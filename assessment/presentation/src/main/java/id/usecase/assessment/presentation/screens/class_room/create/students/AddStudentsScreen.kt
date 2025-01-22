@@ -193,12 +193,6 @@ fun AddStudentsScreen(
                         text = "Students",
                         style = MaterialTheme.typography.titleSmall
                     )
-                    Text(
-                        text = "${students.count { it.isValid }}/${students.size} students ready",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
 
                     Spacer(modifier = Modifier.height(12.dp))
 
