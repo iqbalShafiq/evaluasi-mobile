@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -19,24 +20,25 @@ fun CategoryCard(
     modifier: Modifier = Modifier,
     state: CategoryItemState,
     percentageExceeded: Boolean = false,
-    errorMessage: String = ""
+    errorMessage: String = "",
+    onNameChanged: (TextFieldValue) -> Unit,
+    onPercentageChanged: (TextFieldValue) -> Unit,
+    onDescriptionChanged: (TextFieldValue) -> Unit
 ) {
-    Card(
+    ElevatedCard(
         modifier = modifier,
-        shape = MaterialTheme.shapes.medium,
-        colors = CardDefaults.cardColors().copy(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        ),
+        shape = MaterialTheme.shapes.small,
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         content = {
             Column(
-                modifier = Modifier.padding(20.dp)
+                modifier = Modifier.padding(16.dp)
             ) {
                 EvaluasiTextField(
                     modifier = Modifier.fillMaxWidth(),
                     label = "Category Name",
                     placeholder = "Enter category name",
                     value = state.name,
-                    onValueChange = { },
+                    onValueChange = { onNameChanged(it) },
                     keyboardType = KeyboardType.Text,
                 )
 
@@ -47,8 +49,9 @@ fun CategoryCard(
                     label = "Percentage",
                     placeholder = "Enter Percentage (total must be 100)",
                     value = state.partPercentage,
-                    onValueChange = {},
-                    keyboardType = KeyboardType.Number
+                    onValueChange = { onPercentageChanged(it) },
+                    keyboardType = KeyboardType.Number,
+                    errorMessage = if (percentageExceeded) errorMessage else "",
                 )
 
                 EvaluasiTextField(
@@ -58,7 +61,7 @@ fun CategoryCard(
                     label = "Category Description",
                     placeholder = "Enter category description (optional)",
                     value = state.description,
-                    onValueChange = {},
+                    onValueChange = { onDescriptionChanged(it) },
                     keyboardType = KeyboardType.Text,
                     minLines = 3,
                     maxLines = 3
@@ -78,6 +81,9 @@ private fun CategoryCardPreview() {
             description = TextFieldValue(),
         ),
         percentageExceeded = true,
-        errorMessage = "Total percentage must be 100"
+        errorMessage = "Total percentage must be 100",
+        onNameChanged = {},
+        onPercentageChanged = {},
+        onDescriptionChanged = {}
     )
 }

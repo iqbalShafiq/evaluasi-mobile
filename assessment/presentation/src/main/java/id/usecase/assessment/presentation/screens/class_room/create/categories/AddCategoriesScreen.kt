@@ -24,6 +24,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -173,9 +174,14 @@ fun AddCategoriesScreen(
                         style = MaterialTheme.typography.titleSmall,
                     )
 
-                    LazyColumn(
-                        modifier = Modifier.padding(top = 12.dp)
-                    ) {
+                    Text(
+                        text = "${categories.sumOf { it.partPercentage.text.toDoubleOrNull() ?: 0.0 }}/100 Assessments Percentage",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = 4.dp, bottom = 12.dp)
+                    )
+
+                    LazyColumn {
                         items(categories.size) { index ->
                             val category = categories[index]
 
@@ -191,7 +197,22 @@ fun AddCategoriesScreen(
                                 CategoryCard(
                                     state = category,
                                     percentageExceeded = totalPercentage > 100,
-                                    errorMessage = "Total percentage must be 100"
+                                    errorMessage = "Total percentage must be 100",
+                                    onNameChanged = { name ->
+                                        categories[index] = category.copy(
+                                            name = name
+                                        )
+                                    },
+                                    onPercentageChanged = { percentage ->
+                                        categories[index] = category.copy(
+                                            partPercentage = percentage
+                                        )
+                                    },
+                                    onDescriptionChanged = { description ->
+                                        categories[index] = category.copy(
+                                            description = description
+                                        )
+                                    }
                                 )
 
                                 if (
@@ -251,13 +272,16 @@ fun AddCategoriesScreen(
 @Preview
 @Composable
 private fun AddCategoriesPreview() {
-    val state = remember {
-        AddCategoriesState(
-            categories = listOf(
-                CategoryItemState()
+    val state by remember {
+        mutableStateOf(
+            AddCategoriesState(
+                categories = listOf(
+                    CategoryItemState()
+                )
             )
         )
     }
+
     EvaluasiTheme {
         AddCategoriesScreen(
             state = state,
