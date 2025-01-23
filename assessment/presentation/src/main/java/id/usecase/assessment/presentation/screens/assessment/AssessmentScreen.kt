@@ -26,8 +26,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -76,7 +74,15 @@ fun AssessmentScreenRoot(
                     eventId = eventId
                 )
             )
+
+            return@LaunchedEffect
         }
+
+        viewModel.onAction(
+            action = AssessmentAction.LoadNewAssessment(
+                classRoomId = classRoomId
+            )
+        )
     }
 
     when {
@@ -180,8 +186,9 @@ fun AssessmentScreen(
                 val (progress) = createRefs()
                 LinearProgressIndicator(
                     progress = {
+                        if (state.assessmentListField.isEmpty()) return@LinearProgressIndicator 0f
                         assessments.count {
-                            it.score.text.isNotEmpty()
+                            (it.score.text.toDoubleOrNull() ?: 0.0) != 0.0
                         } / state.assessmentListField.size.toFloat()
                     },
                     modifier = Modifier
@@ -286,7 +293,7 @@ fun AssessmentScreen(
                     )
 
                     Text(
-                        text = "${assessments.count { it.score.text.isNotEmpty() }}/${state.assessmentListField.size} assessment of students",
+                        text = "${assessments.count { (it.score.text.toDoubleOrNull() ?: 0.0) != 0.0 }}/${state.assessmentListField.size} assessment of students",
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(top = 4.dp, bottom = 12.dp)

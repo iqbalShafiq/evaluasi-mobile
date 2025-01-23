@@ -1,6 +1,7 @@
 package id.usecase.assessment.presentation.screens.assessment
 
 import android.app.Application
+import android.util.Log
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,6 +28,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -52,6 +55,10 @@ class AssessmentViewModel(
 
     fun onAction(action: AssessmentAction) {
         when (action) {
+            is AssessmentAction.LoadNewAssessment -> loadNewAssessment(
+                classRoomId = action.classRoomId
+            )
+
             is AssessmentAction.LoadAssessmentDetail -> loadAssessmentDetail(
                 classRoomId = action.classRoomId,
                 eventId = action.eventId
@@ -85,6 +92,7 @@ class AssessmentViewModel(
                         DataResult.Loading -> _state.update { it.copy(isLoading = true) }
 
                         is DataResult.Success -> {
+                            Log.d("TAG", "loadStudentsOfClassRoom: ${result.data}")
                             _state.update {
                                 it.copy(
                                     isLoading = false,
@@ -112,54 +120,67 @@ class AssessmentViewModel(
         withContext(dispatcher) {
             assessmentRepository.getAssessmentsByEventId(eventId)
                 .catch {
-                    onAssessmentHasNotCreatedYet()
+                    _state.update { state -> state.copy(isLoading = false) }
+                    _events.send(
+                        OnErrorOccurred(
+                            errorMessage = it.message ?: application.getString(
+                                R.string.unknown_error
+                            )
+                        )
+                    )
                 }
                 .collectLatest { result ->
                     when (result) {
                         DataResult.Loading -> _state.update { it.copy(isLoading = true) }
 
-                        is DataResult.Success -> _state.update {
-                            it.copy(
-                                isLoading = false,
-                                assessmentList = result.data ?: emptyList()
-                            )
+                        is DataResult.Success -> {
+                            Log.d("TAG", "loadAssessmentsByEventId: ${state.value}")
+                            _state.update {
+                                it.copy(
+                                    isLoading = false,
+                                    assessmentList = result.data!!.ifEmpty {
+                                        state.value.studentList.map { student ->
+                                            Assessment(
+                                                id = 0,
+                                                studentId = student.id,
+                                                eventId = eventId,
+                                                score = 0.0,
+                                                createdTime = System.currentTimeMillis(),
+                                                lastModifiedTime = System.currentTimeMillis()
+                                            )
+                                        }
+                                    }
+                                )
+                            }
                         }
 
-                        is DataResult.Error -> onAssessmentHasNotCreatedYet()
+                        is DataResult.Error -> {
+                            _state.update { it.copy(isLoading = false) }
+                            _events.send(
+                                OnErrorOccurred(
+                                    errorMessage = result.exception.message ?: application.getString(
+                                        R.string.unknown_error
+                                    )
+                                )
+                            )
+                        }
                     }
                 }
         }
     }
 
-    private suspend fun onAssessmentHasNotCreatedYet() {
-        withContext(dispatcher) {
-            _state.update {
-                it.copy(
-                    isLoading = false,
-                    assessmentList = emptyList()
-                )
-            }
-        }
-    }
-
     private suspend fun getStudentAvgScore(studentId: Int): Double {
-        return suspendCoroutine { continuation ->
-            viewModelScope.launch(dispatcher) {
-                assessmentRepository.getAverageScoreByStudentId(studentId)
-                    .catch {
-                        continuation.resume(0.0)
-                    }
-                    .collectLatest { result ->
-                        when (result) {
-                            is DataResult.Success -> continuation.resume(
-                                value = result.data ?: 0.0
-                            )
-
-                            else -> continuation.resume(0.0)
-                        }
-                    }
+        return assessmentRepository.getAverageScoreByStudentId(studentId)
+            .catch {
+                emit(DataResult.Error(Exception(it)))
             }
-        }
+            .map { result ->
+                when (result) {
+                    is DataResult.Success -> result.data ?: 0.0
+                    else -> 0.0
+                }
+            }
+            .first()
     }
 
     private suspend fun transformAssessmentToStudentAssessmentState(
@@ -203,6 +224,35 @@ class AssessmentViewModel(
                             else -> continuation.resume(null)
                         }
                     }
+            }
+        }
+    }
+
+    private fun loadNewAssessment(classRoomId: Int) {
+        viewModelScope.launch(dispatcher) {
+            loadStudentsOfClassRoom(classRoomId)
+            _state.update {
+                it.copy(
+                    assessmentList = state.value.studentList.map { student ->
+                        Assessment(
+                            id = 0,
+                            studentId = student.id,
+                            eventId = 0,
+                            score = 0.0,
+                            createdTime = System.currentTimeMillis(),
+                            lastModifiedTime = System.currentTimeMillis()
+                        )
+                    }
+                )
+            }
+            val assessmentListField = transformAssessmentToStudentAssessmentState(
+                assessmentList = state.value.assessmentList,
+                studentList = state.value.studentList
+            )
+            _state.update {
+                it.copy(
+                    assessmentListField = assessmentListField
+                )
             }
         }
     }

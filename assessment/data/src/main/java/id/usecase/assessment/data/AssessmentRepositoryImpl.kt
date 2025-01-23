@@ -35,16 +35,7 @@ class AssessmentRepositoryImpl(
         return flow {
             try {
                 emit(DataResult.Loading)
-                val assessments: List<Assessment> =
-                    dataSource.getAssessmentsByEventId(eventId)
-                if (assessments.isEmpty()) {
-                    emit(
-                        DataResult.Error(
-                            Exception("Haven't create any assessment yet")
-                        )
-                    )
-                    return@flow
-                }
+                val assessments: List<Assessment> = dataSource.getAssessmentsByEventId(eventId)
                 emit(DataResult.Success(assessments))
             } catch (e: Exception) {
                 emit(DataResult.Error(e))

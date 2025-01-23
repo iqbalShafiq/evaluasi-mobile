@@ -27,10 +27,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             EvaluasiTheme {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
+                Column(modifier = Modifier.fillMaxSize()) {
                     MyNavigation()
                 }
             }
