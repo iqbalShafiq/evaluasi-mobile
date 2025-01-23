@@ -40,6 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.screens.class_room.create.students.item.AddStudentCard
 import id.usecase.assessment.presentation.screens.class_room.create.students.item.AddStudentItemState
@@ -63,6 +64,7 @@ fun AddStudentsScreenRoot(
     openAutoFillScanner: () -> Unit,
     viewModel: AddStudentsViewModel = koinViewModel()
 ) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val openAlertDialog = remember { mutableStateOf(false) }
     val errorMessage = remember { mutableStateOf("") }
 
@@ -105,9 +107,7 @@ fun AddStudentsScreenRoot(
         )
     }
 
-    if (viewModel.state.value.isLoading) {
-        StandardLoadingDialog()
-    }
+    if (state.isLoading) StandardLoadingDialog()
 
     AddStudentsScreen(
         modifier = modifier,
@@ -115,7 +115,7 @@ fun AddStudentsScreenRoot(
         onBackPressed = onBackPressed,
         onClearStudentPressed = {},
         onPastePressed = openAutoFillScanner,
-        state = viewModel.state.value,
+        state = state,
         onAction = { action ->
             viewModel.onAction(action)
         },

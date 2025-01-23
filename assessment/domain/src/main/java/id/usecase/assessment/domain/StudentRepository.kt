@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface StudentRepository {
     suspend fun upsertStudent(students: Student): DataResult<Student?>
     suspend fun upsertStudents(students: List<Student>): DataResult<List<Student>>
+    fun getTotalStudent(): Flow<DataResult<Int>>
     fun getStudentsByClassRoomId(classRoomId: Int): Flow<DataResult<List<Student>>>
     suspend fun deleteStudent(student: Student)
 }

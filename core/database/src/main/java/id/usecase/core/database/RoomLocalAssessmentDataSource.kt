@@ -84,6 +84,12 @@ class RoomLocalAssessmentDataSource(
         }
     }
 
+    override suspend fun getTotalStudent(): Int {
+        return withContext(dispatcher) {
+            studentDao.getTotalStudent()
+        }
+    }
+
     override suspend fun getStudentsByClassRoomId(classRoomId: Int): List<Student> {
         return withContext(dispatcher) {
             studentDao

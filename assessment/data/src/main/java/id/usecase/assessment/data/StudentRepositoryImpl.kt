@@ -38,19 +38,23 @@ class StudentRepositoryImpl(
         }
     }
 
+    override fun getTotalStudent(): Flow<DataResult<Int>> {
+        return flow {
+            try {
+                emit(DataResult.Loading)
+                val totalStudent: Int = dataSource.getTotalStudent()
+                emit(DataResult.Success(totalStudent))
+            } catch (e: Exception) {
+                emit(DataResult.Error(e))
+            }
+        }.flowOn(dispatcher)
+    }
+
     override fun getStudentsByClassRoomId(classRoomId: Int): Flow<DataResult<List<Student>>> {
         return flow {
             try {
                 emit(DataResult.Loading)
                 val students: List<Student> = dataSource.getStudentsByClassRoomId(classRoomId)
-                if (students.isEmpty()) {
-                    emit(
-                        DataResult.Error(
-                            Exception("Haven't create any student yet")
-                        )
-                    )
-                    return@flow
-                }
                 emit(DataResult.Success(students))
             } catch (e: Exception) {
                 emit(DataResult.Error(e))

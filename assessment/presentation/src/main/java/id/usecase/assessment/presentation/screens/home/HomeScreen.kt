@@ -84,7 +84,6 @@ fun HomeScreenRoot(
         modifier = Modifier.fillMaxSize(),
         errorMessage = errorMessage,
         state = state,
-        classRoomList = state.classRooms,
         onCreateClassRoomClicked = onCreateClassRoomClicked,
         onClassRoomChosen = onClassRoomChosen,
         onAction = homeViewModel::onAction
@@ -96,7 +95,6 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     errorMessage: String? = null,
     state: HomeState,
-    classRoomList: List<ClassRoomUi>,
     onCreateClassRoomClicked: () -> Unit,
     onClassRoomChosen: (Int) -> Unit,
     onAction: (HomeAction) -> Unit
@@ -190,15 +188,15 @@ fun HomeScreen(
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(
-                            count = classRoomList.size,
-                            key = { index -> classRoomList[index].id }
+                            count = state.classRooms.size,
+                            key = { index -> state.classRooms[index].id }
                         ) { index ->
                             ClassRoomCard(
                                 modifier = Modifier.animateItem(),
                                 onDetailClickedListener = {
-                                    onClassRoomChosen(classRoomList[index].id)
+                                    onClassRoomChosen(state.classRooms[index].id)
                                 },
-                                item = classRoomList[index]
+                                item = state.classRooms[index]
                             )
                         }
                     }
@@ -230,8 +228,8 @@ fun HomeScreen(
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             StatisticsHeader(
-                totalClasses = classRoomList.size,
-                totalStudents = classRoomList.sumOf { it.studentCount }
+                totalClasses = state.classRooms.size,
+                totalStudents = state.totalStudent
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -261,19 +259,19 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .animateContentSize(),
-                contentPadding = PaddingValues(bottom = heightInDp + 16.dp),
+                contentPadding = PaddingValues(bottom = heightInDp + 28.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(
-                    count = classRoomList.size,
-                    key = { index -> classRoomList[index].id }
+                    count = state.classRooms.size,
+                    key = { index -> state.classRooms[index].id }
                 ) { index ->
                     ClassRoomCard(
                         modifier = Modifier.animateItem(),
                         onDetailClickedListener = {
-                            onClassRoomChosen(classRoomList[index].id)
+                            onClassRoomChosen(state.classRooms[index].id)
                         },
-                        item = classRoomList[index]
+                        item = state.classRooms[index]
                     )
                 }
             }
@@ -286,47 +284,48 @@ fun HomeScreen(
 private fun HomeScreenPreview() {
     EvaluasiTheme {
         HomeScreen(
-            classRoomList = listOf(
-                ClassRoomUi(
-                    subject = "Math",
-                    className = "A",
-                    studentCount = 20,
-                    id = 1,
-                    lastAssessment = "January Math Exam",
-                    startPeriod = "2021-01-01",
-                    endPeriod = "2021-12-31"
-                ),
-                ClassRoomUi(
-                    subject = "Science",
-                    className = "B",
-                    studentCount = 30,
-                    id = 2,
-                    lastAssessment = "February Science Exam",
-                    startPeriod = "2021-01-01",
-                    endPeriod = "2021-12-31"
-                ),
-                ClassRoomUi(
-                    subject = "English",
-                    className = "C",
-                    studentCount = 40,
-                    id = 3,
-                    lastAssessment = "March English Exam",
-                    startPeriod = "2021-01-01",
-                    endPeriod = "2021-12-31"
-                ),
-                ClassRoomUi(
-                    subject = "History",
-                    className = "D",
-                    studentCount = 50,
-                    id = 4,
-                    lastAssessment = "April History Exam",
-                    startPeriod = "2021-01-01",
-                    endPeriod = "2021-12-31"
-                )
-            ),
             onCreateClassRoomClicked = { },
             onClassRoomChosen = { },
-            state = HomeState(),
+            state = HomeState(
+                classRooms = listOf(
+                    ClassRoomUi(
+                        subject = "Math",
+                        className = "A",
+                        studentCount = 20,
+                        id = 1,
+                        lastAssessment = "January Math Exam",
+                        startPeriod = "2021-01-01",
+                        endPeriod = "2021-12-31"
+                    ),
+                    ClassRoomUi(
+                        subject = "Science",
+                        className = "B",
+                        studentCount = 30,
+                        id = 2,
+                        lastAssessment = "February Science Exam",
+                        startPeriod = "2021-01-01",
+                        endPeriod = "2021-12-31"
+                    ),
+                    ClassRoomUi(
+                        subject = "English",
+                        className = "C",
+                        studentCount = 40,
+                        id = 3,
+                        lastAssessment = "March English Exam",
+                        startPeriod = "2021-01-01",
+                        endPeriod = "2021-12-31"
+                    ),
+                    ClassRoomUi(
+                        subject = "History",
+                        className = "D",
+                        studentCount = 50,
+                        id = 4,
+                        lastAssessment = "April History Exam",
+                        startPeriod = "2021-01-01",
+                        endPeriod = "2021-12-31"
+                    )
+                )
+            ),
             onAction = {}
         )
     }

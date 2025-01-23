@@ -212,7 +212,7 @@ fun CreateClassRoomScreen(
                                 color = MaterialTheme.colorScheme.primary
                             )
 
-                            Spacer(modifier = Modifier.height(8.dp))
+                            Spacer(modifier = Modifier.height(12.dp))
 
                             EvaluasiTextField(
                                 modifier = Modifier.fillMaxWidth(),
@@ -305,7 +305,7 @@ fun CreateClassRoomScreen(
                                 }
                             )
 
-                            Spacer(modifier = Modifier.height(8.dp))
+                            Spacer(modifier = Modifier.height(12.dp))
 
                             EvaluasiTextField(
                                 modifier = Modifier.fillMaxWidth(),

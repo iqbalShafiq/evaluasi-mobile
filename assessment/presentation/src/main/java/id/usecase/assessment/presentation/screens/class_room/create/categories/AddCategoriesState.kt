@@ -4,5 +4,5 @@ import id.usecase.assessment.presentation.screens.class_room.create.categories.c
 
 data class AddCategoriesState(
     val isLoading: Boolean = false,
-    val categories: List<CategoryItemState> = emptyList(),
+    val categories: List<CategoryItemState> = listOf(CategoryItemState()),
 )

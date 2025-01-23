@@ -1,8 +1,6 @@
 package id.usecase.assessment.presentation.screens.class_room.create.categories
 
 import android.app.Application
-import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import id.usecase.assessment.domain.CategoryRepository
@@ -14,9 +12,12 @@ import id.usecase.core.domain.assessment.DataResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -28,8 +29,8 @@ class AddCategoriesViewModel(
     private val _events = Channel<AddCategoriesEvent>()
     val events = _events.receiveAsFlow()
 
-    var state = mutableStateOf(AddCategoriesState())
-        private set
+    private val _state = MutableStateFlow(AddCategoriesState())
+    val state = _state.asStateFlow()
 
     fun onAction(action: AddCategoriesAction) {
         when (action) {
@@ -50,8 +51,7 @@ class AddCategoriesViewModel(
         viewModelScope.launch(dispatcher) {
             repository.getCategoriesByClassRoomId(classRoomId)
                 .catch { e ->
-                    Log.e(TAG, "loadCategories: Catch", e)
-                    state.value = state.value.copy(isLoading = false)
+                    _state.value = state.value.copy(isLoading = false)
                     _events.send(
                         AddCategoriesEvent.OnErrorOccurred(
                             message = e.message ?: application.getString(R.string.unknown_error)
@@ -60,22 +60,21 @@ class AddCategoriesViewModel(
                 }
                 .collectLatest { result ->
                     when (result) {
-                        DataResult.Loading -> state.value = state.value.copy(isLoading = true)
+                        DataResult.Loading -> _state.value = state.value.copy(isLoading = true)
 
                         is DataResult.Success -> {
-                            Log.d(TAG, "loadCategories: Success ${result.data}")
-                            state.value = state.value.copy(
-                                isLoading = false,
-                                categories = result
-                                    .data
-                                    ?.map { it.toItemState() }
-                                    ?: listOf(CategoryItemState())
-                            )
+                            _state.update {
+                                it.copy(
+                                    isLoading = false,
+                                    categories = result.data!!.map { category ->
+                                        category.toItemState()
+                                    }.ifEmpty { listOf(CategoryItemState()) }
+                                )
+                            }
                         }
 
                         is DataResult.Error -> {
-                            Log.e(TAG, "loadCategories: Error", result.exception)
-                            state.value = state.value.copy(isLoading = false)
+                            _state.value = state.value.copy(isLoading = false)
                             _events.send(
                                 AddCategoriesEvent.OnErrorOccurred(
                                     message = result.exception.message ?: application.getString(
@@ -99,7 +98,7 @@ class AddCategoriesViewModel(
 
             when (val result = repository.upsertCategories(categoryList)) {
                 DataResult.Loading -> {
-                    state.value = state.value.copy(isLoading = true)
+                    _state.value = state.value.copy(isLoading = true)
                 }
 
                 is DataResult.Error -> {
@@ -110,12 +109,12 @@ class AddCategoriesViewModel(
                             )
                         )
                     )
-                    state.value = state.value.copy(isLoading = false)
+                    _state.value = state.value.copy(isLoading = false)
                 }
 
                 is DataResult.Success -> {
                     _events.send(AddCategoriesEvent.OnCategoriesHasAdded)
-                    state.value = state.value.copy(isLoading = false)
+                    _state.value = state.value.copy(isLoading = false)
                 }
             }
         }

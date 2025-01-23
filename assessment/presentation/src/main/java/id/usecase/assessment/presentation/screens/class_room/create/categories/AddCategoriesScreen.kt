@@ -2,6 +2,7 @@
 
 package id.usecase.assessment.presentation.screens.class_room.create.categories
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -36,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.screens.class_room.create.categories.components.CategoryCard
 import id.usecase.assessment.presentation.screens.class_room.create.categories.components.CategoryItemState
@@ -57,6 +59,7 @@ fun AddCategoriesScreenRoot(
     onCategoriesHasCreated: () -> Unit,
     viewModel: AddCategoriesViewModel = koinViewModel()
 ) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val openAlertDialog = remember { mutableStateOf(false) }
     val openLoadingDialog = remember { mutableStateOf(false) }
     val errorMessage = remember { mutableStateOf("") }
@@ -108,7 +111,7 @@ fun AddCategoriesScreenRoot(
     AddCategoriesScreen(
         modifier = modifier,
         classRoomId = classRoomId,
-        state = viewModel.state.value,
+        state = state,
         onBackPressed = onBackPressed,
         onClearStudentPressed = {},
         onAction = { action ->
@@ -126,6 +129,8 @@ fun AddCategoriesScreen(
     onClearStudentPressed: () -> Unit,
     onAction: (AddCategoriesAction) -> Unit
 ) {
+    val categories = remember { mutableStateListOf<CategoryItemState>() }
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -146,9 +151,9 @@ fun AddCategoriesScreen(
             )
         },
         content = { innerPadding ->
-            val categories = remember { mutableStateListOf<CategoryItemState>() }
             categories.clear()
             categories.addAll(state.categories)
+            Log.d("TAG", "AddCategoriesScreen: $categories")
 
             ConstraintLayout(
                 modifier = modifier
@@ -186,7 +191,7 @@ fun AddCategoriesScreen(
                             val category = categories[index]
 
                             val totalPercentage = categories.sumOf {
-                                it.partPercentage.text.toString().toIntOrNull() ?: 0
+                                it.partPercentage.text.toIntOrNull() ?: 0
                             }
 
                             AnimatedVisibility(
@@ -274,11 +279,7 @@ fun AddCategoriesScreen(
 private fun AddCategoriesPreview() {
     val state by remember {
         mutableStateOf(
-            AddCategoriesState(
-                categories = listOf(
-                    CategoryItemState()
-                )
-            )
+            AddCategoriesState()
         )
     }
 

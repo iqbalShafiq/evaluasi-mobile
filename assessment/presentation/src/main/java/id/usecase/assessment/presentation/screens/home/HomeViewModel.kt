@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import id.usecase.assessment.domain.AssessmentRepository
 import id.usecase.assessment.domain.ClassRoomRepository
+import id.usecase.assessment.domain.StudentRepository
 import id.usecase.assessment.presentation.utils.toUi
 import id.usecase.core.domain.assessment.DataResult
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,10 +16,14 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class HomeViewModel(
     private val assessmentRepository: AssessmentRepository,
-    private val classRoomRepository: ClassRoomRepository
+    private val classRoomRepository: ClassRoomRepository,
+    private val studentRepository: StudentRepository,
+    private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
     private val _events = Channel<HomeEvent>()
     val events = _events.receiveAsFlow()
@@ -36,8 +42,30 @@ class HomeViewModel(
         }
     }
 
+    private fun getAllStudentCount(){
+        viewModelScope.launch(dispatcher) {
+            studentRepository.getTotalStudent()
+                .catch {
+                    _state.update {
+                        it.copy(totalStudent = 0)
+                    }
+                }
+                .collectLatest { result ->
+                    when (result) {
+                        is DataResult.Success -> _state.update {
+                            it.copy(totalStudent = result.data ?: 0)
+                        }
+
+                        else -> _state.update {
+                            it.copy(totalStudent = 0)
+                        }
+                    }
+                }
+        }
+    }
+
     private fun loadClassRoom() {
-        viewModelScope.launch {
+        viewModelScope.launch(dispatcher) {
             classRoomRepository.getClassRooms()
                 .catch { e ->
                     _state.update {
@@ -52,6 +80,7 @@ class HomeViewModel(
                         }
 
                         is DataResult.Success -> {
+                            getAllStudentCount()
                             _state.update {
                                 it.copy(
                                     isLoading = false,

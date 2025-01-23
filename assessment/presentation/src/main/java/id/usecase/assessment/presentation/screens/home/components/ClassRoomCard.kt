@@ -34,8 +34,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -53,7 +51,6 @@ fun ClassRoomCard(
     item: ClassRoomUi
 ) {
     var isExpanded by remember { mutableStateOf(false) }
-    var textColor by remember { mutableStateOf(Color.Black) }
 
     Card(
         modifier = modifier
@@ -84,22 +81,14 @@ fun ClassRoomCard(
                     // Subject Icon
                     Surface(
                         shape = CircleShape,
-                        color = Color(
-                            red = (0..255).random() / 255f,
-                            green = (0..255).random() / 255f,
-                            blue = (0..255).random() / 255f
-                        ).also { surfaceColor ->
-                            textColor = if (surfaceColor.luminance() > 0.5f) {
-                                MaterialTheme.colorScheme.onSurface
-                            } else MaterialTheme.colorScheme.inverseOnSurface
-                        },
+                        color = MaterialTheme.colorScheme.primaryContainer,
                         modifier = Modifier.size(40.dp)
                     ) {
                         Text(
                             text = item.subject.first().toString(),
                             modifier = Modifier.padding(8.dp),
                             style = MaterialTheme.typography.titleMedium,
-                            color = textColor,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
                             textAlign = TextAlign.Center
                         )
                     }

@@ -17,6 +17,9 @@ interface StudentDao {
     @Query("SELECT * FROM students WHERE id = :id")
     suspend fun getStudentById(id: Int): StudentEntity?
 
+    @Query("SELECT COUNT(*) FROM students")
+    suspend fun getTotalStudent(): Int
+
     @Query("SELECT * FROM students WHERE class_room_id = :classRoomId")
     suspend fun getStudentsByClassRoomId(classRoomId: Int): List<StudentEntity>
 
