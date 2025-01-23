@@ -119,10 +119,11 @@ fun MyNavigation() {
                     navController.popBackStack()
                 },
                 onStudentHasAdded = {
-                    navController.popBackStack(
-                        Home,
-                        inclusive = true
-                    )
+                    navController.navigate(ClassRoomDetail(classRoomId)) {
+                        popUpTo(Home) {
+                            inclusive = false
+                        }
+                    }
                 },
                 openAutoFillScanner = {
                     // TODO
