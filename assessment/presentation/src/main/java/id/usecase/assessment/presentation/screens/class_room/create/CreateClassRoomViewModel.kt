@@ -100,20 +100,6 @@ class CreateClassRoomViewModel(
                                 ),
                             )
                         }
-
-                        is DataResult.Error -> {
-                            _state.update {
-                                it.copy(isLoading = false)
-                            }
-
-                            _events.send(
-                                OnErrorOccurred(
-                                    result.exception.message ?: application.getString(
-                                        R.string.unknown_error
-                                    )
-                                )
-                            )
-                        }
                     }
                 }
         }
@@ -152,17 +138,6 @@ class CreateClassRoomViewModel(
                     result.data?.toUi()?.let {
                         _events.send(OnClassRoomCreated(it))
                     }
-                }
-
-                is DataResult.Error -> {
-                    _state.value = _state.value.copy(isLoading = false)
-                    _events.send(
-                        OnErrorOccurred(
-                            result.exception.message ?: application.getString(
-                                R.string.unknown_error
-                            )
-                        )
-                    )
                 }
             }
         }

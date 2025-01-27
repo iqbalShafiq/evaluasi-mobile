@@ -40,6 +40,7 @@ interface LocalAssessmentDataSource {
     suspend fun getAssessmentsByIds(assessmentIds: List<Int>): List<Assessment>
     suspend fun getAssessmentsByEventId(eventId: Int): List<Assessment>
     suspend fun getAssessmentById(assessmentId: Int): Assessment?
+    suspend fun getAverageScoreByClassRoomId(classRoomId: Int): Double
     suspend fun getAverageScoreByStudentId(studentId: Int): Double
     suspend fun deleteAssessment(assessment: Assessment)
 

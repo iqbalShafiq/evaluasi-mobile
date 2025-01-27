@@ -2,6 +2,7 @@
 
 package id.usecase.assessment.presentation.screens.assessment
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -47,6 +48,7 @@ import id.usecase.designsystem.components.button.EvaluasiButton
 import id.usecase.designsystem.components.dialog.EvaluasiDatePicker
 import id.usecase.designsystem.components.dialog.StandardAlertDialog
 import id.usecase.designsystem.components.dialog.StandardLoadingDialog
+import id.usecase.designsystem.components.text_field.EvaluasiDropdown
 import id.usecase.designsystem.components.text_field.EvaluasiTextField
 import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
@@ -67,23 +69,15 @@ fun AssessmentScreenRoot(
     val showStartDatePicker = remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = Unit) {
-        if (eventId != null) {
-            viewModel.onAction(
-                action = AssessmentAction.LoadAssessmentDetail(
-                    classRoomId = classRoomId,
-                    eventId = eventId
-                )
-            )
-
-            return@LaunchedEffect
-        }
-
         viewModel.onAction(
-            action = AssessmentAction.LoadNewAssessment(
-                classRoomId = classRoomId
+            action = AssessmentAction.LoadAssessmentDetail(
+                classRoomId = classRoomId,
+                eventId = eventId
             )
         )
     }
+
+    Log.d("TAG", "AssessmentScreenRoot: Event Id $eventId")
 
     when {
         showStartDatePicker.value -> {
@@ -95,6 +89,7 @@ fun AssessmentScreenRoot(
                     viewModel.onAction(
                         AssessmentAction.UpdateForms(
                             state.copy(
+                                selectedDate = it ?: System.currentTimeMillis(),
                                 startDateField = TextFieldValue(
                                     text = SimpleDateFormat(
                                         "yyyy-MM-dd",
@@ -162,9 +157,11 @@ fun AssessmentScreen(
     showStartDatePicker: () -> Unit,
     onAction: (AssessmentAction) -> Unit
 ) {
-    val assessments = remember { mutableStateListOf<StudentAssessmentState>() }
-    assessments.clear()
-    assessments.addAll(state.assessmentListField)
+    val assessments = remember(state.assessmentListField) {
+        mutableStateListOf<StudentAssessmentState>().apply {
+            addAll(state.assessmentListField)
+        }
+    }
 
     Scaffold(
         modifier = modifier,
@@ -177,6 +174,7 @@ fun AssessmentScreen(
             )
         },
         content = { innerPadding ->
+
             ConstraintLayout(
                 modifier = Modifier
                     .padding(innerPadding)
@@ -238,20 +236,17 @@ fun AssessmentScreen(
                     )
 
                     // Category Field
-                    EvaluasiTextField(
+                    EvaluasiDropdown(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 12.dp),
                         label = "Category",
                         placeholder = "Choose category",
-                        value = state.categoryField,
-                        onValueChange = {
+                        items = state.categoryNameList,
+                        selectedItem = state.selectedCategoryName,
+                        onItemSelected = { category ->
                             onAction(
-                                AssessmentAction.UpdateForms(
-                                    state.copy(
-                                        categoryField = it
-                                    )
-                                )
+                                AssessmentAction.OnCategorySelected(category)
                             )
                         }
                     )
@@ -305,18 +300,16 @@ fun AssessmentScreen(
                         contentPadding = PaddingValues(bottom = 12.dp)
                     ) {
                         items(assessments.size) { index ->
-                            val assessment = assessments[index]
-
                             StudentAssessmentCard(
                                 modifier = Modifier.fillMaxWidth(),
-                                state = assessment,
+                                state = assessments[index],
                                 onScoreChanged = { score ->
-                                    assessments[index] = assessment.copy(
+                                    assessments[index] = assessments[index].copy(
                                         score = score
                                     )
                                 },
                                 onCommentsChanged = { comment ->
-                                    assessments[index] = assessment.copy(
+                                    assessments[index] = assessments[index].copy(
                                         comments = comment
                                     )
                                 }
@@ -342,9 +335,7 @@ fun AssessmentScreen(
                         )
                     },
                     buttonType = ButtonType.INVERSE,
-                    enabled = state.assessmentNameField.text.isNotEmpty() &&
-                            state.startDateField.text.isNotEmpty() &&
-                            state.categoryField.text.isNotEmpty()
+                    enabled = state.isFormValid
                 )
             }
         }

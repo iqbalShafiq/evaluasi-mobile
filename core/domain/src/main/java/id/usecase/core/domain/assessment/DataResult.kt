@@ -1,7 +1,6 @@
 package id.usecase.core.domain.assessment
 
-sealed class DataResult <out T>(val data: T? = null, val message: String? = null) {
-    class Success<T>(data: T) : DataResult<T>(data = data)
-    data class Error(val exception: Exception): DataResult<Nothing>()
+sealed class DataResult <out T>() {
+    class Success<T>(val data: T) : DataResult<T>()
     data object Loading: DataResult<Nothing>()
 }

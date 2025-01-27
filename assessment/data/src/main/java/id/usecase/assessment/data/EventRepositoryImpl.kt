@@ -16,66 +16,40 @@ class EventRepositoryImpl(
 ) : EventRepository {
     override suspend fun upsertEvent(event: Event): DataResult<Event?> {
         return withContext(dispatcher) {
-            try {
-                val eventId = dataSource.upsertEvent(event)
-                DataResult.Success(dataSource.getEventById(eventId.toInt()))
-            } catch (e: Exception) {
-                DataResult.Error(e)
-            }
+            val eventId = dataSource.upsertEvent(event)
+            DataResult.Success(dataSource.getEventById(eventId.toInt()))
         }
     }
 
     override fun getEventsByClassRoomId(classRoomId: Int): Flow<DataResult<List<Event>>> {
         return flow {
-            try {
-                emit(DataResult.Loading)
-                val events: List<Event> = dataSource.getEventsByClassRoomId(classRoomId)
-                emit(DataResult.Success(events))
-            } catch (e: Exception) {
-                emit(DataResult.Error(e))
-            }
+            emit(DataResult.Loading)
+            val events: List<Event> = dataSource.getEventsByClassRoomId(classRoomId)
+            emit(DataResult.Success(events))
         }.flowOn(dispatcher)
     }
 
     override fun getEventsByCategoryId(categoryId: Int): Flow<DataResult<List<Event>>> {
         return flow {
-            try {
-                emit(DataResult.Loading)
-                val events: List<Event> = dataSource.getEventsByCategoryId(categoryId)
-                emit(DataResult.Success(events))
-            } catch (e: Exception) {
-                emit(DataResult.Error(e))
-            }
+            emit(DataResult.Loading)
+            val events: List<Event> = dataSource.getEventsByCategoryId(categoryId)
+            emit(DataResult.Success(events))
         }.flowOn(dispatcher)
     }
 
     override fun getEventById(eventId: Int): Flow<DataResult<Event?>> {
         return flow {
-            try {
-                emit(DataResult.Loading)
-                val event: Event? = dataSource.getEventById(eventId)
-                if (event == null) {
-                    emit(
-                        DataResult.Error(
-                            Exception("Event not found")
-                        )
-                    )
-                    return@flow
-                }
-                emit(DataResult.Success(event))
-            } catch (e: Exception) {
-                emit(DataResult.Error(e))
-            }
+            emit(DataResult.Loading)
+            val event: Event? = dataSource.getEventById(eventId)
+            if (event == null) throw Exception("Event not found")
+
+            emit(DataResult.Success(event))
         }.flowOn(dispatcher)
     }
 
     override suspend fun deleteEvent(event: Event) {
         withContext(dispatcher) {
-            try {
-                dataSource.deleteEvent(event)
-            } catch (e: Exception) {
-                throw e
-            }
+            dataSource.deleteEvent(event)
         }
     }
 }

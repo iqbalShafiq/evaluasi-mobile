@@ -9,6 +9,7 @@ import id.usecase.assessment.domain.AssessmentRepository
 import id.usecase.assessment.domain.CategoryRepository
 import id.usecase.assessment.domain.ClassRoomRepository
 import id.usecase.assessment.domain.EventRepository
+import id.usecase.assessment.domain.StudentRepository
 import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.model.AssessmentEventUi
 import id.usecase.core.domain.assessment.DataResult
@@ -32,7 +33,8 @@ class ClassRoomViewModel(
     private val categoryRepository: CategoryRepository,
     private val eventRepository: EventRepository,
     private val assessmentRepository: AssessmentRepository,
-    private val analyticsRepository: AnalyticsRepository
+    private val analyticsRepository: AnalyticsRepository,
+    private val studentRepository: StudentRepository
 ) : ViewModel() {
     private val _events = Channel<ClassRoomEvent>()
     val events = _events.receiveAsFlow()
@@ -45,6 +47,8 @@ class ClassRoomViewModel(
             is ClassRoomAction.LoadClassRoom -> {
                 viewModelScope.launch(dispatcher) {
                     loadClassRoom(action.classRoomId)
+                    loadStudentTotalPerClassRoom()
+                    loadAverageScore()
                     loadAssessmentEvents()
                     getPerformanceTrend()
                     getCategoryDistribution()
@@ -83,19 +87,65 @@ class ClassRoomViewModel(
                                 it.copy(classRoom = result.data)
                             }
                         }
+                    }
+                }
+        }
+    }
 
-                        is DataResult.Error -> {
-                            _state.update {
-                                it.copy(isLoading = false)
-                            }
+    private suspend fun loadStudentTotalPerClassRoom() {
+        withContext(dispatcher) {
+            if (state.value.classRoom == null) return@withContext
+            studentRepository.getStudentsByClassRoomId(state.value.classRoom!!.id)
+                .catch { e ->
+                    _state.update {
+                        it.copy(isLoading = false)
+                    }
 
-                            _events.send(
-                                ClassRoomEvent.OnErrorOccurred(
-                                    message = result.exception.message ?: application.getString(
-                                        R.string.unknown_error
-                                    )
-                                )
+                    _events.send(
+                        ClassRoomEvent.OnErrorOccurred(
+                            message = e.message ?: application.getString(
+                                R.string.unknown_error
                             )
+                        )
+                    )
+                }
+                .collectLatest { result ->
+                    when (result) {
+                        DataResult.Loading -> _state.update {
+                            it.copy(isLoading = true)
+                        }
+
+                        is DataResult.Success -> _state.update {
+                            it.copy(totalStudents = result.data.size)
+                        }
+                    }
+                }
+        }
+    }
+
+    private suspend fun loadAverageScore() {
+        withContext(dispatcher) {
+            val classRoomId = state.value.classRoom?.id ?: 0
+            if (classRoomId == 0) return@withContext
+
+            assessmentRepository.getAverageScoreByClassRoomId(classRoomId)
+                .catch { e ->
+                    _events.send(
+                        ClassRoomEvent.OnErrorOccurred(
+                            message = e.message ?: application.getString(
+                                R.string.unknown_error
+                            )
+                        )
+                    )
+                }
+                .collectLatest { result ->
+                    when(result) {
+                        DataResult.Loading -> _state.update {
+                            it.copy(isLoading = true)
+                        }
+
+                        is DataResult.Success -> _state.update {
+                            it.copy(classAverage = result.data)
                         }
                     }
                 }
@@ -127,35 +177,36 @@ class ClassRoomViewModel(
 
                         is DataResult.Success -> {
                             _state.update {
-                                it.copy(events = result.data ?: emptyList())
+                                it.copy(events = result.data)
                             }
 
                             val categoryNames = getCategoryNames(classRoomId)
 
-                            val assessmentEventUiList = result.data?.map { event ->
-                                val categoryName = categoryNames
-                                    .find { it.first == event.categoryId }
-                                    ?.second ?: ""
+                            val assessmentEventUiList = result.data
+                                .map { event ->
+                                    val categoryName = categoryNames
+                                        .find { it.first == event.categoryId }
+                                        ?.second ?: ""
 
-                                AssessmentEventUi(
-                                    id = event.id,
-                                    name = event.name,
-                                    totalAssessment = 0,
-                                    categoryId = event.categoryId,
-                                    categoryName = categoryName,
-                                    classId = classRoomId,
-                                    eventDate = event.eventDate.toString(),
-                                    createdTime = event.createdTime.toString(),
-                                    lastModifiedTime = event.lastModifiedTime.toString()
-                                )
-                            }
+                                    AssessmentEventUi(
+                                        id = event.id,
+                                        name = event.name,
+                                        totalAssessment = 0,
+                                        categoryId = event.categoryId,
+                                        categoryName = categoryName,
+                                        classId = classRoomId,
+                                        eventDate = event.eventDate.toString(),
+                                        createdTime = event.createdTime.toString(),
+                                        lastModifiedTime = event.lastModifiedTime.toString()
+                                    )
+                                }
 
                             _state.update {
-                                it.copy(assessmentEvents = assessmentEventUiList ?: emptyList())
+                                it.copy(assessmentEvents = assessmentEventUiList)
                             }
 
                             val assessmentEventUiListWithTotalAssessment = assessmentEventUiList
-                                ?.map { assessmentEventUi ->
+                                .map { assessmentEventUi ->
                                     val totalAssessment = getTotalAssessmentFromEvent(
                                         eventId = assessmentEventUi.id
                                     )
@@ -164,25 +215,10 @@ class ClassRoomViewModel(
 
                             _state.update {
                                 it.copy(
-                                    assessmentEvents = assessmentEventUiListWithTotalAssessment
-                                        ?: emptyList(),
+                                    assessmentEvents = assessmentEventUiListWithTotalAssessment,
                                     isLoading = false
                                 )
                             }
-                        }
-
-                        is DataResult.Error -> {
-                            _state.update {
-                                it.copy(isLoading = false)
-                            }
-
-                            _events.send(
-                                ClassRoomEvent.OnErrorOccurred(
-                                    message = result.exception.message ?: application.getString(
-                                        R.string.unknown_error
-                                    )
-                                )
-                            )
                         }
                     }
                 }
@@ -205,15 +241,11 @@ class ClassRoomViewModel(
                             }
 
                             is DataResult.Success -> {
-                                val categories = result.data?.map {
+                                val categories = result.data.map {
                                     Pair(it.id, it.name)
                                 }
 
-                                continuation.resume(categories ?: emptyList())
-                            }
-
-                            is DataResult.Error -> {
-                                continuation.resume(emptyList())
+                                continuation.resume(categories)
                             }
                         }
                     }
@@ -237,11 +269,7 @@ class ClassRoomViewModel(
                             }
 
                             is DataResult.Success -> {
-                                continuation.resume(result.data?.size ?: 0)
-                            }
-
-                            is DataResult.Error -> {
-                                continuation.resume(0)
+                                continuation.resume(result.data.size)
                             }
                         }
                     }

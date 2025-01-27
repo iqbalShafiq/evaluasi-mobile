@@ -14,9 +14,6 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.toArgb
@@ -50,21 +47,13 @@ fun ClassOverviewTab(
     state: ClassRoomState,
     bottomPadding: Dp = 0.dp
 ) {
-    val performanceTrendData by remember {
-        mutableStateOf(
-            state.performanceTrendData
-                .map { Pair(it.x, it.y) }
-                .toTypedArray()
-        )
-    }
+    val performanceTrendData = state.performanceTrendData
+        .map { Pair(it.x, it.y) }
+        .toTypedArray()
 
-    val categoryDistributionData by remember {
-        mutableStateOf(
-            state.categoryDistributionData.map {
-                Pair(it.x, it.y)
-            }.toTypedArray()
-        )
-    }
+    val categoryDistributionData = state.categoryDistributionData.map {
+        Pair(it.x, it.y)
+    }.toTypedArray()
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -110,7 +99,11 @@ fun ClassOverviewTab(
                         )
                         StatisticItem(
                             title = "Avg Score",
-                            value = "${state.classAverage}%",
+                            value = String.format(
+                                Locale.getDefault(),
+                                "%.2f",
+                                state.classAverage
+                            ),
                             icon = R.drawable.ic_analytics
                         )
                     }

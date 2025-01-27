@@ -224,6 +224,12 @@ class RoomLocalAssessmentDataSource(
         }
     }
 
+    override suspend fun getAverageScoreByClassRoomId(classRoomId: Int): Double {
+        return withContext(dispatcher) {
+            assessmentDao.getAverageScoreByClassRoomId(classRoomId)
+        }
+    }
+
     override suspend fun getAverageScoreByStudentId(studentId: Int): Double {
         return withContext(dispatcher) {
             assessmentDao.getAverageScoreByStudentId(studentId)

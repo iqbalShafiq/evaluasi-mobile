@@ -60,7 +60,17 @@ fun AnalyticsTab(
                         return@ElevatedCard
                     }
 
-                    PerformanceDistributionChart(state.performanceDistribution)
+                    PerformanceDistributionChart(state.performanceDistribution.toSortedMap(
+                        Comparator { a, b ->
+                            val order = mapOf(
+                                "Poor" to 0,
+                                "Bad" to 1,
+                                "Good" to 2,
+                                "Great" to 3
+                            )
+                            order[a]!!.compareTo(order[b]!!)
+                        }
+                    ))
                 }
             }
 

@@ -20,6 +20,7 @@ interface EventDao {
         SELECT events.* FROM events
         INNER JOIN categories ON events.category_id = categories.id
         WHERE categories.class_room_id = :classRoomId
+        ORDER BY events.last_modified_time DESC
         """
     )
     suspend fun getEventsByClassRoomId(classRoomId: Int): List<EventEntity>

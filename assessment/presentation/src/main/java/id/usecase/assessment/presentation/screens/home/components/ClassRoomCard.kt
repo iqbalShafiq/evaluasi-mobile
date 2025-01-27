@@ -42,6 +42,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.model.ClassRoomUi
+import id.usecase.core.presentation.ui.formatDate
 import id.usecase.designsystem.components.button.EvaluasiButton
 
 @Composable
@@ -136,12 +137,12 @@ fun ClassRoomCard(
                     ) {
                         PeriodInfo(
                             label = "Start",
-                            date = item.startPeriod
+                            date = formatDate(item.startPeriod)
                         )
                         if (item.endPeriod.isNotEmpty()) {
                             PeriodInfo(
-                                label = "End",
-                                date = item.endPeriod
+                                label = "Long Period",
+                                date = "${item.endPeriod} Months"
                             )
                         }
                     }

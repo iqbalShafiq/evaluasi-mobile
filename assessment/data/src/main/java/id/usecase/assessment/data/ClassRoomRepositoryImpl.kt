@@ -16,64 +16,33 @@ class ClassRoomRepositoryImpl(
 ) : ClassRoomRepository {
     override suspend fun upsertClassRoom(classRoom: ClassRoom): DataResult<ClassRoom?> {
         return withContext(dispatcher) {
-            try {
-                val newClassRoom = dataSource.upsertClassRoom(classRoom)
-                return@withContext DataResult.Success(newClassRoom)
-            } catch (e: Exception) {
-                return@withContext DataResult.Error(e)
-            }
+            val newClassRoom = dataSource.upsertClassRoom(classRoom)
+            return@withContext DataResult.Success(newClassRoom)
         }
     }
 
     override fun getClassRooms(): Flow<DataResult<List<ClassRoom>>> {
         return flow {
-            try {
-                emit(DataResult.Loading)
-                val classRooms: List<ClassRoom> = dataSource.getClassRooms()
-                if (classRooms.isEmpty()) {
-                    emit(
-                        DataResult.Error(
-                            Exception("Haven't create any class room yet")
-                        )
-                    )
-                    return@flow
-                }
-
-                emit(DataResult.Success(classRooms))
-            } catch (e: Exception) {
-                emit(DataResult.Error(e))
-            }
+            emit(DataResult.Loading)
+            val classRooms: List<ClassRoom> = dataSource.getClassRooms()
+            emit(DataResult.Success(classRooms))
         }.flowOn(dispatcher)
     }
 
     override fun getClassRoomById(classRoomId: Int): Flow<DataResult<ClassRoom?>> {
         return flow {
-            try {
-                emit(DataResult.Loading)
-                val classRoom: ClassRoom? = dataSource.getClassRoomById(classRoomId)
-                if (classRoom == null) {
-                    emit(
-                        DataResult.Error(
-                            Exception("Class room not found")
-                        )
-                    )
-                    return@flow
-                }
-                emit(DataResult.Success(classRoom))
-            } catch (e: Exception) {
-                emit(DataResult.Error(e))
-            }
+            emit(DataResult.Loading)
+            val classRoom: ClassRoom? = dataSource.getClassRoomById(classRoomId)
+            if (classRoom == null) throw Exception("Class room not found")
+
+            emit(DataResult.Success(classRoom))
         }.flowOn(dispatcher)
     }
 
     override suspend fun deleteClassRoom(classRoom: ClassRoom): DataResult<Unit> {
         return withContext(dispatcher) {
-            try {
-                dataSource.deleteClassRoom(classRoom)
-                return@withContext DataResult.Success(Unit)
-            } catch (e: Exception) {
-                return@withContext DataResult.Error(e)
-            }
+            dataSource.deleteClassRoom(classRoom)
+            return@withContext DataResult.Success(Unit)
         }
     }
 }

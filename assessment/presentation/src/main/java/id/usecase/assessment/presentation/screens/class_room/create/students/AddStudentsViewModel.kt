@@ -65,20 +65,9 @@ class AddStudentsViewModel(
                         is DataResult.Success -> {
                             _state.value = state.value.copy(
                                 isLoading = false,
-                                studentList = result.data!!.map {
+                                studentList = result.data.map {
                                     it.toItemState()
                                 }.ifEmpty { listOf(AddStudentItemState()) }
-                            )
-                        }
-
-                        is DataResult.Error -> {
-                            _state.value = state.value.copy(isLoading = false)
-                            _events.send(
-                                AddStudentsEvent.OnErrorOccurred(
-                                    message = result.exception.message ?: application.getString(
-                                        R.string.unknown_error
-                                    )
-                                )
                             )
                         }
                     }
@@ -101,17 +90,6 @@ class AddStudentsViewModel(
                 is DataResult.Success -> {
                     _state.value = state.value.copy(isLoading = false)
                     _events.send(AddStudentsEvent.OnStudentsHasAdded)
-                }
-
-                is DataResult.Error -> {
-                    _state.value = state.value.copy(isLoading = false)
-                    _events.send(
-                        AddStudentsEvent.OnErrorOccurred(
-                            message = result.exception.message ?: application.getString(
-                                R.string.unknown_error
-                            )
-                        )
-                    )
                 }
             }
         }

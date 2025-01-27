@@ -131,11 +131,12 @@ fun MyNavigation() {
         composable<AssessmentEventEditor> { backStackEntry ->
             val assessmentEventEditor: AssessmentEventEditor = backStackEntry.toRoute()
             val classRoomId = assessmentEventEditor.classRoomId
+            val eventId = assessmentEventEditor.eventId
 
             AssessmentScreenRoot(
                 modifier = Modifier.fillMaxSize(),
                 classRoomId = classRoomId,
-                eventId = null,
+                eventId = eventId,
                 onBackPressed = {
                     navController.popBackStack()
                 },

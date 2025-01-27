@@ -66,22 +66,11 @@ class AddCategoriesViewModel(
                             _state.update {
                                 it.copy(
                                     isLoading = false,
-                                    categories = result.data!!.map { category ->
+                                    categories = result.data.map { category ->
                                         category.toItemState()
                                     }.ifEmpty { listOf(CategoryItemState()) }
                                 )
                             }
-                        }
-
-                        is DataResult.Error -> {
-                            _state.value = state.value.copy(isLoading = false)
-                            _events.send(
-                                AddCategoriesEvent.OnErrorOccurred(
-                                    message = result.exception.message ?: application.getString(
-                                        R.string.unknown_error
-                                    )
-                                )
-                            )
                         }
                     }
                 }
@@ -96,20 +85,9 @@ class AddCategoriesViewModel(
                 }
             }
 
-            when (val result = repository.upsertCategories(categoryList)) {
+            when (repository.upsertCategories(categoryList)) {
                 DataResult.Loading -> {
                     _state.value = state.value.copy(isLoading = true)
-                }
-
-                is DataResult.Error -> {
-                    _events.send(
-                        AddCategoriesEvent.OnErrorOccurred(
-                            message = result.exception.message ?: application.getString(
-                                R.string.unknown_error
-                            )
-                        )
-                    )
-                    _state.value = state.value.copy(isLoading = false)
                 }
 
                 is DataResult.Success -> {
@@ -118,9 +96,5 @@ class AddCategoriesViewModel(
                 }
             }
         }
-    }
-
-    companion object {
-        private val TAG = AddCategoriesViewModel::class.java.simpleName
     }
 }

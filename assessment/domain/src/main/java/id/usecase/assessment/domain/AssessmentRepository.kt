@@ -8,6 +8,7 @@ interface AssessmentRepository {
     suspend fun upsertAssessments(assessmentList: List<Assessment>): DataResult<List<Assessment>>
     fun getAssessmentsByEventId(eventId: Int): Flow<DataResult<List<Assessment>>>
     fun getAssessmentById(assessmentId: Int): Flow<DataResult<Assessment?>>
+    fun getAverageScoreByClassRoomId(classRoomId: Int): Flow<DataResult<Double>>
     fun getAverageScoreByStudentId(studentId: Int): Flow<DataResult<Double>>
     suspend fun deleteAssessment(assessment: Assessment)
 }

@@ -18,9 +18,5 @@ suspend fun <T> Flow<DataResult<T>>.handleSuccessResult(
     when (result) {
         is DataResult.Loading -> listener.onLoading()
         is DataResult.Success<T> -> successCallback(result)
-        is DataResult.Error -> listener.onErrorOccurred(
-            errorMessage = result.exception.message,
-            retryCallback = retryCallback
-        )
     }
 }
