@@ -29,6 +29,14 @@ class ClassRoomRepositoryImpl(
         }.flowOn(dispatcher)
     }
 
+    override fun searchClassRooms(query: String): Flow<DataResult<List<ClassRoom>>> {
+        return flow {
+            emit(DataResult.Loading)
+            val classRooms: List<ClassRoom> = dataSource.searchClassRooms(query)
+            emit(DataResult.Success(classRooms))
+        }.flowOn(dispatcher)
+    }
+
     override fun getClassRoomById(classRoomId: Int): Flow<DataResult<ClassRoom?>> {
         return flow {
             emit(DataResult.Loading)

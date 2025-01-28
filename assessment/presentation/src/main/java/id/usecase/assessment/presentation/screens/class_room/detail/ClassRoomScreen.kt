@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -20,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -47,6 +50,7 @@ import id.usecase.designsystem.components.dialog.StandardAlertDialog
 import id.usecase.designsystem.components.dialog.StandardLoadingDialog
 import id.usecase.designsystem.components.menus.DropdownMenuItem
 import id.usecase.designsystem.components.menus.EvaluasiDropdownMenu
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -124,7 +128,6 @@ fun ClassRoomScreen(
     onStudentEditClicked: () -> Unit,
     onAddAssessmentClicked: () -> Unit,
 ) {
-    var selectedTab by remember { mutableIntStateOf(0) }
     val tabs = listOf("Overview", "Assessments", "Analytics")
     var fabHeight by remember { mutableIntStateOf(0) }
     val heightInDp = with(LocalDensity.current) { fabHeight.toDp() }
@@ -184,37 +187,49 @@ fun ClassRoomScreen(
                         bottom = innerPadding.calculateBottomPadding()
                     )
             ) {
+                val pagerState = rememberPagerState(pageCount = { 3 })
+                val scope = rememberCoroutineScope()
+
                 // Tab Row
                 TabRow(
                     modifier = Modifier.padding(bottom = 16.dp),
-                    selectedTabIndex = selectedTab
+                    selectedTabIndex = pagerState.currentPage
                 ) {
                     tabs.forEachIndexed { index, title ->
                         Tab(
-                            selected = selectedTab == index,
-                            onClick = { selectedTab = index },
+                            selected = pagerState.currentPage == index,
+                            onClick = {
+                                scope.launch {
+                                    pagerState.animateScrollToPage(index)
+                                }
+                            },
                             text = { Text(title) }
                         )
                     }
                 }
 
-                // Content based on selected tab
-                when (selectedTab) {
-                    0 -> ClassOverviewTab(
-                        state = state,
-                        bottomPadding = heightInDp + 24.dp
-                    )
+                // Horizontal Pager untuk swipe
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier.fillMaxSize()
+                ) { page ->
+                    when (page) {
+                        0 -> ClassOverviewTab(
+                            state = state,
+                            bottomPadding = heightInDp + 24.dp
+                        )
 
-                    1 -> AssessmentHistoryTab(
-                        state = state,
-                        onDetailAssessmentEventClicked = onDetailAssessmentEventClicked,
-                        bottomPadding = heightInDp + 24.dp
-                    )
+                        1 -> AssessmentHistoryTab(
+                            state = state,
+                            onDetailAssessmentEventClicked = onDetailAssessmentEventClicked,
+                            bottomPadding = heightInDp + 24.dp
+                        )
 
-                    2 -> AnalyticsTab(
-                        state = state,
-                        bottomPadding = heightInDp + 24.dp
-                    )
+                        2 -> AnalyticsTab(
+                            state = state,
+                            bottomPadding = heightInDp + 24.dp
+                        )
+                    }
                 }
             }
         }

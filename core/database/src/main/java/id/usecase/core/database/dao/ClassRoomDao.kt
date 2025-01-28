@@ -14,6 +14,9 @@ interface ClassRoomDao {
     @Query("SELECT * FROM class_rooms ORDER BY last_modified_time DESC")
     suspend fun getAllClassRooms(): List<ClassRoomEntity>
 
+    @Query("SELECT * FROM class_rooms WHERE name LIKE '%' || :query || '%' ORDER BY last_modified_time DESC")
+    suspend fun searchClassRooms(query: String): List<ClassRoomEntity>
+
     @Query("SELECT * FROM class_rooms WHERE id = :id")
     suspend fun getClassRoomById(id: Int): ClassRoomEntity?
 

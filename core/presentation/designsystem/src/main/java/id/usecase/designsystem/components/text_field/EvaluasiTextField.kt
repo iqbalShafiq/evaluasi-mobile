@@ -24,7 +24,7 @@ fun EvaluasiTextField(
     leadingIcon: (@Composable () -> Unit)? = null,
     trailingIcon: (@Composable () -> Unit)? = null,
     singleLine: Boolean = true,
-    keyboardOptions: KeyboardOptions? = null,
+    imeAction: ImeAction = ImeAction.Next,
     keyboardType: KeyboardType = KeyboardType.Text,
     minLines: Int = 1,
     maxLines: Int = 1,
@@ -55,9 +55,9 @@ fun EvaluasiTextField(
             singleLine = singleLine && minLines == 1 && maxLines == 1,
             minLines = minLines,
             maxLines = maxLines,
-            keyboardOptions = keyboardOptions ?: KeyboardOptions.Default.copy(
+            keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = keyboardType,
-                imeAction = ImeAction.Next
+                imeAction = imeAction
             ),
             isError = !errorMessage.isNullOrEmpty()
         )

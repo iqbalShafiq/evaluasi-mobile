@@ -1,6 +1,5 @@
 package id.usecase.core.database
 
-import android.util.Log
 import id.usecase.core.database.dao.AnalyticsDao
 import id.usecase.core.database.dao.AssessmentDao
 import id.usecase.core.database.dao.CategoryDao
@@ -42,6 +41,14 @@ class RoomLocalAssessmentDataSource(
         return withContext(dispatcher) {
             classRoomDao
                 .getAllClassRooms()
+                .map { it.toDomainForm() }
+        }
+    }
+
+    override suspend fun searchClassRooms(query: String): List<ClassRoom> {
+        return withContext(dispatcher) {
+            classRoomDao
+                .searchClassRooms(query)
                 .map { it.toDomainForm() }
         }
     }
@@ -228,6 +235,12 @@ class RoomLocalAssessmentDataSource(
     override suspend fun getAverageScoreByClassRoomId(classRoomId: Int): Double {
         return withContext(dispatcher) {
             assessmentDao.getAverageScoreByClassRoomId(classRoomId)
+        }
+    }
+
+    override suspend fun getLastAssessmentByClassRoomId(classRoomId: Int): String? {
+        return withContext(dispatcher) {
+            assessmentDao.getLastAssessmentByClassRoomId(classRoomId)
         }
     }
 

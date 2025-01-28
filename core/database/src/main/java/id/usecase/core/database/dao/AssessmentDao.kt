@@ -31,6 +31,19 @@ interface AssessmentDao {
     )
     suspend fun getAverageScoreByClassRoomId(classRoomId: Int): Double
 
+    @Query(
+        """
+        SELECT events.name 
+        FROM assessments 
+        JOIN events ON assessments.event_id = events.id
+        JOIN categories ON events.category_id = categories.id
+        WHERE categories.class_room_id = :classRoomId
+        ORDER BY assessments.created_time DESC
+        LIMIT 1
+        """
+    )
+    suspend fun getLastAssessmentByClassRoomId(classRoomId: Int): String
+
     @Query("SELECT AVG(score) FROM assessments WHERE student_id = :studentId")
     suspend fun getAverageScoreByStudentId(studentId: Int): Double
 

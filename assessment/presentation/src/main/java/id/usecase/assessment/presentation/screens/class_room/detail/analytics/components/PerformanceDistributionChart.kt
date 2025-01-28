@@ -14,6 +14,7 @@ import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.entry.entryModelOf
+import java.util.Locale
 
 @Composable
 fun PerformanceDistributionChart(
@@ -35,7 +36,13 @@ fun PerformanceDistributionChart(
         model = entryModelOf(*chartEntryData),
         startAxis = rememberStartAxis(
             title = "Score",
-            valueFormatter = { value, _ -> value.toString() },
+            valueFormatter = { value, _ ->
+                String.format(
+                    Locale.getDefault(),
+                    "%.2f",
+                    value
+                )
+            },
             itemPlacer = AxisItemPlacer.Vertical.default(
                 maxItemCount = 6
             )

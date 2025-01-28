@@ -14,6 +14,7 @@ import id.usecase.core.domain.assessment.model.student.Student
 interface LocalAssessmentDataSource {
     suspend fun upsertClassRoom(classRoom: ClassRoom): ClassRoom?
     suspend fun getClassRooms(): List<ClassRoom>
+    suspend fun searchClassRooms(query: String): List<ClassRoom>
     suspend fun getClassRoomById(classRoomId: Int): ClassRoom?
     suspend fun deleteClassRoom(classRoom: ClassRoom)
 
@@ -41,6 +42,7 @@ interface LocalAssessmentDataSource {
     suspend fun getAssessmentsByEventId(eventId: Int): List<Assessment>
     suspend fun getAssessmentById(assessmentId: Int): Assessment?
     suspend fun getAverageScoreByClassRoomId(classRoomId: Int): Double
+    suspend fun getLastAssessmentByClassRoomId(classRoomId: Int): String?
     suspend fun getAverageScoreByStudentId(studentId: Int): Double
     suspend fun deleteAssessment(assessment: Assessment)
 

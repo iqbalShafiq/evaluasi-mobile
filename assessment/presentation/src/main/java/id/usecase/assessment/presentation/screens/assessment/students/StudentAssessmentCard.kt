@@ -87,7 +87,12 @@ fun StudentAssessmentCard(
                     .fillMaxWidth(),
                 label = "Assessment Score",
                 placeholder = "Enter score (0-100)",
-                value = state.score,
+                value = state.score.copy(
+                    text = if (
+                        state.score.text.toDoubleOrNull() == null ||
+                        state.score.text.toDoubleOrNull() == 0.0
+                    ) "" else state.score.text
+                ),
                 onValueChange = {
                     onScoreChanged(it)
                 },

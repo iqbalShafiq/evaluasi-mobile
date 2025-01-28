@@ -2,6 +2,7 @@ package id.usecase.assessment.presentation.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import id.usecase.assessment.domain.AssessmentRepository
 import id.usecase.assessment.domain.ClassRoomRepository
 import id.usecase.assessment.domain.StudentRepository
 import id.usecase.assessment.presentation.utils.toUi
@@ -12,7 +13,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -23,6 +23,7 @@ import kotlinx.coroutines.withContext
 class HomeViewModel(
     private val classRoomRepository: ClassRoomRepository,
     private val studentRepository: StudentRepository,
+    private val assessmentRepository: AssessmentRepository,
     private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
     private val _events = Channel<HomeEvent>()
@@ -45,6 +46,10 @@ class HomeViewModel(
             }
 
             is HomeAction.UpdateTextField -> _state.update { action.state }
+
+            HomeAction.SearchClassRooms -> {
+                searchClassRooms()
+            }
         }
     }
 
@@ -91,7 +96,48 @@ class HomeViewModel(
                                         classRoom.toUi().copy(
                                             studentCount = loadStudentTotalPerClassRoom(
                                                 classRoom.id
-                                            )
+                                            ),
+                                            lastAssessment = loadLastAssessment(classRoom.id)
+                                        )
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+        }
+    }
+
+    private fun searchClassRooms() {
+        viewModelScope.launch(dispatcher) {
+            if (state.value.querySearch.isEmpty()) {
+                _state.update {
+                    it.copy(searchResult = emptyList())
+                }
+                return@launch
+            }
+
+            classRoomRepository.searchClassRooms(state.value.querySearch)
+                .catch { e ->
+                    _state.update {
+                        it.copy(isLoading = false)
+                    }
+                    _events.send(HomeEvent.OnErrorOccurred(e))
+                }
+                .collectLatest { result ->
+                    when (result) {
+                        DataResult.Loading -> _state.update { it.copy(isLoading = true) }
+
+                        is DataResult.Success -> {
+                            _state.update {
+                                it.copy(
+                                    isLoading = false,
+                                    searchResult = result.data.map { classRoom ->
+                                        classRoom.toUi().copy(
+                                            studentCount = loadStudentTotalPerClassRoom(
+                                                classRoom.id
+                                            ),
+                                            lastAssessment = loadLastAssessment(classRoom.id)
                                         )
                                     }
                                 )
@@ -110,6 +156,20 @@ class HomeViewModel(
                     when (result) {
                         is DataResult.Success -> result.data.size
                         else -> 0
+                    }
+                }
+                .last()
+        }
+    }
+
+    private suspend fun loadLastAssessment(classRoomId: Int): String {
+        return withContext(dispatcher) {
+            assessmentRepository.getLastAssessmentByClassRoomId(classRoomId)
+                .catch { "" }
+                .map { result ->
+                    when (result) {
+                        is DataResult.Success -> result.data ?: ""
+                        else -> ""
                     }
                 }
                 .last()

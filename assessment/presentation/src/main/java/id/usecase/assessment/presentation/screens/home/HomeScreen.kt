@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.Close
@@ -130,8 +131,7 @@ fun HomeScreen(
                 exit = fadeOut() + shrinkVertically()
             ) {
                 SearchBar(
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     inputField = {
                         SearchBarDefaults.InputField(
                             query = state.querySearch,
@@ -143,11 +143,13 @@ fun HomeScreen(
                                         )
                                     )
                                 )
+
+                                onAction(HomeAction.SearchClassRooms)
                             },
                             onSearch = { expanded = false },
                             expanded = expanded,
                             onExpandedChange = { expanded = it },
-                            placeholder = { Text("Hinted search text") },
+                            placeholder = { Text("Search class room name") },
                             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                             trailingIcon = {
                                 IconButton(
@@ -179,6 +181,15 @@ fun HomeScreen(
                         }
                     }
 
+                    if (state.searchResult.isEmpty()) {
+                        Text(
+                            text = "No result found",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    }
+
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
@@ -188,15 +199,15 @@ fun HomeScreen(
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(
-                            count = state.classRooms.size,
-                            key = { index -> state.classRooms[index].id }
-                        ) { index ->
+                            items = state.searchResult,
+                            key = { classRoom -> classRoom.id }
+                        ) { classRoom ->
                             ClassRoomCard(
                                 modifier = Modifier.animateItem(),
                                 onDetailClickedListener = {
-                                    onClassRoomChosen(state.classRooms[index].id)
+                                    onClassRoomChosen(classRoom.id)
                                 },
-                                item = state.classRooms[index]
+                                item = classRoom
                             )
                         }
                     }

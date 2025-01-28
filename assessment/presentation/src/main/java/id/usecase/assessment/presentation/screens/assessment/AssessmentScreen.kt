@@ -3,14 +3,19 @@
 package id.usecase.assessment.presentation.screens.assessment
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.DateRange
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -23,11 +28,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.TextFieldValue
@@ -159,6 +168,14 @@ fun AssessmentScreen(
     showStartDatePicker: () -> Unit,
     onAction: (AssessmentAction) -> Unit
 ) {
+    val scrollState = rememberScrollState()
+    var studentScoresY by remember { mutableFloatStateOf(0f) }
+    var showStickyTitle by remember { mutableStateOf(false) }
+
+    LaunchedEffect(scrollState.value) {
+        showStickyTitle = scrollState.value > studentScoresY
+    }
+
     val assessments = remember(state.assessmentListField) {
         mutableStateListOf<StudentAssessmentState>().apply {
             addAll(state.assessmentListField)
@@ -176,7 +193,6 @@ fun AssessmentScreen(
             )
         },
         content = { innerPadding ->
-
             ConstraintLayout(
                 modifier = Modifier
                     .padding(innerPadding)
@@ -199,122 +215,168 @@ fun AssessmentScreen(
                         }
                 )
 
-                Column(
+                Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(end = 16.dp, start = 16.dp, top = 16.dp)
                         .constrainAs(content) {
                             top.linkTo(progress.bottom)
                             bottom.linkTo(button.top)
                             height = Dimension.fillToConstraints
                         }
+                        .padding(top = 16.dp)
                 ) {
-
-                    // Assessment Details Section
-                    Text(
+                    Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 8.dp),
-                        text = "Assessment Details",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.primary
-                    )
+                            .verticalScroll(scrollState)
+                            .padding(horizontal = 16.dp)
+                            .fillMaxSize()
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 8.dp)
+                        ) {
 
-                    // Assessment Name Field
-                    EvaluasiTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        label = "Title",
-                        placeholder = "Type name",
-                        value = state.assessmentNameField,
-                        onValueChange = {
-                            onAction(
-                                AssessmentAction.UpdateForms(
-                                    state.copy(
-                                        assessmentNameField = it
+                            // Assessment Details Section
+                            Text(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 8.dp),
+                                text = "Assessment Details",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+
+                            // Assessment Name Field
+                            EvaluasiTextField(
+                                modifier = Modifier.fillMaxWidth(),
+                                label = "Title",
+                                placeholder = "Type name",
+                                value = state.assessmentNameField,
+                                onValueChange = {
+                                    onAction(
+                                        AssessmentAction.UpdateForms(
+                                            state.copy(
+                                                assessmentNameField = it
+                                            )
+                                        )
                                     )
-                                )
+                                }
+                            )
+
+                            // Category Field
+                            EvaluasiDropdown(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 12.dp),
+                                label = "Category",
+                                placeholder = "Choose category",
+                                items = state.categoryNameList,
+                                selectedItem = state.selectedCategoryName,
+                                onItemSelected = { category ->
+                                    onAction(
+                                        AssessmentAction.OnCategorySelected(category)
+                                    )
+                                }
+                            )
+
+                            // Assessment Date Field
+                            EvaluasiTextField(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 12.dp),
+                                label = "Assessment Date",
+                                placeholder = "Pick date",
+                                value = state.startDateField,
+                                onValueChange = {
+                                    onAction(
+                                        AssessmentAction.UpdateForms(
+                                            state.copy(
+                                                startDateField = it
+                                            )
+                                        )
+                                    )
+                                },
+                                readOnly = true,
+                                trailingIcon = {
+                                    IconButton(onClick = showStartDatePicker) {
+                                        Icon(
+                                            imageVector = Icons.Rounded.DateRange,
+                                            contentDescription = "Calendar icon"
+                                        )
+                                    }
+                                }
                             )
                         }
-                    )
 
-                    // Category Field
-                    EvaluasiDropdown(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 12.dp),
-                        label = "Category",
-                        placeholder = "Choose category",
-                        items = state.categoryNameList,
-                        selectedItem = state.selectedCategoryName,
-                        onItemSelected = { category ->
-                            onAction(
-                                AssessmentAction.OnCategorySelected(category)
-                            )
-                        }
-                    )
+                        // Students Section
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 16.dp)
+                                .onGloballyPositioned { coordinates ->
+                                    studentScoresY = coordinates.positionInParent().y
+                                },
+                            text = "Student Scores",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.primary
+                        )
 
-                    // Assessment Date Field
-                    EvaluasiTextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 12.dp),
-                        label = "Assessment Date",
-                        placeholder = "Pick date",
-                        value = state.startDateField,
-                        onValueChange = {
-                            onAction(
-                                AssessmentAction.UpdateForms(
-                                    state.copy(
-                                        startDateField = it
-                                    )
-                                )
-                            )
-                        },
-                        readOnly = true,
-                        trailingIcon = {
-                            IconButton(onClick = showStartDatePicker) {
-                                Icon(
-                                    imageVector = Icons.Rounded.DateRange,
-                                    contentDescription = "Calendar icon"
+                        Text(
+                            text = "${assessments.count { (it.score.text.toDoubleOrNull() ?: 0.0) != 0.0 }}/${state.assessmentListField.size} assessment of students",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(top = 4.dp, bottom = 12.dp)
+                        )
+
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .heightIn(max = 1500.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            contentPadding = PaddingValues(bottom = 12.dp)
+                        ) {
+                            items(assessments.size) { index ->
+                                StudentAssessmentCard(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    state = assessments[index],
+                                    onScoreChanged = { score ->
+                                        assessments[index] = assessments[index].copy(
+                                            score = score
+                                        )
+                                    },
+                                    onCommentsChanged = { comment ->
+                                        assessments[index] = assessments[index].copy(
+                                            comments = comment
+                                        )
+                                    }
                                 )
                             }
                         }
-                    )
+                    }
 
-                    // Students Section
-                    Text(
-                        modifier = Modifier.padding(top = 16.dp),
-                        text = "Student Scores",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-
-                    Text(
-                        text = "${assessments.count { (it.score.text.toDoubleOrNull() ?: 0.0) != 0.0 }}/${state.assessmentListField.size} assessment of students",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 4.dp, bottom = 12.dp)
-                    )
-
-                    LazyColumn(
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
-                        contentPadding = PaddingValues(bottom = 12.dp)
-                    ) {
-                        items(assessments.size) { index ->
-                            StudentAssessmentCard(
+                    // Sticky Header
+                    if (showStickyTitle) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(MaterialTheme.colorScheme.background)
+                                .padding(bottom = 16.dp, start = 16.dp, end = 16.dp),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Text(
                                 modifier = Modifier.fillMaxWidth(),
-                                state = assessments[index],
-                                onScoreChanged = { score ->
-                                    assessments[index] = assessments[index].copy(
-                                        score = score
-                                    )
-                                },
-                                onCommentsChanged = { comment ->
-                                    assessments[index] = assessments[index].copy(
-                                        comments = comment
-                                    )
-                                }
+                                text = state.assessmentNameField.text.ifEmpty { "Title has not added" },
+                                style = MaterialTheme.typography.titleMedium,
+                                color = if (state.assessmentNameField.text.isNotEmpty()) {
+                                    MaterialTheme.colorScheme.primary
+                                } else MaterialTheme.colorScheme.error
+                            )
+
+                            Text(
+                                text = "${assessments.count { (it.score.text.toDoubleOrNull() ?: 0.0) != 0.0 }}/${state.assessmentListField.size} assessment of students",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }

@@ -6,5 +6,6 @@ data class HomeState(
     val isLoading: Boolean = false,
     val querySearch: String = "",
     val classRooms: List<ClassRoomUi> = emptyList(),
+    val searchResult: List<ClassRoomUi> = emptyList(),
     val totalStudent: Int = 0
 )

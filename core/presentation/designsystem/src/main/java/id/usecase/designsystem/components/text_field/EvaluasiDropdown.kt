@@ -3,6 +3,7 @@ package id.usecase.designsystem.components.text_field
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.DropdownMenu
@@ -20,8 +21,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.toSize
 
 @Composable
 fun EvaluasiDropdown(
@@ -35,11 +40,16 @@ fun EvaluasiDropdown(
     errorMessage: String? = null,
     enabled: Boolean = true
 ) {
+    var fieldSize by remember { mutableStateOf(Size.Zero) }
     var expanded by remember { mutableStateOf(false) }
 
     Column(modifier = modifier.fillMaxWidth()) {
         TextField(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .onGloballyPositioned { layoutCoordinates ->
+                    fieldSize = layoutCoordinates.size.toSize()
+                },
             value = selectedItem,
             onValueChange = { },
             readOnly = true,
@@ -66,17 +76,19 @@ fun EvaluasiDropdown(
                 }
             },
             singleLine = true,
-            isError = !errorMessage.isNullOrEmpty()
+            isError = !errorMessage.isNullOrEmpty(),
         )
 
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+            modifier = Modifier.width(with(LocalDensity.current) { fieldSize.width.toDp() })
         ) {
             items.forEach { item ->
                 DropdownMenuItem(
-                    text = { Text(text = item) },
+                    text = {
+                        Text(text = item)
+                    },
                     onClick = {
                         onItemSelected(item)
                         expanded = false

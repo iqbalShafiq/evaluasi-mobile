@@ -57,6 +57,14 @@ class AssessmentRepositoryImpl(
         }.flowOn(dispatcher)
     }
 
+    override fun getLastAssessmentByClassRoomId(classRoomId: Int): Flow<DataResult<String?>> {
+        return flow {
+            emit(DataResult.Loading)
+            val assessment: String? = dataSource.getLastAssessmentByClassRoomId(classRoomId)
+            emit(DataResult.Success(assessment))
+        }.flowOn(dispatcher)
+    }
+
     override fun getAverageScoreByStudentId(studentId: Int): Flow<DataResult<Double>> {
         return flow {
             emit(DataResult.Loading)
