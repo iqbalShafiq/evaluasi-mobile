@@ -72,7 +72,7 @@ fun EvaluasiDropdown(
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
         ) {
             items.forEach { item ->
                 DropdownMenuItem(

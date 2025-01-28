@@ -15,7 +15,7 @@ sealed class AssessmentAction {
 
     data class OnCategorySelected(
         val category: String
-    ): AssessmentAction()
+    ) : AssessmentAction()
 
     data object DeleteAssessmentEvent : AssessmentAction()
 }

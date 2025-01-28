@@ -141,6 +141,7 @@ fun AssessmentScreenRoot(
     AssessmentScreen(
         modifier = modifier,
         state = state,
+        eventId = eventId,
         onBackPressed = onBackPressed,
         showStartDatePicker = {
             showStartDatePicker.value = true
@@ -152,6 +153,7 @@ fun AssessmentScreenRoot(
 @Composable
 fun AssessmentScreen(
     modifier: Modifier = Modifier,
+    eventId: Int?,
     onBackPressed: () -> Unit,
     state: AssessmentState,
     showStartDatePicker: () -> Unit,
@@ -326,7 +328,7 @@ fun AssessmentScreen(
                             bottom.linkTo(parent.bottom)
                         }
                         .padding(16.dp),
-                    text = "Save Assessment",
+                    text = if (eventId == null) "Save Assessment" else "Update Assessment",
                     onClick = {
                         onAction(
                             AssessmentAction.SaveAssessmentEvent(
@@ -334,7 +336,7 @@ fun AssessmentScreen(
                             )
                         )
                     },
-                    buttonType = ButtonType.INVERSE,
+                    buttonType = ButtonType.PRIMARY,
                     enabled = state.isFormValid
                 )
             }
@@ -350,6 +352,7 @@ private fun AssessmentScreenPreview() {
             onAction = {},
             onBackPressed = {},
             showStartDatePicker = {},
+            eventId = 1,
             state = AssessmentState(
                 assessmentListField = listOf(
                     StudentAssessmentState(

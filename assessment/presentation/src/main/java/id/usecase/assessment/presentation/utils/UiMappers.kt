@@ -22,36 +22,39 @@ fun ClassRoom.toUi(): ClassRoomUi = ClassRoomUi(
 )
 
 fun CategoryItemState.toDomainForm(classRoomId: Int) = Category(
-    id = 0,
-    name = name.text.toString(),
-    percentage = partPercentage.text.toString().toDouble(),
+    id = id,
+    name = name.text,
+    percentage = partPercentage.text.toDouble(),
     classRoomId = classRoomId,
     createdTime = System.currentTimeMillis(),
     lastModifiedTime = System.currentTimeMillis()
 )
 
 fun Category.toItemState() = CategoryItemState(
+    id = id,
     name = TextFieldValue(text = name),
     partPercentage = TextFieldValue(text = percentage.toString())
 )
 
 fun AddStudentItemState.toDomainForm(classRoomId: Int) = Student(
-    id = 0,
-    name = name.text.toString(),
+    id = id,
+    name = name.text,
     classRoomId = classRoomId,
-    identifier = identifier.text.toString().toInt(),
+    identifier = identifier.text.toInt(),
     createdTime = System.currentTimeMillis(),
     lastModifiedTime = System.currentTimeMillis()
 )
 
 fun Student.toItemState() = AddStudentItemState(
+    id = id,
     identifier = TextFieldValue(text = id.toString()),
-    name = TextFieldValue(text = name)
+    name = TextFieldValue(text = name),
+    isValid = true
 )
 
 fun AddStudentItemState.toDomainForm() = AddStudentUi(
-    identifier = identifier.text.toString().toInt(),
-    name = name.text.toString()
+    identifier = identifier.text.toInt(),
+    name = name.text
 )
 
 fun Event.toUi(classRoomId: Int, assessedStudent: Int, categoryName: String) = AssessmentEventUi(

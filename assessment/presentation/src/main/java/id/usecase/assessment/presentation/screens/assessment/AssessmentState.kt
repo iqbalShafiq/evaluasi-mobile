@@ -13,7 +13,6 @@ data class AssessmentState(
     val isLoading: Boolean = false,
     val assessmentNameField: TextFieldValue = TextFieldValue(),
     val startDateField: TextFieldValue = TextFieldValue(),
-    val categoryField: TextFieldValue = TextFieldValue(),
     val selectedDate: Long = System.currentTimeMillis(),
     val assessmentListField: List<StudentAssessmentState> = emptyList(),
     val assessmentEvent: Event? = null,

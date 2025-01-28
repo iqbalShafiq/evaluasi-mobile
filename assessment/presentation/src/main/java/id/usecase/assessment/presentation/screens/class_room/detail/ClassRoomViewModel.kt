@@ -1,6 +1,7 @@
 package id.usecase.assessment.presentation.screens.class_room.detail
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.vico.core.entry.FloatEntry
@@ -320,12 +321,20 @@ class ClassRoomViewModel(
                     )
                 }
                 .collectLatest { result ->
+                    val (categories, distributions) = result.mapIndexed { index, distribution ->
+                        Pair(
+                            distribution.first,
+                            FloatEntry(index.toFloat(), distribution.second)
+                        )
+                    }.unzip()
+
+                    Log.d("TAG", "getCategoryDistribution: $categories")
+                    Log.d("TAG", "getCategoryDistribution: $distributions")
+
                     _state.update {
                         it.copy(
-                            categoryList = result.map { category -> category.first },
-                            categoryDistributionData = result.mapIndexed { index, distribution ->
-                                FloatEntry(index.toFloat(), distribution.second)
-                            }
+                            categoryList = categories,
+                            categoryDistributionData = distributions
                         )
                     }
                 }

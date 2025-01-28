@@ -45,6 +45,8 @@ import id.usecase.designsystem.components.app_bar.EvaluasiTopAppBar
 import id.usecase.designsystem.components.button.EvaluasiFloatingActionButton
 import id.usecase.designsystem.components.dialog.StandardAlertDialog
 import id.usecase.designsystem.components.dialog.StandardLoadingDialog
+import id.usecase.designsystem.components.menus.DropdownMenuItem
+import id.usecase.designsystem.components.menus.EvaluasiDropdownMenu
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -53,7 +55,8 @@ fun ClassRoomScreenRoot(
     classRoomId: Int,
     onBackPressed: () -> Unit,
     onDetailAssessmentEventClicked: (AssessmentEventUi) -> Unit,
-    onSettingClicked: () -> Unit,
+    onCategoryMenuClicked: () -> Unit,
+    onClassRoomBioMenuClicked: () -> Unit,
     onAddAssessmentClicked: () -> Unit,
     onStudentEditClicked: () -> Unit,
     viewModel: ClassRoomViewModel = koinViewModel()
@@ -102,7 +105,8 @@ fun ClassRoomScreenRoot(
         state = state,
         onBackPressed = onBackPressed,
         onDetailAssessmentEventClicked = onDetailAssessmentEventClicked,
-        onSettingClicked = onSettingClicked,
+        onCategoryMenuClicked = onCategoryMenuClicked,
+        onClassRoomBioMenuClicked = onClassRoomBioMenuClicked,
         onStudentEditClicked = onStudentEditClicked,
         onAddAssessmentClicked = onAddAssessmentClicked,
     )
@@ -115,7 +119,8 @@ fun ClassRoomScreen(
     state: ClassRoomState,
     onBackPressed: () -> Unit,
     onDetailAssessmentEventClicked: (AssessmentEventUi) -> Unit,
-    onSettingClicked: () -> Unit,
+    onCategoryMenuClicked: () -> Unit,
+    onClassRoomBioMenuClicked: () -> Unit,
     onStudentEditClicked: () -> Unit,
     onAddAssessmentClicked: () -> Unit,
 ) {
@@ -138,15 +143,24 @@ fun ClassRoomScreen(
                             onStudentEditClicked()
                         },
                         contentDescription = "Edit Student"
-                    ),
-                    ActionItem(
-                        icon = Icons.Rounded.Settings,
-                        onClick = {
-                            onSettingClicked()
-                        },
-                        contentDescription = "Settings"
-                    ),
-                )
+                    )
+                ),
+                moreMenu = {
+                    EvaluasiDropdownMenu(
+                        menuItems = listOf(
+                            DropdownMenuItem(
+                                text = "Categories",
+                                leadingIcon = ImageVector.vectorResource(R.drawable.ic_category),
+                                onClick = onCategoryMenuClicked
+                            ),
+                            DropdownMenuItem(
+                                text = "Classroom Bio",
+                                leadingIcon = Icons.Rounded.Settings,
+                                onClick = onClassRoomBioMenuClicked
+                            )
+                        )
+                    )
+                }
             )
         },
         floatingActionButton = {
@@ -301,9 +315,10 @@ private fun ClassRoomPreview() {
         ClassRoomScreen(
             onBackPressed = { },
             onDetailAssessmentEventClicked = { },
-            onSettingClicked = { },
+            onClassRoomBioMenuClicked = { },
             onStudentEditClicked = { },
             onAddAssessmentClicked = { },
+            onCategoryMenuClicked = { },
             state = state
         )
     }

@@ -48,19 +48,34 @@ fun MyNavigation() {
                     navController.navigate(ClassRoomDetail(it))
                 },
                 onCreateClassRoomClicked = {
-                    navController.navigate(CreateClassRoom)
+                    navController.navigate(
+                        CreateClassRoom(classRoomId = null)
+                    )
                 }
             )
         }
 
-        composable<CreateClassRoom> {
+        composable<CreateClassRoom> { backStackEntry ->
+            val createClassRoom: CreateClassRoom = backStackEntry.toRoute()
+            val classRoomId = createClassRoom.classRoomId
+
             CreateClassRoomScreenRoot(
                 modifier = Modifier.fillMaxSize(),
+                classRoomId = classRoomId,
                 onBackPressed = {
                     navController.popBackStack()
                 },
+                onClassRoomHasUpdated = {
+                    navController.popBackStack()
+                    return@CreateClassRoomScreenRoot
+                },
                 onClassHasCreated = { classRoom ->
-                    navController.navigate(CreateCategories(classRoom.id))
+                    navController.navigate(
+                        CreateCategories(
+                            classRoomId = classRoom.id,
+                            isUpdating = false
+                        )
+                    )
                 }
             )
         }
@@ -82,9 +97,26 @@ fun MyNavigation() {
                     )
                 },
                 onAddAssessmentClicked = { navController.navigate(AssessmentEventEditor(classRoomId)) },
-                onStudentEditClicked = { navController.navigate(AddStudents(classRoomId)) },
-                onSettingClicked = {
-                    // TODO
+                onStudentEditClicked = {
+                    navController.navigate(
+                        AddStudents(
+                            classRoomId = classRoomId,
+                            isUpdating = true
+                        )
+                    )
+                },
+                onCategoryMenuClicked = {
+                    navController.navigate(
+                        CreateCategories(
+                            classRoomId = classRoomId,
+                            isUpdating = true
+                        )
+                    )
+                },
+                onClassRoomBioMenuClicked = {
+                    navController.navigate(
+                        CreateClassRoom(classRoomId = classRoomId)
+                    )
                 }
             )
         }
@@ -92,6 +124,7 @@ fun MyNavigation() {
         composable<CreateCategories> { backStackEntry ->
             val createCategories: CreateCategories = backStackEntry.toRoute()
             val classRoomId = createCategories.classRoomId
+            val isUpdating = createCategories.isUpdating
 
             AddCategoriesScreenRoot(
                 modifier = Modifier.fillMaxSize(),
@@ -100,7 +133,17 @@ fun MyNavigation() {
                     navController.popBackStack()
                 },
                 onCategoriesHasCreated = {
-                    navController.navigate(AddStudents(classRoomId))
+                    if (isUpdating) {
+                        navController.popBackStack()
+                        return@AddCategoriesScreenRoot
+                    }
+
+                    navController.navigate(
+                        AddStudents(
+                            classRoomId = classRoomId,
+                            isUpdating = false
+                        )
+                    )
                 },
             )
         }

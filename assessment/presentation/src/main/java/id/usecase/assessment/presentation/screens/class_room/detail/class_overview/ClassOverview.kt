@@ -1,5 +1,6 @@
 package id.usecase.assessment.presentation.screens.class_room.detail.class_overview
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -47,13 +48,15 @@ fun ClassOverviewTab(
     state: ClassRoomState,
     bottomPadding: Dp = 0.dp
 ) {
+    Log.d("TAG", "ClassOverviewTab: ${state.categoryDistributionData}")
+
     val performanceTrendData = state.performanceTrendData
         .map { Pair(it.x, it.y) }
         .toTypedArray()
 
-    val categoryDistributionData = state.categoryDistributionData.map {
-        Pair(it.x, it.y)
-    }.toTypedArray()
+    val categoryDistributionData = state.categoryDistributionData
+        .map { Pair(it.x, it.y) }
+        .toTypedArray()
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),

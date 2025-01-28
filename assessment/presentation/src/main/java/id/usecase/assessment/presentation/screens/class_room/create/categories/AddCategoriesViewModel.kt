@@ -51,7 +51,7 @@ class AddCategoriesViewModel(
         viewModelScope.launch(dispatcher) {
             repository.getCategoriesByClassRoomId(classRoomId)
                 .catch { e ->
-                    _state.value = state.value.copy(isLoading = false)
+                    _state.update { it.copy(isLoading = false) }
                     _events.send(
                         AddCategoriesEvent.OnErrorOccurred(
                             message = e.message ?: application.getString(R.string.unknown_error)
@@ -60,13 +60,14 @@ class AddCategoriesViewModel(
                 }
                 .collectLatest { result ->
                     when (result) {
-                        DataResult.Loading -> _state.value = state.value.copy(isLoading = true)
+                        DataResult.Loading -> _state.update { it.copy(isLoading = true) }
 
                         is DataResult.Success -> {
                             _state.update {
                                 it.copy(
                                     isLoading = false,
-                                    categories = result.data.map { category ->
+                                    categories = result.data,
+                                    categoryFields = result.data.map { category ->
                                         category.toItemState()
                                     }.ifEmpty { listOf(CategoryItemState()) }
                                 )
@@ -87,12 +88,12 @@ class AddCategoriesViewModel(
 
             when (repository.upsertCategories(categoryList)) {
                 DataResult.Loading -> {
-                    _state.value = state.value.copy(isLoading = true)
+                    _state.update { it.copy(isLoading = true) }
                 }
 
                 is DataResult.Success -> {
+                    _state.update { it.copy(isLoading = false) }
                     _events.send(AddCategoriesEvent.OnCategoriesHasAdded)
-                    _state.value = state.value.copy(isLoading = false)
                 }
             }
         }

@@ -152,7 +152,7 @@ fun AddCategoriesScreen(
         },
         content = { innerPadding ->
             categories.clear()
-            categories.addAll(state.categories)
+            categories.addAll(state.categoryFields)
             Log.d("TAG", "AddCategoriesScreen: $categories")
 
             ConstraintLayout(
@@ -253,7 +253,7 @@ fun AddCategoriesScreen(
                 ) {
                     EvaluasiButton(
                         modifier = Modifier.fillMaxWidth(),
-                        text = "Set Category",
+                        text = "Save Categories",
                         buttonType = ButtonType.PRIMARY,
                         onClick = {
                             onAction(

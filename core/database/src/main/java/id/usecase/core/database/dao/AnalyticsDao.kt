@@ -38,6 +38,7 @@ interface AnalyticsDao {
         LEFT JOIN assessments a ON e.id = a.event_id
         WHERE c.class_room_id = :classRoomId
         GROUP BY c.id, c.name
+        ORDER BY c.percentage ASC
     """
     )
     suspend fun getCategoryDistributionByClassRoom(classRoomId: Int): List<CategoryScore>
@@ -96,6 +97,7 @@ interface AnalyticsDao {
         LEFT JOIN assessments a ON e.id = a.event_id
         WHERE c.class_room_id = :classRoomId
         GROUP BY c.id, c.name
+        ORDER BY c.percentage ASC
     """
     )
     suspend fun getCategoryAnalysisByClassRoom(classRoomId: Int): List<CategoryAnalysis>

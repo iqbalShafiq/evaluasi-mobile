@@ -2,6 +2,7 @@
 
 package id.usecase.assessment.presentation.screens.class_room.create
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -54,7 +55,6 @@ import id.usecase.designsystem.EvaluasiTheme
 import id.usecase.designsystem.components.app_bar.EvaluasiTopAppBar
 import id.usecase.designsystem.components.dialog.EvaluasiDatePicker
 import id.usecase.designsystem.components.dialog.StandardAlertDialog
-import id.usecase.designsystem.components.dialog.StandardLoadingDialog
 import id.usecase.designsystem.components.text_field.EvaluasiTextField
 import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
@@ -67,11 +67,11 @@ fun CreateClassRoomScreenRoot(
     classRoomId: Int? = null,
     onBackPressed: () -> Unit,
     onClassHasCreated: (classRoom: ClassRoomUi) -> Unit,
+    onClassRoomHasUpdated: () -> Unit,
     viewModel: CreateClassRoomViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     var openAlertDialog by remember { mutableStateOf(false) }
-    var openLoadingDialog by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
     var showStartDatePicker by remember { mutableStateOf(false) }
 
@@ -119,8 +119,12 @@ fun CreateClassRoomScreenRoot(
             }
 
             is CreateClassRoomEvent.OnClassRoomCreated -> {
-                openLoadingDialog = false
                 onClassHasCreated(event.classRoomUi)
+                Log.d("TAG", "CreateClassRoomScreenRoot: ${event.classRoomUi}")
+            }
+
+            is CreateClassRoomEvent.OnClassRoomHasUpdated -> {
+                onClassRoomHasUpdated()
             }
         }
     }
@@ -140,16 +144,11 @@ fun CreateClassRoomScreenRoot(
         )
     }
 
-    if (openLoadingDialog) {
-        StandardLoadingDialog()
-    }
-
     CreateClassRoomScreen(
         modifier = modifier,
         onBackPressed = onBackPressed,
-        onCreatePressed = {
+        onCreateButtonClicked = {
             viewModel.onAction(CreateClassRoomAction.CreateClassRoom)
-            openLoadingDialog = true
         },
         showStartDatePicker = {
             showStartDatePicker = true
@@ -164,7 +163,7 @@ fun CreateClassRoomScreenRoot(
 fun CreateClassRoomScreen(
     modifier: Modifier = Modifier,
     onBackPressed: () -> Unit,
-    onCreatePressed: () -> Unit,
+    onCreateButtonClicked: () -> Unit,
     showStartDatePicker: () -> Unit,
     onAction: (CreateClassRoomAction) -> Unit,
     state: CreateClassRoomState
@@ -432,7 +431,7 @@ fun CreateClassRoomScreen(
                         .padding(24.dp)
                 ) {
                     Button(
-                        onClick = onCreatePressed,
+                        onClick = onCreateButtonClicked,
                         modifier = Modifier.fillMaxWidth(),
                         enabled = state.isFormValid
                     ) {
@@ -490,7 +489,7 @@ private fun CreateClassRoomPreview() {
 
         CreateClassRoomScreen(
             onBackPressed = { },
-            onCreatePressed = { },
+            onCreateButtonClicked = { },
             state = state,
             showStartDatePicker = {
                 showStartDatePicker = true

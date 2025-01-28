@@ -6,16 +6,16 @@ import kotlinx.serialization.Serializable
 internal object Home
 
 @Serializable
-internal object CreateClassRoom
+internal data class CreateClassRoom(val classRoomId: Int? = null)
 
 @Serializable
 internal data class ClassRoomDetail(val classRoomId: Int)
 
 @Serializable
-internal data class CreateCategories(val classRoomId: Int)
+internal data class CreateCategories(val classRoomId: Int, val isUpdating: Boolean)
 
 @Serializable
-internal data class AddStudents(val classRoomId: Int)
+internal data class AddStudents(val classRoomId: Int, val isUpdating: Boolean)
 
 @Serializable
 internal data class AssessmentEventEditor(

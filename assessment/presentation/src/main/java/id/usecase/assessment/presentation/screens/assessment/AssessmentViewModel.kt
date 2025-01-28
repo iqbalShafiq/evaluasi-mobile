@@ -300,12 +300,16 @@ class AssessmentViewModel(
                                 state.value.studentList
                             )
 
+                            val eventDate = result.data?.eventDate ?: System.currentTimeMillis()
+
                             val formattedEventDate = SimpleDateFormat(
                                 "dd MMMM yyyy",
                                 Locale.getDefault()
-                            ).format(result.data?.eventDate)
+                            ).format(eventDate)
 
-                            val category = loadCategoryById(result.data?.categoryId ?: -1)
+                            val category = loadCategoryById(
+                                categoryId = result.data?.categoryId ?: -1
+                            )
 
                             _state.update {
                                 it.copy(
@@ -314,12 +318,12 @@ class AssessmentViewModel(
                                     assessmentNameField = TextFieldValue(
                                         text = result.data?.name ?: ""
                                     ),
+                                    selectedDate = eventDate,
                                     startDateField = TextFieldValue(
                                         text = formattedEventDate
                                     ),
-                                    categoryField = TextFieldValue(
-                                        text = category?.name ?: ""
-                                    ),
+                                    category = category,
+                                    selectedCategoryName = category?.name ?: "",
                                     assessmentListField = assessmentListField
                                 )
                             }
@@ -367,7 +371,6 @@ class AssessmentViewModel(
                     )
                 }
             }
-            Log.d("TAG", "saveAssessments: $assessmentList")
 
             when (assessmentRepository.upsertAssessments(assessmentList)) {
                 DataResult.Loading -> _state.update { it.copy(isLoading = true) }
@@ -403,7 +406,10 @@ class AssessmentViewModel(
         viewModelScope.launch(dispatcher) {
             val selectedCategory = state.value.categoryList.find { it.name == category }
             _state.update {
-                it.copy(category = selectedCategory, selectedCategoryName = category)
+                it.copy(
+                    category = selectedCategory,
+                    selectedCategoryName = category
+                )
             }
         }
     }

@@ -1,6 +1,7 @@
 package id.usecase.assessment.presentation.screens.class_room.create
 
 import android.app.Application
+import android.util.Log
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,9 +21,12 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
+import java.util.Locale
 
 class CreateClassRoomViewModel(
     private val application: Application,
@@ -55,7 +59,8 @@ class CreateClassRoomViewModel(
                     }
                 }
             }
-            CreateClassRoomAction.CreateClassRoom -> createClassRoom()
+
+            CreateClassRoomAction.CreateClassRoom -> upsertClassRoom()
         }
     }
 
@@ -80,32 +85,44 @@ class CreateClassRoomViewModel(
                         }
 
                         is DataResult.Success -> {
-                            _state.value = _state.value.copy(
-                                isLoading = false,
-                                classRoom = result.data,
-                                classRoomName = TextFieldValue(
-                                    text = result.data?.name ?: ""
-                                ),
-                                subject = TextFieldValue(
-                                    text = result.data?.subject ?: ""
-                                ),
-                                startDate = TextFieldValue(
-                                    text = result.data?.startPeriod.toString()
-                                ),
-                                longPeriod = TextFieldValue(
-                                    text = result.data?.longPeriod?.toString() ?: ""
-                                ),
-                                description = TextFieldValue(
-                                    text = result.data?.description ?: ""
-                                ),
-                            )
+                            Log.d("TAG", "loadClassRoomDetail: ${result.data?.startPeriod}")
+                            _state.update {
+                                it.copy(
+                                    isLoading = false,
+                                    isEditing = true,
+                                    classRoom = result.data,
+                                    classRoomName = TextFieldValue(
+                                        text = result.data?.name ?: ""
+                                    ),
+                                    subject = TextFieldValue(
+                                        text = result.data?.subject ?: ""
+                                    ),
+                                    startDate = TextFieldValue(
+                                        text = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                                            .format((result.data?.startPeriod ?: 0L) * 1_000)
+                                    ),
+                                    longPeriod = TextFieldValue(
+                                        text = result.data?.longPeriod?.toString() ?: ""
+                                    ),
+                                    description = TextFieldValue(
+                                        text = result.data?.description ?: ""
+                                    ),
+                                    hasSchedule = result.data?.schedule?.isNotEmpty() ?: false,
+                                    selectedDays = result.data?.schedule
+                                        ?.mapNotNull { day ->
+                                            DayOfWeek.entries.find { dow -> dow.value == day }
+                                        }
+                                        ?.toSet()
+                                        ?: emptySet()
+                                )
+                            }
                         }
                     }
                 }
         }
     }
 
-    private fun createClassRoom() {
+    private fun upsertClassRoom() {
         viewModelScope.launch(dispatcher) {
             val result = repository.upsertClassRoom(
                 ClassRoom(
@@ -130,14 +147,22 @@ class CreateClassRoomViewModel(
 
             when (result) {
                 DataResult.Loading -> {
-                    _state.value = _state.value.copy(isLoading = true)
+                    Log.d("TAG", "upsertClassRoom: Loading ...")
+                    _state.update { it.copy(isLoading = true) }
                 }
 
                 is DataResult.Success -> {
-                    _state.value = _state.value.copy(isLoading = false)
-                    result.data?.toUi()?.let {
-                        _events.send(OnClassRoomCreated(it))
+                    _state.update { it.copy(isLoading = false) }
+
+                    val classRoom = result.data?.toUi()
+                    if (classRoom != null) {
+                        _events.send(OnClassRoomCreated(classRoom))
+                        return@launch
                     }
+
+                    _events.send(
+                        CreateClassRoomEvent.OnClassRoomHasUpdated
+                    )
                 }
             }
         }

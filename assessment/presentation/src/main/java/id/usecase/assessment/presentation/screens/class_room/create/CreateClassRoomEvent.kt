@@ -5,4 +5,5 @@ import id.usecase.assessment.presentation.model.ClassRoomUi
 sealed class CreateClassRoomEvent {
     data class OnErrorOccurred(val message: String) : CreateClassRoomEvent()
     data class OnClassRoomCreated(val classRoomUi: ClassRoomUi) : CreateClassRoomEvent()
+    data object OnClassRoomHasUpdated: CreateClassRoomEvent()
 }

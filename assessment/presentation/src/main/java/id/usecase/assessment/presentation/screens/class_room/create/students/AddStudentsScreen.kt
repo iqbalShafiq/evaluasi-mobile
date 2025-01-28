@@ -254,7 +254,7 @@ fun AddStudentsScreen(
                 ) {
                     EvaluasiButton(
                         modifier = Modifier.fillMaxWidth(),
-                        text = "Create Class",
+                        text = "Save Students",
                         buttonType = ButtonType.PRIMARY,
                         enabled = students
                             .takeIf { it.size > 1 }

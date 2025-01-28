@@ -1,5 +1,6 @@
 package id.usecase.core.database
 
+import android.util.Log
 import id.usecase.core.database.dao.AnalyticsDao
 import id.usecase.core.database.dao.AssessmentDao
 import id.usecase.core.database.dao.CategoryDao

@@ -42,6 +42,7 @@ fun EvaluasiTopAppBar(
     onNavigationClicked: () -> Unit = {},
     centeredTitle: Boolean = false,
     centeredSubtitle: Boolean = false,
+    moreMenu: (@Composable () -> Unit)? = null,
     scrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(),
     title: String
 ) {
@@ -97,6 +98,12 @@ fun EvaluasiTopAppBar(
                                 contentDescription = actionItem.contentDescription,
                                 tint = MaterialTheme.colorScheme.onSurface
                             )
+                        }
+                    }
+
+                    if (moreMenu != null) {
+                        item {
+                            moreMenu()
                         }
                     }
                 }

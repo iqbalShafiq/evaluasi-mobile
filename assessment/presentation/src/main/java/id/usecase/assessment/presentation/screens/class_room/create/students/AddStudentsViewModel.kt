@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -49,7 +50,7 @@ class AddStudentsViewModel(
         viewModelScope.launch(dispatcher) {
             repository.getStudentsByClassRoomId(classRoomId = classRoomId)
                 .catch { e ->
-                    _state.value = state.value.copy(isLoading = false)
+                    _state.update { it.copy(isLoading = false) }
                     _events.send(
                         AddStudentsEvent.OnErrorOccurred(
                             message = e.message ?: application.getString(
@@ -60,15 +61,17 @@ class AddStudentsViewModel(
                 }
                 .collectLatest { result ->
                     when (result) {
-                        DataResult.Loading -> _state.value = state.value.copy(isLoading = true)
+                        DataResult.Loading -> _state.update { it.copy(isLoading = true) }
 
                         is DataResult.Success -> {
-                            _state.value = state.value.copy(
-                                isLoading = false,
-                                studentList = result.data.map {
-                                    it.toItemState()
-                                }.ifEmpty { listOf(AddStudentItemState()) }
-                            )
+                            _state.update {
+                                it.copy(
+                                    isLoading = false,
+                                    studentList = result.data.map { student ->
+                                        student.toItemState()
+                                    }.ifEmpty { listOf(AddStudentItemState()) }
+                                )
+                            }
                         }
                     }
                 }
@@ -86,9 +89,9 @@ class AddStudentsViewModel(
             val result = repository.upsertStudents(studentList)
 
             when (result) {
-                DataResult.Loading -> _state.value = state.value.copy(isLoading = true)
+                DataResult.Loading -> _state.update { it.copy(isLoading = true) }
                 is DataResult.Success -> {
-                    _state.value = state.value.copy(isLoading = false)
+                    _state.update { it.copy(isLoading = false) }
                     _events.send(AddStudentsEvent.OnStudentsHasAdded)
                 }
             }
