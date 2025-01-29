@@ -4,6 +4,8 @@ import id.usecase.core.database.entities.AssessmentEntity
 import id.usecase.core.database.entities.CategoryEntity
 import id.usecase.core.database.entities.ClassRoomEntity
 import id.usecase.core.database.entities.EventEntity
+import id.usecase.core.database.entities.EventSectionCrossRef
+import id.usecase.core.database.entities.SectionEntity
 import id.usecase.core.database.entities.StudentEntity
 import id.usecase.core.domain.assessment.model.analytics.CategoryAnalysis
 import id.usecase.core.domain.assessment.model.analytics.CategoryScore
@@ -14,6 +16,8 @@ import id.usecase.core.domain.assessment.model.assessment.Assessment
 import id.usecase.core.domain.assessment.model.assessment.category.Category
 import id.usecase.core.domain.assessment.model.assessment.event.Event
 import id.usecase.core.domain.assessment.model.classroom.ClassRoom
+import id.usecase.core.domain.assessment.model.section.EventSection
+import id.usecase.core.domain.assessment.model.section.Section
 import id.usecase.core.domain.assessment.model.student.Student
 import id.usecase.core.database.model.analytics.CategoryAnalysis as CategoryAnalysisDb
 import id.usecase.core.database.model.analytics.CategoryScore as CategoryScoreDb
@@ -142,3 +146,27 @@ fun CategoryAnalysisDb.toDomainForm() = CategoryAnalysis(
     categoryName = categoryName,
     averageScore = averageScore
 )
+
+fun Section.toEntity() = SectionEntity(
+    id = id,
+    name = name,
+    topics = topics,
+    classRoomId = classRoomId,
+    createdTime = createdTime,
+    lastModifiedTime = lastModifiedTime
+)
+
+fun SectionEntity.toDomainForm() = Section(
+    id = id,
+    name = name,
+    topics = topics,
+    classRoomId = classRoomId,
+    createdTime = createdTime,
+    lastModifiedTime = lastModifiedTime
+)
+
+fun EventSection.toEntity() = EventSectionCrossRef(
+    eventId = eventId,
+    sectionId = sectionId
+)
+

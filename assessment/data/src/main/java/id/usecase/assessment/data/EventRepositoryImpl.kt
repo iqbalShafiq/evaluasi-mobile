@@ -4,6 +4,7 @@ import id.usecase.assessment.domain.EventRepository
 import id.usecase.core.domain.assessment.DataResult
 import id.usecase.core.domain.assessment.LocalAssessmentDataSource
 import id.usecase.core.domain.assessment.model.assessment.event.Event
+import id.usecase.core.domain.assessment.model.section.EventSection
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -18,6 +19,13 @@ class EventRepositoryImpl(
         return withContext(dispatcher) {
             val eventId = dataSource.upsertEvent(event)
             DataResult.Success(dataSource.getEventById(eventId.toInt()))
+        }
+    }
+
+    override suspend fun upsertEventSection(eventSections: List<EventSection>): DataResult<Unit> {
+        return withContext(dispatcher) {
+            dataSource.upsertEventSection(eventSections)
+            DataResult.Success(Unit)
         }
     }
 

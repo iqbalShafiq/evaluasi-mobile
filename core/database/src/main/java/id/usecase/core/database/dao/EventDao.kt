@@ -5,12 +5,15 @@ import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import id.usecase.core.database.entities.EventEntity
-import kotlinx.coroutines.flow.Flow
+import id.usecase.core.database.entities.EventSectionCrossRef
 
 @Dao
 interface EventDao {
     @Upsert
     suspend fun upsert(event: EventEntity): Long
+
+    @Upsert
+    suspend fun upsertEventSection(crossRef: List<EventSectionCrossRef>): Long
 
     @Query("SELECT * FROM events WHERE id = :id")
     suspend fun getEventById(id: Int): EventEntity?

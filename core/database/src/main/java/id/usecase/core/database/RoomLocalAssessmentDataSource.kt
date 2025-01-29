@@ -5,7 +5,9 @@ import id.usecase.core.database.dao.AssessmentDao
 import id.usecase.core.database.dao.CategoryDao
 import id.usecase.core.database.dao.ClassRoomDao
 import id.usecase.core.database.dao.EventDao
+import id.usecase.core.database.dao.SectionDao
 import id.usecase.core.database.dao.StudentDao
+import id.usecase.core.database.entities.EventSectionCrossRef
 import id.usecase.core.domain.assessment.LocalAssessmentDataSource
 import id.usecase.core.domain.assessment.model.analytics.CategoryAnalysis
 import id.usecase.core.domain.assessment.model.analytics.CategoryScore
@@ -16,6 +18,8 @@ import id.usecase.core.domain.assessment.model.assessment.Assessment
 import id.usecase.core.domain.assessment.model.assessment.category.Category
 import id.usecase.core.domain.assessment.model.assessment.event.Event
 import id.usecase.core.domain.assessment.model.classroom.ClassRoom
+import id.usecase.core.domain.assessment.model.section.EventSection
+import id.usecase.core.domain.assessment.model.section.Section
 import id.usecase.core.domain.assessment.model.student.Student
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -28,7 +32,8 @@ class RoomLocalAssessmentDataSource(
     private val assessmentDao: AssessmentDao,
     private val studentDao: StudentDao,
     private val dispatcher: CoroutineDispatcher,
-    private val analyticsDao: AnalyticsDao
+    private val analyticsDao: AnalyticsDao,
+    private val sectionDao: SectionDao
 ) : LocalAssessmentDataSource {
     override suspend fun upsertClassRoom(classRoom: ClassRoom): ClassRoom? {
         return withContext(dispatcher) {
@@ -166,6 +171,21 @@ class RoomLocalAssessmentDataSource(
         }
     }
 
+    override suspend fun upsertEventSection(eventSections: List<EventSection>): Long {
+        return withContext(dispatcher) {
+            val crossRef = withContext(Dispatchers.Default) {
+                eventSections.map {
+                    EventSectionCrossRef(
+                        eventId = it.eventId,
+                        sectionId = it.sectionId
+                    )
+                }
+            }
+
+            eventDao.upsertEventSection(crossRef)
+        }
+    }
+
     override suspend fun getEventsByClassRoomId(classRoomId: Int): List<Event> {
         return withContext(dispatcher) {
             eventDao
@@ -288,6 +308,32 @@ class RoomLocalAssessmentDataSource(
         return withContext(dispatcher) {
             val result = analyticsDao.getCategoryAnalysisByClassRoom(classRoomId)
             result.map { it.toDomainForm() }
+        }
+    }
+
+    override suspend fun upsertSection(section: List<Section>): List<Long> {
+        return withContext(dispatcher) {
+            val sectionEntities = section.map {
+                it.toEntity()
+            }
+
+            sectionDao.upsert(sectionEntities)
+        }
+    }
+
+    override suspend fun getSectionById(sectionId: Int): Section? {
+        return withContext(dispatcher) {
+            sectionDao
+                .getSectionById(sectionId)
+                ?.toDomainForm()
+        }
+    }
+
+    override suspend fun getSectionsByClassRoomId(classRoomId: Int): List<Section> {
+        return withContext(dispatcher) {
+            sectionDao
+                .getSectionsByClassRoomId(classRoomId)
+                .map { it.toDomainForm() }
         }
     }
 }

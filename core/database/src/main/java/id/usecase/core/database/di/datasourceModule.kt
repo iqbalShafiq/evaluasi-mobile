@@ -20,6 +20,7 @@ val dataSourceModule = module {
     single { get<RoomAppDatabase>().categoryDao() }
     single { get<RoomAppDatabase>().classRoomDao() }
     single { get<RoomAppDatabase>().analyticsDao() }
+    single { get<RoomAppDatabase>().sectionDao() }
     single<LocalAssessmentDataSource> {
         RoomLocalAssessmentDataSource(
             classRoomDao = get(),
@@ -28,6 +29,7 @@ val dataSourceModule = module {
             assessmentDao = get(),
             studentDao = get(),
             analyticsDao = get(),
+            sectionDao = get(),
             dispatcher = get()
         )
     }

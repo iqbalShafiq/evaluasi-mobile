@@ -9,6 +9,8 @@ import id.usecase.core.domain.assessment.model.assessment.Assessment
 import id.usecase.core.domain.assessment.model.assessment.category.Category
 import id.usecase.core.domain.assessment.model.assessment.event.Event
 import id.usecase.core.domain.assessment.model.classroom.ClassRoom
+import id.usecase.core.domain.assessment.model.section.EventSection
+import id.usecase.core.domain.assessment.model.section.Section
 import id.usecase.core.domain.assessment.model.student.Student
 
 interface LocalAssessmentDataSource {
@@ -32,6 +34,7 @@ interface LocalAssessmentDataSource {
     suspend fun deleteCategory(category: Category)
 
     suspend fun upsertEvent(event: Event): Long
+    suspend fun upsertEventSection(eventSections: List<EventSection>): Long
     suspend fun getEventsByClassRoomId(classRoomId: Int): List<Event>
     suspend fun getEventsByCategoryId(categoryId: Int): List<Event>
     suspend fun getEventById(eventId: Int): Event?
@@ -51,4 +54,8 @@ interface LocalAssessmentDataSource {
     suspend fun getPerformanceDistributionByClassRoom(classRoomId: Int): List<PerformanceScore>
     suspend fun getStudentProgressByClassRoom(classRoomId: Int): List<StudentProgress>
     suspend fun getCategoryAnalysisByClassRoom(classRoomId: Int): List<CategoryAnalysis>
+
+    suspend fun upsertSection(section: List<Section>): List<Long>
+    suspend fun getSectionById(sectionId: Int): Section?
+    suspend fun getSectionsByClassRoomId(classRoomId: Int): List<Section>
 }
