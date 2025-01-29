@@ -1,5 +1,6 @@
 [versions]
 agp = "8.8.0"
+animation = "1.7.6"
 composeCharts = "0.0.18"
 constraintlayoutCompose = "1.1.0"
 kotlin = "2.1.0"
@@ -25,6 +26,7 @@ uiTooling = "1.7.6"
 vico = "1.13.1"
 
 [libraries]
+androidx-animation = { module = "androidx.compose.animation:animation", version.ref = "animation" }
 androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }

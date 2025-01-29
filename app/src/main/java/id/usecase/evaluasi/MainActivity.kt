@@ -4,11 +4,21 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -38,11 +48,41 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MyNavigation() {
     val navController = rememberNavController()
+    val animationSpec = tween<IntOffset>(
+        durationMillis = 300,
+        easing = FastOutSlowInEasing
+    )
+
     NavHost(
         startDestination = Home,
         navController = navController
     ) {
-        composable<Home> {
+        composable<Home>(
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = animationSpec
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = animationSpec
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = animationSpec
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = animationSpec
+                )
+            }
+        ) {
             HomeScreenRoot(
                 onClassRoomChosen = {
                     navController.navigate(ClassRoomDetail(it))
@@ -55,7 +95,32 @@ fun MyNavigation() {
             )
         }
 
-        composable<CreateClassRoom> { backStackEntry ->
+        composable<CreateClassRoom>(
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = animationSpec
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = animationSpec
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = animationSpec
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = animationSpec
+                )
+            }
+        ) { backStackEntry ->
             val createClassRoom: CreateClassRoom = backStackEntry.toRoute()
             val classRoomId = createClassRoom.classRoomId
 
@@ -80,7 +145,33 @@ fun MyNavigation() {
             )
         }
 
-        composable<ClassRoomDetail> { backStackEntry ->
+        composable<ClassRoomDetail>(
+
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = animationSpec
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = animationSpec
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = animationSpec
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = animationSpec
+                )
+            }
+        ) { backStackEntry ->
             val classRoomDetail: ClassRoomDetail = backStackEntry.toRoute()
             val classRoomId = classRoomDetail.classRoomId
 
@@ -121,7 +212,33 @@ fun MyNavigation() {
             )
         }
 
-        composable<CreateCategories> { backStackEntry ->
+        composable<CreateCategories>(
+
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = animationSpec
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = animationSpec
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = animationSpec
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = animationSpec
+                )
+            }
+        ) { backStackEntry ->
             val createCategories: CreateCategories = backStackEntry.toRoute()
             val classRoomId = createCategories.classRoomId
             val isUpdating = createCategories.isUpdating
@@ -148,7 +265,33 @@ fun MyNavigation() {
             )
         }
 
-        composable<AddStudents> { backStackEntry ->
+        composable<AddStudents>(
+
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = animationSpec
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = animationSpec
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = animationSpec
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = animationSpec
+                )
+            }
+        ) { backStackEntry ->
             val addStudents: AddStudents = backStackEntry.toRoute()
             val classRoomId = addStudents.classRoomId
 
@@ -171,7 +314,33 @@ fun MyNavigation() {
             )
         }
 
-        composable<AssessmentEventEditor> { backStackEntry ->
+        composable<AssessmentEventEditor>(
+
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = animationSpec
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = animationSpec
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = animationSpec
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = animationSpec
+                )
+            }
+        ) { backStackEntry ->
             val assessmentEventEditor: AssessmentEventEditor = backStackEntry.toRoute()
             val classRoomId = assessmentEventEditor.classRoomId
             val eventId = assessmentEventEditor.eventId

@@ -32,7 +32,7 @@ interface AnalyticsDao {
         """
         SELECT 
             c.name as category_name,
-            AVG(COALESCE(a.score, 0.0)) as average_score
+            COUNT(a.id) as total_assessments
         FROM categories c
         LEFT JOIN events e ON c.id = e.category_id
         LEFT JOIN assessments a ON e.id = a.event_id
@@ -90,8 +90,7 @@ interface AnalyticsDao {
         """
         SELECT 
             c.name as category_name,
-            AVG(COALESCE(a.score, 0.0)) as average_score,
-            COUNT(a.id) as total_assessments
+            AVG(COALESCE(a.score, 0.0)) as average_score
         FROM categories c
         LEFT JOIN events e ON c.id = e.category_id
         LEFT JOIN assessments a ON e.id = a.event_id
@@ -101,4 +100,24 @@ interface AnalyticsDao {
     """
     )
     suspend fun getCategoryAnalysisByClassRoom(classRoomId: Int): List<CategoryAnalysis>
+
+    // For Low Performance Students
+    @Query(
+        """
+        SELECT 
+            s.name as student_name,
+            AVG(COALESCE(a.score, 0.0)) as average_score,
+            MAX(a.created_time) as last_updated
+        FROM students s
+        LEFT JOIN assessments a ON s.id = a.student_id
+        WHERE a.event_id IN (
+            SELECT id FROM events WHERE category_id IN (
+                SELECT id FROM categories WHERE class_room_id = :classRoomId
+            )
+        )
+        GROUP BY s.id, s.name
+        HAVING average_score < 50
+    """
+    )
+    suspend fun getLowPerformanceStudentsByClassRoom(classRoomId: Int): List<StudentProgress>
 }

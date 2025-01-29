@@ -57,11 +57,11 @@ fun CategoryAnalysisChart(
 private fun CategoryAnalysisChartPreview() {
     CategoryAnalysisChart(
         analysis = listOf(
-            CategoryAnalysis("Category 1", 10F, 80),
-            CategoryAnalysis("Category 2", 5F, 60),
-            CategoryAnalysis("Category 3", 7F, 70),
-            CategoryAnalysis("Category 4", 3F, 40),
-            CategoryAnalysis("Category 5", 8F, 90),
+            CategoryAnalysis("Category 1", 10F),
+            CategoryAnalysis("Category 2", 5F),
+            CategoryAnalysis("Category 3", 7F),
+            CategoryAnalysis("Category 4", 3F),
+            CategoryAnalysis("Category 5", 8F),
         )
     )
 }

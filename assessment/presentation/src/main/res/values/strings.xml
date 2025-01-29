@@ -5,4 +5,5 @@
     <string name="create_assessment">Create Assessment</string>
     <string name="unknown_error">Unknown error</string>
     <string name="event_not_found">Assessment event not found</string>
+    <string name="update_assessment">Update Assessment</string>
 </resources>

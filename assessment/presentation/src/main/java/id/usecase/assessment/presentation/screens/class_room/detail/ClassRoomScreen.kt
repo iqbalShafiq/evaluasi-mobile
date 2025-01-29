@@ -310,17 +310,14 @@ private fun ClassRoomPreview() {
             CategoryAnalysis(
                 "Monthly",
                 50f,
-                5,
             ),
             CategoryAnalysis(
                 "Mid",
                 90f,
-                7,
             ),
             CategoryAnalysis(
                 "Final",
                 70f,
-                9,
             )
         ),
         categoryList = listOf("Monthly", "Mid", "Final")

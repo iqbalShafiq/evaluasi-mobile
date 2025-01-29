@@ -7,6 +7,4 @@ data class CategoryAnalysis(
     val categoryName: String,
     @ColumnInfo(name = "average_score")
     val averageScore: Float,
-    @ColumnInfo(name = "total_assessments")
-    val totalAssessments: Int
 )

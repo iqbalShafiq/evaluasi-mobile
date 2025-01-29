@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import id.usecase.assessment.presentation.model.StudentScoreUi
 import id.usecase.designsystem.components.text_field.EvaluasiTextField
+import java.util.Locale
 
 @Composable
 fun StudentAssessmentCard(
@@ -70,7 +71,11 @@ fun StudentAssessmentCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = "${state.data?.avgScore}",
+                        text = String.format(
+                            Locale.getDefault(),
+                            "%.2f",
+                            state.data?.avgScore ?: 0.0
+                        ),
                         style = MaterialTheme.typography.titleMedium,
                         color = if ((state.data?.avgScore ?: 0.0) >= 75) {
                             MaterialTheme.colorScheme.primary

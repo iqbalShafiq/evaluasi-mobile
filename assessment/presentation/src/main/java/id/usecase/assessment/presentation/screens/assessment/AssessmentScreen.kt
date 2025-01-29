@@ -3,6 +3,11 @@
 package id.usecase.assessment.presentation.screens.assessment
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -187,7 +192,7 @@ fun AssessmentScreen(
         topBar = {
             EvaluasiTopAppBar(
                 modifier = Modifier.padding(horizontal = 8.dp),
-                title = stringResource(R.string.create_assessment),
+                title = if (eventId == null) stringResource(R.string.create_assessment) else stringResource(R.string.update_assessment),
                 navigationIcon = ImageVector.vectorResource(R.drawable.ic_rounded_arrow_back),
                 onNavigationClicked = onBackPressed
             )
@@ -356,7 +361,11 @@ fun AssessmentScreen(
                     }
 
                     // Sticky Header
-                    if (showStickyTitle) {
+                    AnimatedVisibility(
+                        visible = showStickyTitle,
+                        enter = fadeIn() + expandVertically(),
+                        exit = fadeOut() + shrinkVertically()
+                    ) {
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()

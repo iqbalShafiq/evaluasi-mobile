@@ -145,17 +145,14 @@ private fun AnalyticsTabPreview() {
                     CategoryAnalysis(
                         "Category 1",
                         50f,
-                        5,
                     ),
                     CategoryAnalysis(
                         "Category 2",
                         90f,
-                        7,
                     ),
                     CategoryAnalysis(
                         "Category 3",
                         70f,
-                        9,
                     )
                 )
             )

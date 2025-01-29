@@ -124,7 +124,7 @@ fun MonthlyScoreDb.toDomainForm() = MonthlyScore(
 
 fun CategoryScoreDb.toDomainForm() = CategoryScore(
     categoryName = categoryName,
-    averageScore = averageScore
+    totalAssessments = totalAssessments.toFloat()
 )
 
 fun PerformanceScoreDb.toDomainForm() = PerformanceScore(
@@ -140,6 +140,5 @@ fun StudentProgressDb.toDomainForm() = StudentProgress(
 
 fun CategoryAnalysisDb.toDomainForm() = CategoryAnalysis(
     categoryName = categoryName,
-    averageScore = averageScore,
-    totalAssessments = totalAssessments
+    averageScore = averageScore
 )

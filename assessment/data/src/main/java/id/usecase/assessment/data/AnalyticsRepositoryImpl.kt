@@ -24,7 +24,7 @@ class AnalyticsRepositoryImpl(
     override fun getCategoryDistribution(classRoomId: Int): Flow<List<Pair<String, Float>>> {
         return flow {
             val result = dataSource.getCategoryDistributionByClassRoom(classRoomId)
-                .map { Pair(it.categoryName, it.averageScore) }
+                .map { Pair(it.categoryName, it.totalAssessments) }
             emit(result)
         }.flowOn(dispatcher)
     }
@@ -48,7 +48,7 @@ class AnalyticsRepositoryImpl(
     override fun getCategoryAnalysis(classRoomId: Int): Flow<List<CategoryAnalysis>> {
         return flow {
             val result = dataSource.getCategoryAnalysisByClassRoom(classRoomId)
-                .map { CategoryAnalysis(it.categoryName, it.averageScore, it.totalAssessments) }
+                .map { CategoryAnalysis(it.categoryName, it.averageScore) }
             emit(result)
         }.flowOn(dispatcher)
     }

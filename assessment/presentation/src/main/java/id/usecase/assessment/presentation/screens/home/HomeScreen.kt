@@ -181,7 +181,14 @@ fun HomeScreen(
                         }
                     }
 
-                    if (state.searchResult.isEmpty()) {
+                    if (state.querySearch.isEmpty()) {
+                        Text(
+                            text = "Please type class name to search",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    } else if (state.searchResult.isEmpty()) {
                         Text(
                             text = "No result found",
                             style = MaterialTheme.typography.bodyMedium,
