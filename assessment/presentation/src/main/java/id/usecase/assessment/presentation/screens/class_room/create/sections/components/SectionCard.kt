@@ -41,12 +41,12 @@ fun SectionCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp)
+                .padding(16.dp)
         ) {
             EvaluasiTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 12.dp),
+                    .padding(top = 8.dp),
                 label = "Name",
                 placeholder = "Type Section name",
                 value = state.name,
