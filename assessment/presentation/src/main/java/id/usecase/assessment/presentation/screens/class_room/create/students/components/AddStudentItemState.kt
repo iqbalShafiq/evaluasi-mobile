@@ -1,4 +1,4 @@
-package id.usecase.assessment.presentation.screens.class_room.create.students.item
+package id.usecase.assessment.presentation.screens.class_room.create.students.components
 
 import androidx.compose.ui.text.input.TextFieldValue
 

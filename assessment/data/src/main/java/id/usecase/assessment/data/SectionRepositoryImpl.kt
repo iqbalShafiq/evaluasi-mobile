@@ -7,6 +7,7 @@ import id.usecase.core.domain.assessment.model.section.Section
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 
 class SectionRepositoryImpl(
@@ -25,7 +26,7 @@ class SectionRepositoryImpl(
             emit(DataResult.Loading)
             val section: Section? = dataSource.getSectionById(sectionId)
             emit(DataResult.Success(section))
-        }
+        }.flowOn(dispatcher)
     }
 
     override fun getSectionsByClassRoomId(classRoomId: Int): Flow<DataResult<List<Section>>> {
@@ -33,6 +34,6 @@ class SectionRepositoryImpl(
             emit(DataResult.Loading)
             val sections: List<Section> = dataSource.getSectionsByClassRoomId(classRoomId)
             emit(DataResult.Success(sections))
-        }
+        }.flowOn(dispatcher)
     }
 }

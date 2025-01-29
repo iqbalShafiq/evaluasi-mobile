@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import id.usecase.assessment.domain.StudentRepository
 import id.usecase.assessment.presentation.R
-import id.usecase.assessment.presentation.screens.class_room.create.students.item.AddStudentItemState
+import id.usecase.assessment.presentation.screens.class_room.create.students.components.AddStudentItemState
 import id.usecase.assessment.presentation.utils.toDomainForm
 import id.usecase.assessment.presentation.utils.toItemState
 import id.usecase.core.domain.assessment.DataResult

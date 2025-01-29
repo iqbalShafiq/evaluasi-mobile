@@ -1,4 +1,4 @@
-package id.usecase.assessment.presentation.screens.class_room.create.students.item
+package id.usecase.assessment.presentation.screens.class_room.create.students.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth

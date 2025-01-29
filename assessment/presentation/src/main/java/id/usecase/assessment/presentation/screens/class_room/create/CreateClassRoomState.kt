@@ -1,7 +1,7 @@
 package id.usecase.assessment.presentation.screens.class_room.create
 
 import androidx.compose.ui.text.input.TextFieldValue
-import id.usecase.assessment.presentation.screens.class_room.create.students.item.AddStudentItemState
+import id.usecase.assessment.presentation.screens.class_room.create.students.components.AddStudentItemState
 import id.usecase.core.domain.assessment.model.classroom.ClassRoom
 import java.time.DayOfWeek
 

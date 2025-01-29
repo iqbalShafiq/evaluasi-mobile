@@ -5,12 +5,14 @@ import id.usecase.assessment.data.AssessmentRepositoryImpl
 import id.usecase.assessment.data.CategoryRepositoryImpl
 import id.usecase.assessment.data.ClassRoomRepositoryImpl
 import id.usecase.assessment.data.EventRepositoryImpl
+import id.usecase.assessment.data.SectionRepositoryImpl
 import id.usecase.assessment.data.StudentRepositoryImpl
 import id.usecase.assessment.domain.AnalyticsRepository
 import id.usecase.assessment.domain.AssessmentRepository
 import id.usecase.assessment.domain.CategoryRepository
 import id.usecase.assessment.domain.ClassRoomRepository
 import id.usecase.assessment.domain.EventRepository
+import id.usecase.assessment.domain.SectionRepository
 import id.usecase.assessment.domain.StudentRepository
 import org.koin.dsl.module
 
@@ -52,6 +54,13 @@ val assessmentRepositoryModule = module {
 
     single<AnalyticsRepository> {
         AnalyticsRepositoryImpl(
+            dataSource = get(),
+            dispatcher = get(),
+        )
+    }
+
+    single<SectionRepository> {
+        SectionRepositoryImpl(
             dataSource = get(),
             dispatcher = get(),
         )

@@ -5,7 +5,7 @@ import id.usecase.assessment.presentation.model.AddStudentUi
 import id.usecase.assessment.presentation.model.AssessmentEventUi
 import id.usecase.assessment.presentation.model.ClassRoomUi
 import id.usecase.assessment.presentation.screens.class_room.create.categories.components.CategoryItemState
-import id.usecase.assessment.presentation.screens.class_room.create.students.item.AddStudentItemState
+import id.usecase.assessment.presentation.screens.class_room.create.students.components.AddStudentItemState
 import id.usecase.core.domain.assessment.model.assessment.category.Category
 import id.usecase.core.domain.assessment.model.assessment.event.Event
 import id.usecase.core.domain.assessment.model.classroom.ClassRoom

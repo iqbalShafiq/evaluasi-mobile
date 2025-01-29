@@ -42,8 +42,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import id.usecase.assessment.presentation.R
-import id.usecase.assessment.presentation.screens.class_room.create.students.item.AddStudentCard
-import id.usecase.assessment.presentation.screens.class_room.create.students.item.AddStudentItemState
+import id.usecase.assessment.presentation.screens.class_room.create.students.components.AddStudentCard
+import id.usecase.assessment.presentation.screens.class_room.create.students.components.AddStudentItemState
 import id.usecase.core.presentation.ui.ObserveAsEvents
 import id.usecase.designsystem.EvaluasiTheme
 import id.usecase.designsystem.components.app_bar.ActionItem
