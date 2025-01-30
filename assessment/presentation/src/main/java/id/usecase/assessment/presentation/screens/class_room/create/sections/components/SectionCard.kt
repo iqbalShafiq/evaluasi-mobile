@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ElevatedCard
@@ -57,7 +58,8 @@ fun SectionCard(
             )
 
             LazyColumn(
-                contentPadding = PaddingValues(start = 12.dp, top = 8.dp, bottom = 8.dp)
+                modifier = Modifier.heightIn(max = 300.dp),
+                contentPadding = PaddingValues(start = 12.dp, top = 8.dp)
             ) {
                 items(subSections.size) { index ->
                     val subSection = subSections[index]

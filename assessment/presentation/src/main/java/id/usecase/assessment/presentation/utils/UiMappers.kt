@@ -5,10 +5,13 @@ import id.usecase.assessment.presentation.model.AddStudentUi
 import id.usecase.assessment.presentation.model.AssessmentEventUi
 import id.usecase.assessment.presentation.model.ClassRoomUi
 import id.usecase.assessment.presentation.screens.class_room.create.categories.components.CategoryItemState
+import id.usecase.assessment.presentation.screens.class_room.create.sections.components.SectionCardState
+import id.usecase.assessment.presentation.screens.class_room.create.sections.components.SubSectionState
 import id.usecase.assessment.presentation.screens.class_room.create.students.components.AddStudentItemState
 import id.usecase.core.domain.assessment.model.assessment.category.Category
 import id.usecase.core.domain.assessment.model.assessment.event.Event
 import id.usecase.core.domain.assessment.model.classroom.ClassRoom
+import id.usecase.core.domain.assessment.model.section.Section
 import id.usecase.core.domain.assessment.model.student.Student
 
 fun ClassRoom.toUi(): ClassRoomUi = ClassRoomUi(
@@ -67,4 +70,21 @@ fun Event.toUi(classRoomId: Int, assessedStudent: Int, categoryName: String) = A
     eventDate = eventDate.toString(),
     createdTime = createdTime.toString(),
     lastModifiedTime = lastModifiedTime.toString()
+)
+
+fun SectionCardState.toDomainForm(classRoomId: Int) = Section(
+    id = sectionId,
+    name = name.text,
+    topics = subSections.map { it.description.text },
+    classRoomId = classRoomId,
+    createdTime = System.currentTimeMillis(),
+    lastModifiedTime = System.currentTimeMillis()
+)
+
+fun Section.toItemState(classRoomId: Int) = SectionCardState(
+    sectionId = id,
+    name = TextFieldValue(text = name),
+    subSections = topics.map { SubSectionState(description = TextFieldValue(text = it)) },
+    isExpanded = false,
+    isValid = true
 )

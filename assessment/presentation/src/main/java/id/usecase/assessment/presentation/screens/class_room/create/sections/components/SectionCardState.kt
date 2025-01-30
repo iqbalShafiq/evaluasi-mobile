@@ -6,5 +6,6 @@ data class SectionCardState(
     val sectionId: Int = 0,
     val name: TextFieldValue = TextFieldValue(),
     val subSections: List<SubSectionState> = emptyList(),
-    val isExpanded: Boolean = false
+    val isExpanded: Boolean = false,
+    val isValid: Boolean = false
 )
