@@ -5,7 +5,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 data class SectionCardState(
     val sectionId: Int = 0,
     val name: TextFieldValue = TextFieldValue(),
-    val subSections: List<SubSectionState> = emptyList(),
+    val subSections: List<SubSectionState> = listOf(SubSectionState()),
     val isExpanded: Boolean = false,
     val isValid: Boolean = false
 )

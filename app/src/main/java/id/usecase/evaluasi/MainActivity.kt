@@ -173,6 +173,7 @@ fun MyNavigation() {
             SectionEditorScreenRoot(
                 modifier = Modifier.fillMaxSize(),
                 classRoomId = classRoomId,
+                isUpdating = isUpdating,
                 onBackPressed = {
                     navController.popBackStack()
                 },

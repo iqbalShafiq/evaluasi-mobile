@@ -4,7 +4,6 @@ import id.usecase.assessment.presentation.screens.class_room.create.sections.com
 
 data class SectionEditorState(
     val isLoading: Boolean = false,
-    val isUpdating: Boolean = false,
     val classRoomId: Int = 0,
-    val sectionStates: List<SectionCardState> = emptyList()
+    val sectionStates: List<SectionCardState> = listOf(SectionCardState())
 )

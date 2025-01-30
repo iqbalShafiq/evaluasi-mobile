@@ -57,6 +57,7 @@ import org.koin.androidx.compose.koinViewModel
 fun SectionEditorScreenRoot(
     modifier: Modifier = Modifier,
     classRoomId: Int,
+    isUpdating: Boolean,
     viewModel: SectionEditorViewModel = koinViewModel(),
     onBackPressed: () -> Unit,
     onSectionHasSaved: () -> Unit
@@ -98,6 +99,7 @@ fun SectionEditorScreenRoot(
     SectionEditorScreen(
         modifier = modifier,
         classRoomId = classRoomId,
+        isUpdating = isUpdating,
         state = state,
         onAction = viewModel::onAction,
         onBackPressed = onBackPressed
@@ -108,6 +110,7 @@ fun SectionEditorScreenRoot(
 private fun SectionEditorScreen(
     modifier: Modifier = Modifier,
     classRoomId: Int,
+    isUpdating: Boolean,
     state: SectionEditorState,
     onAction: (SectionEditorAction) -> Unit,
     onBackPressed: () -> Unit,
@@ -117,7 +120,7 @@ private fun SectionEditorScreen(
     Scaffold(
         topBar = {
             EvaluasiTopAppBar(
-                title = if (state.isUpdating) "Update Sections" else "Add Sections",
+                title = if (isUpdating) "Update Sections" else "Add Sections",
                 navigationIcon = ImageVector.vectorResource(R.drawable.ic_rounded_arrow_back),
                 navigationIconTint = MaterialTheme.colorScheme.onSurface,
                 onNavigationClicked = onBackPressed
@@ -269,6 +272,7 @@ private fun SectionEditorScreenPreview() {
         SectionEditorScreen(
             modifier = Modifier,
             classRoomId = 1,
+            isUpdating = false,
             state = state,
             onAction = {},
             onBackPressed = {}

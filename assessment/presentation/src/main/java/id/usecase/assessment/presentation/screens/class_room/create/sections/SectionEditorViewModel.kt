@@ -69,17 +69,8 @@ class SectionEditorViewModel(
                             _state.update {
                                 it.copy(
                                     isLoading = false,
-                                    sectionStates = sectionStates,
-                                    isUpdating = sectionStates.isNotEmpty()
+                                    sectionStates = sectionStates
                                 )
-                            }
-
-                            if (sectionStates.isEmpty()) {
-                                _state.update {
-                                    it.copy(
-                                        sectionStates = listOf(SectionCardState())
-                                    )
-                                }
                             }
                         }
                     }
