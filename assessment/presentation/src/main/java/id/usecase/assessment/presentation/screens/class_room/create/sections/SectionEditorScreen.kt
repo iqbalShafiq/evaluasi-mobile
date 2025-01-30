@@ -59,7 +59,7 @@ fun SectionEditorScreenRoot(
     classRoomId: Int,
     viewModel: SectionEditorViewModel = koinViewModel(),
     onBackPressed: () -> Unit,
-    onSectionSaved: () -> Unit
+    onSectionHasSaved: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     var errorMessage by remember {
@@ -79,7 +79,7 @@ fun SectionEditorScreenRoot(
             }
 
             SectionEditorEvent.OnSaveSuccess -> {
-                onSectionSaved()
+                onSectionHasSaved()
             }
         }
     }

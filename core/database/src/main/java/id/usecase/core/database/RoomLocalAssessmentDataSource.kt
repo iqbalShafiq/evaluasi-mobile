@@ -171,7 +171,7 @@ class RoomLocalAssessmentDataSource(
         }
     }
 
-    override suspend fun upsertEventSection(eventSections: List<EventSection>): Long {
+    override suspend fun upsertEventSection(eventSections: List<EventSection>): List<Long> {
         return withContext(dispatcher) {
             val crossRef = withContext(Dispatchers.Default) {
                 eventSections.map {

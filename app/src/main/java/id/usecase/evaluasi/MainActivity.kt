@@ -7,12 +7,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -26,6 +20,7 @@ import androidx.navigation.toRoute
 import id.usecase.assessment.presentation.screens.assessment.AssessmentScreenRoot
 import id.usecase.assessment.presentation.screens.class_room.create.CreateClassRoomScreenRoot
 import id.usecase.assessment.presentation.screens.class_room.create.categories.AddCategoriesScreenRoot
+import id.usecase.assessment.presentation.screens.class_room.create.sections.SectionEditorScreenRoot
 import id.usecase.assessment.presentation.screens.class_room.create.students.AddStudentsScreenRoot
 import id.usecase.assessment.presentation.screens.class_room.detail.ClassRoomScreenRoot
 import id.usecase.assessment.presentation.screens.home.HomeScreenRoot
@@ -136,7 +131,7 @@ fun MyNavigation() {
                 },
                 onClassHasCreated = { classRoom ->
                     navController.navigate(
-                        CreateCategories(
+                        SectionEditor(
                             classRoomId = classRoom.id,
                             isUpdating = false
                         )
@@ -145,8 +140,154 @@ fun MyNavigation() {
             )
         }
 
-        composable<ClassRoomDetail>(
+        composable<SectionEditor>(
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = animationSpec
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = animationSpec
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = animationSpec
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = animationSpec
+                )
+            }
+        ) { backStackEntry ->
+            val sectionEditor: SectionEditor = backStackEntry.toRoute()
+            val classRoomId = sectionEditor.classRoomId
+            val isUpdating = sectionEditor.isUpdating
 
+            SectionEditorScreenRoot(
+                modifier = Modifier.fillMaxSize(),
+                classRoomId = classRoomId,
+                onBackPressed = {
+                    navController.popBackStack()
+                },
+                onSectionHasSaved = {
+                    navController.navigate(
+                        CreateCategories(
+                            classRoomId = classRoomId,
+                            isUpdating = isUpdating
+                        )
+                    )
+                }
+            )
+        }
+
+        composable<CreateCategories>(
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = animationSpec
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = animationSpec
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = animationSpec
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = animationSpec
+                )
+            }
+        ) { backStackEntry ->
+            val createCategories: CreateCategories = backStackEntry.toRoute()
+            val classRoomId = createCategories.classRoomId
+            val isUpdating = createCategories.isUpdating
+
+            AddCategoriesScreenRoot(
+                modifier = Modifier.fillMaxSize(),
+                classRoomId = classRoomId,
+                onBackPressed = {
+                    navController.popBackStack()
+                },
+                onCategoriesHasCreated = {
+                    if (isUpdating) {
+                        navController.popBackStack()
+                        return@AddCategoriesScreenRoot
+                    }
+
+                    navController.navigate(
+                        AddStudents(
+                            classRoomId = classRoomId,
+                            isUpdating = false
+                        )
+                    )
+                },
+            )
+        }
+
+        composable<AddStudents>(
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = animationSpec
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = animationSpec
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = animationSpec
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = animationSpec
+                )
+            }
+        ) { backStackEntry ->
+            val addStudents: AddStudents = backStackEntry.toRoute()
+            val classRoomId = addStudents.classRoomId
+
+            AddStudentsScreenRoot(
+                modifier = Modifier.fillMaxSize(),
+                classRoomId = classRoomId,
+                onBackPressed = {
+                    navController.popBackStack()
+                },
+                onStudentHasAdded = {
+                    navController.navigate(ClassRoomDetail(classRoomId)) {
+                        popUpTo(Home) {
+                            inclusive = false
+                        }
+                    }
+                },
+                openAutoFillScanner = {
+                    // TODO
+                }
+            )
+        }
+
+        composable<ClassRoomDetail>(
             enterTransition = {
                 slideIntoContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Left,
@@ -208,108 +349,6 @@ fun MyNavigation() {
                     navController.navigate(
                         CreateClassRoom(classRoomId = classRoomId)
                     )
-                }
-            )
-        }
-
-        composable<CreateCategories>(
-
-            enterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                    animationSpec = animationSpec
-                )
-            },
-            exitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                    animationSpec = animationSpec
-                )
-            },
-            popEnterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                    animationSpec = animationSpec
-                )
-            },
-            popExitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                    animationSpec = animationSpec
-                )
-            }
-        ) { backStackEntry ->
-            val createCategories: CreateCategories = backStackEntry.toRoute()
-            val classRoomId = createCategories.classRoomId
-            val isUpdating = createCategories.isUpdating
-
-            AddCategoriesScreenRoot(
-                modifier = Modifier.fillMaxSize(),
-                classRoomId = classRoomId,
-                onBackPressed = {
-                    navController.popBackStack()
-                },
-                onCategoriesHasCreated = {
-                    if (isUpdating) {
-                        navController.popBackStack()
-                        return@AddCategoriesScreenRoot
-                    }
-
-                    navController.navigate(
-                        AddStudents(
-                            classRoomId = classRoomId,
-                            isUpdating = false
-                        )
-                    )
-                },
-            )
-        }
-
-        composable<AddStudents>(
-
-            enterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                    animationSpec = animationSpec
-                )
-            },
-            exitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                    animationSpec = animationSpec
-                )
-            },
-            popEnterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                    animationSpec = animationSpec
-                )
-            },
-            popExitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                    animationSpec = animationSpec
-                )
-            }
-        ) { backStackEntry ->
-            val addStudents: AddStudents = backStackEntry.toRoute()
-            val classRoomId = addStudents.classRoomId
-
-            AddStudentsScreenRoot(
-                modifier = Modifier.fillMaxSize(),
-                classRoomId = classRoomId,
-                onBackPressed = {
-                    navController.popBackStack()
-                },
-                onStudentHasAdded = {
-                    navController.navigate(ClassRoomDetail(classRoomId)) {
-                        popUpTo(Home) {
-                            inclusive = false
-                        }
-                    }
-                },
-                openAutoFillScanner = {
-                    // TODO
                 }
             )
         }

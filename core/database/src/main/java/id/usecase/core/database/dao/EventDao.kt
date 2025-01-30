@@ -13,7 +13,7 @@ interface EventDao {
     suspend fun upsert(event: EventEntity): Long
 
     @Upsert
-    suspend fun upsertEventSection(crossRef: List<EventSectionCrossRef>): Long
+    suspend fun upsertEventSection(crossRef: List<EventSectionCrossRef>): List<Long>
 
     @Query("SELECT * FROM events WHERE id = :id")
     suspend fun getEventById(id: Int): EventEntity?

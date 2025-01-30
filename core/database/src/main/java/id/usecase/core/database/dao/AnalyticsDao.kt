@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Query
 import id.usecase.core.database.model.analytics.CategoryAnalysis
 import id.usecase.core.database.model.analytics.CategoryScore
+import id.usecase.core.database.model.analytics.LowPerformanceAlert
 import id.usecase.core.database.model.analytics.MonthlyScore
 import id.usecase.core.database.model.analytics.PerformanceScore
 import id.usecase.core.database.model.analytics.StudentProgress
@@ -119,5 +120,5 @@ interface AnalyticsDao {
         HAVING average_score < 50
     """
     )
-    suspend fun getLowPerformanceStudentsByClassRoom(classRoomId: Int): List<StudentProgress>
+    suspend fun getLowPerformanceStudentsByClassRoom(classRoomId: Int): List<LowPerformanceAlert>
 }

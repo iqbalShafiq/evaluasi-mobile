@@ -34,7 +34,7 @@ interface LocalAssessmentDataSource {
     suspend fun deleteCategory(category: Category)
 
     suspend fun upsertEvent(event: Event): Long
-    suspend fun upsertEventSection(eventSections: List<EventSection>): Long
+    suspend fun upsertEventSection(eventSections: List<EventSection>): List<Long>
     suspend fun getEventsByClassRoomId(classRoomId: Int): List<Event>
     suspend fun getEventsByCategoryId(categoryId: Int): List<Event>
     suspend fun getEventById(eventId: Int): Event?
