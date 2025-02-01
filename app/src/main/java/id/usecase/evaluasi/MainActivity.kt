@@ -186,7 +186,7 @@ fun MyNavigation() {
                     navController.navigate(
                         CreateCategories(
                             classRoomId = classRoomId,
-                            isUpdating = isUpdating
+                            isUpdating = false
                         )
                     )
                 }
