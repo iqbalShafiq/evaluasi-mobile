@@ -121,7 +121,11 @@ private fun SectionEditorScreen(
     onAction: (SectionEditorAction) -> Unit,
     onBackPressed: () -> Unit,
 ) {
-    val sections = remember { mutableStateListOf<SectionCardState>() }
+    val sections = remember(state.sectionStates) {
+        mutableStateListOf<SectionCardState>().apply {
+            addAll(state.sectionStates)
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -135,9 +139,6 @@ private fun SectionEditorScreen(
         content = { innerPadding ->
             val scope = rememberCoroutineScope()
             var progressVisible by remember { mutableStateOf(false) }
-
-            sections.clear()
-            sections.addAll(state.sectionStates)
 
             ConstraintLayout(
                 modifier = modifier
@@ -191,6 +192,11 @@ private fun SectionEditorScreen(
                                             name = name,
                                             isValid = section.name.text.isNotEmpty()
                                         )
+                                    },
+                                    onTopicsChanged = { subSections ->
+                                        sections[index] = section.copy(
+                                            subSections = subSections
+                                        )
                                     }
                                 )
 
@@ -201,7 +207,8 @@ private fun SectionEditorScreen(
 
                                 if (
                                     index != sections.size - 1 &&
-                                    section.name.text.isEmpty()
+                                    section.name.text.isEmpty() &&
+                                    section.subSections.all { it.description.text.isEmpty() }
                                 ) sections.removeAt(index)
                             }
                         }

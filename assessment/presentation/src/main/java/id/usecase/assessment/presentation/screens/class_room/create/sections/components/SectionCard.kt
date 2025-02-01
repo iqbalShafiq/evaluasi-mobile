@@ -30,13 +30,16 @@ fun SectionCard(
     modifier: Modifier = Modifier,
     state: SectionCardState,
     onNameChanged: (TextFieldValue) -> Unit,
+    onTopicsChanged: (List<SubSectionState>) -> Unit
 ) {
     ElevatedCard(
         modifier = modifier,
         shape = MaterialTheme.shapes.small
     ) {
         val subSections = remember(state.subSections) {
-            mutableStateListOf<SubSectionState>()
+            mutableStateListOf<SubSectionState>().apply {
+                addAll(state.subSections)
+            }
         }
 
         Column(
@@ -74,6 +77,7 @@ fun SectionCard(
                             descriptionIndex = index,
                             onDescriptionChanged = { description ->
                                 subSections[index] = subSection.copy(description = description)
+                                onTopicsChanged(subSections)
                             }
                         )
 
@@ -109,7 +113,8 @@ private fun SectionCardPreview() {
                     SubSectionState(description = TextFieldValue("Sub Section 2")),
                 )
             ),
-            onNameChanged = {}
+            onNameChanged = {},
+            onTopicsChanged = {}
         )
     }
 }
