@@ -35,9 +35,9 @@ fun SectionCard(
         modifier = modifier,
         shape = MaterialTheme.shapes.small
     ) {
-        val subSections = remember { mutableStateListOf<SubSectionState>() }
-        subSections.clear()
-        subSections.addAll(state.subSections)
+        val subSections = remember(state.subSections) {
+            mutableStateListOf<SubSectionState>()
+        }
 
         Column(
             modifier = Modifier

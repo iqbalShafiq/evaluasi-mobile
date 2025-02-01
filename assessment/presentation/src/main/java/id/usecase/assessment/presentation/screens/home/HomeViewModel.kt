@@ -32,10 +32,6 @@ class HomeViewModel(
     private val _state = MutableStateFlow(HomeState())
     val state = _state.asStateFlow()
 
-    init {
-        onAction(action = HomeAction.LoadClassRoom)
-    }
-
     fun onAction(action: HomeAction) {
         when (action) {
             HomeAction.LoadClassRoom -> {

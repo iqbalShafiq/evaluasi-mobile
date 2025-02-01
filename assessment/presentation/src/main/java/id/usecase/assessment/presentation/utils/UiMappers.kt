@@ -81,7 +81,7 @@ fun SectionCardState.toDomainForm(classRoomId: Int) = Section(
     lastModifiedTime = System.currentTimeMillis()
 )
 
-fun Section.toItemState(classRoomId: Int) = SectionCardState(
+fun Section.toItemState() = SectionCardState(
     sectionId = id,
     name = TextFieldValue(text = name),
     subSections = topics.map { SubSectionState(description = TextFieldValue(text = it)) },

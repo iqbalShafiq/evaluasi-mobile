@@ -24,12 +24,8 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
-fun StudentProgressList(
-    progress: List<StudentProgress>
-) {
-    LazyColumn(
-        modifier = Modifier.heightIn(max = 200.dp)
-    ) {
+fun StudentProgressList(progress: List<StudentProgress>) {
+    LazyColumn(modifier = Modifier.heightIn(max = 200.dp)) {
         items(items = progress, key = { it.studentName }) { studentProgress ->
             StudentProgressItem(studentProgress)
             HorizontalDivider()
@@ -38,9 +34,7 @@ fun StudentProgressList(
 }
 
 @Composable
-fun StudentProgressItem(
-    progress: StudentProgress
-) {
+fun StudentProgressItem(progress: StudentProgress) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

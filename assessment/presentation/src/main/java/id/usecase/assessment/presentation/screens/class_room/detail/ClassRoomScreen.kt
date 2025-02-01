@@ -59,6 +59,7 @@ fun ClassRoomScreenRoot(
     classRoomId: Int,
     onBackPressed: () -> Unit,
     onDetailAssessmentEventClicked: (AssessmentEventUi) -> Unit,
+    onSectionMenuClicked: () -> Unit,
     onCategoryMenuClicked: () -> Unit,
     onClassRoomBioMenuClicked: () -> Unit,
     onAddAssessmentClicked: () -> Unit,
@@ -109,6 +110,7 @@ fun ClassRoomScreenRoot(
         state = state,
         onBackPressed = onBackPressed,
         onDetailAssessmentEventClicked = onDetailAssessmentEventClicked,
+        onSectionMenuClicked = onSectionMenuClicked,
         onCategoryMenuClicked = onCategoryMenuClicked,
         onClassRoomBioMenuClicked = onClassRoomBioMenuClicked,
         onStudentEditClicked = onStudentEditClicked,
@@ -123,6 +125,7 @@ fun ClassRoomScreen(
     state: ClassRoomState,
     onBackPressed: () -> Unit,
     onDetailAssessmentEventClicked: (AssessmentEventUi) -> Unit,
+    onSectionMenuClicked: () -> Unit,
     onCategoryMenuClicked: () -> Unit,
     onClassRoomBioMenuClicked: () -> Unit,
     onStudentEditClicked: () -> Unit,
@@ -151,6 +154,11 @@ fun ClassRoomScreen(
                 moreMenu = {
                     EvaluasiDropdownMenu(
                         menuItems = listOf(
+                            DropdownMenuItem(
+                                text = "Sections",
+                                leadingIcon = ImageVector.vectorResource(R.drawable.ic_section_list),
+                                onClick = onSectionMenuClicked
+                            ),
                             DropdownMenuItem(
                                 text = "Categories",
                                 leadingIcon = ImageVector.vectorResource(R.drawable.ic_category),
@@ -331,6 +339,7 @@ private fun ClassRoomPreview() {
             onStudentEditClicked = { },
             onAddAssessmentClicked = { },
             onCategoryMenuClicked = { },
+            onSectionMenuClicked = { },
             state = state
         )
     }

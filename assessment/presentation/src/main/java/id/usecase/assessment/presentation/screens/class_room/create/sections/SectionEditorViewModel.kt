@@ -1,9 +1,11 @@
 package id.usecase.assessment.presentation.screens.class_room.create.sections
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import id.usecase.assessment.domain.SectionRepository
 import id.usecase.assessment.presentation.screens.class_room.create.sections.components.SectionCardState
+import id.usecase.assessment.presentation.screens.class_room.create.sections.components.SubSectionState
 import id.usecase.assessment.presentation.utils.toDomainForm
 import id.usecase.assessment.presentation.utils.toItemState
 import id.usecase.core.domain.assessment.DataResult
@@ -48,6 +50,7 @@ class SectionEditorViewModel(
         viewModelScope.launch(dispatcher) {
             sectionRepository.getSectionsByClassRoomId(classRoomId)
                 .catch { e ->
+                    Log.d(TAG, "loadSections: $e")
                     _state.update { it.copy(isLoading = false) }
                     _events.send(
                         SectionEditorEvent.OnErrorOccurred(
@@ -63,13 +66,20 @@ class SectionEditorViewModel(
 
                         is DataResult.Success -> {
                             val sectionStates = withContext(Dispatchers.Default) {
-                                result.data.map { it.toItemState(classRoomId) }
+                                result.data.map { it.toItemState() }
                             }
+
+                            Log.d(TAG, "loadSections result: ${result.data}")
+                            Log.d(TAG, "loadSections sectionStates: $sectionStates")
 
                             _state.update {
                                 it.copy(
                                     isLoading = false,
-                                    sectionStates = sectionStates
+                                    sectionStates = sectionStates.map { section ->
+                                        section.copy(
+                                            subSections = section.subSections + SubSectionState()
+                                        )
+                                    } + SectionCardState()
                                 )
                             }
                         }
@@ -79,6 +89,7 @@ class SectionEditorViewModel(
     }
 
     private fun saveSection(sectionStates: List<SectionCardState>, classRoomId: Int) {
+        Log.d(TAG, "saveSection: $sectionStates")
         viewModelScope.launch(dispatcher) {
             try {
                 val sections = withContext(Dispatchers.Default) {
@@ -108,5 +119,9 @@ class SectionEditorViewModel(
                 )
             }
         }
+    }
+
+    companion object {
+        private val TAG = SectionEditorViewModel::class.java.simpleName
     }
 }

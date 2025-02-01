@@ -32,6 +32,7 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -68,6 +69,10 @@ fun HomeScreenRoot(
 
     // Error dialog state
     var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(key1 = Unit) {
+        homeViewModel.onAction(HomeAction.LoadClassRoom)
+    }
 
     // Observe events
     ObserveAsEvents(

@@ -178,6 +178,11 @@ fun MyNavigation() {
                     navController.popBackStack()
                 },
                 onSectionHasSaved = {
+                    if (isUpdating) {
+                        navController.popBackStack()
+                        return@SectionEditorScreenRoot
+                    }
+
                     navController.navigate(
                         CreateCategories(
                             classRoomId = classRoomId,
@@ -338,6 +343,14 @@ fun MyNavigation() {
                         )
                     )
                 },
+                onSectionMenuClicked = {
+                    navController.navigate(
+                        SectionEditor(
+                            classRoomId = classRoomId,
+                            isUpdating = true
+                        )
+                    )
+                },
                 onCategoryMenuClicked = {
                     navController.navigate(
                         CreateCategories(
@@ -355,7 +368,6 @@ fun MyNavigation() {
         }
 
         composable<AssessmentEventEditor>(
-
             enterTransition = {
                 slideIntoContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Left,
