@@ -33,4 +33,7 @@ interface EventDao {
 
     @Delete
     suspend fun delete(event: EventEntity)
+
+    @Delete
+    suspend fun deleteEventSection(crossRef: List<EventSectionCrossRef>)
 }

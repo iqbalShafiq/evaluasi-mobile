@@ -182,6 +182,13 @@ class RoomLocalAssessmentDataSource(
                 }
             }
 
+            val unselectedSections = withContext(Dispatchers.Default) {
+                sectionDao.getSelectedSectionOnAssessment(eventSections.first().eventId)
+                    .filter { section -> eventSections.none { it.sectionId == section.id } }
+                    .map { EventSectionCrossRef(eventSections.first().eventId, it.id) }
+            }
+
+            eventDao.deleteEventSection(unselectedSections)
             eventDao.upsertEventSection(crossRef)
         }
     }
