@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import id.usecase.assessment.domain.AssessmentRepository
 import id.usecase.assessment.domain.CategoryRepository
 import id.usecase.assessment.domain.EventRepository
+import id.usecase.assessment.domain.SectionRepository
 import id.usecase.assessment.domain.StudentRepository
 import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.model.StudentScoreUi
@@ -18,6 +19,7 @@ import id.usecase.core.domain.assessment.DataResult
 import id.usecase.core.domain.assessment.model.assessment.Assessment
 import id.usecase.core.domain.assessment.model.assessment.category.Category
 import id.usecase.core.domain.assessment.model.assessment.event.Event
+import id.usecase.core.domain.assessment.model.section.EventSection
 import id.usecase.core.domain.assessment.model.student.Student
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -41,7 +43,8 @@ class AssessmentViewModel(
     private val studentRepository: StudentRepository,
     private val eventRepository: EventRepository,
     private val categoryRepository: CategoryRepository,
-    private val assessmentRepository: AssessmentRepository
+    private val assessmentRepository: AssessmentRepository,
+    private val sectionRepository: SectionRepository
 ) : ViewModel() {
     private val _events = Channel<AssessmentEvent>()
     val events = _events.receiveAsFlow()
@@ -53,6 +56,7 @@ class AssessmentViewModel(
         when (action) {
             is AssessmentAction.LoadAssessmentDetail -> {
                 viewModelScope.launch(dispatcher) {
+                    loadClassSections(action.classRoomId)
                     loadAssessmentCategories(action.classRoomId)
 
                     if (action.eventId != null) {
@@ -84,6 +88,40 @@ class AssessmentViewModel(
             }
 
             AssessmentAction.DeleteAssessmentEvent -> deleteAssessmentEvent()
+        }
+    }
+
+    private suspend fun loadClassSections(classRoomId: Int) {
+        withContext(dispatcher) {
+            sectionRepository.getSectionsByClassRoomId(classRoomId)
+                .catch { e ->
+                    _state.update {
+                        it.copy(isLoading = false)
+                    }
+                    _events.send(
+                        OnErrorOccurred(
+                            e.message ?: application.getString(
+                                R.string.unknown_error
+                            )
+                        )
+                    )
+                }
+                .collectLatest { result ->
+                    when (result) {
+                        DataResult.Loading -> _state.update {
+                            it.copy(isLoading = true)
+                        }
+
+                        is DataResult.Success -> {
+                            _state.update {
+                                it.copy(
+                                    sectionList = result.data,
+                                    sectionNameList = result.data.map { section -> section.name }
+                                )
+                            }
+                        }
+                    }
+                }
         }
     }
 
@@ -341,6 +379,7 @@ class AssessmentViewModel(
             val event = Event(
                 id = state.value.assessmentEvent?.id ?: 0,
                 name = state.value.assessmentNameField.text,
+                purpose = state.value.purposeField.text,
                 eventDate = state.value.selectedDate,
                 categoryId = state.value.category?.id ?: 0,
                 createdTime = System.currentTimeMillis(),
@@ -352,6 +391,28 @@ class AssessmentViewModel(
                 is DataResult.Success -> {
                     Log.d("TAG", "saveEvent: ${result.data}")
                     saveAssessments(result.data?.id ?: -1)
+                }
+            }
+        }
+    }
+
+    private fun saveEventSections(eventId: Int) {
+        viewModelScope.launch(dispatcher) {
+            val selectedSectionIds = state.value.selectedSectionNameList.map { sectionName ->
+                state.value.sectionList.find { it.name == sectionName }?.id ?: 0
+            }
+
+            val eventSections = selectedSectionIds.map { sectionId ->
+                EventSection(
+                    eventId = eventId,
+                    sectionId = sectionId
+                )
+            }
+
+            when (eventRepository.upsertEventSection(eventSections)) {
+                DataResult.Loading -> _state.update { it.copy(isLoading = true) }
+                is DataResult.Success -> {
+                    saveAssessments(eventId)
                 }
             }
         }
@@ -417,7 +478,8 @@ class AssessmentViewModel(
     private fun checkFormValidity() {
         val isFormValid = state.value.assessmentNameField.text.isNotEmpty() &&
                 state.value.selectedCategoryName.isNotEmpty() &&
-                state.value.startDateField.text.isNotEmpty()
+                state.value.startDateField.text.isNotEmpty() &&
+                state.value.selectedSectionNameList.isNotEmpty()
 
         _state.update { it.copy(isFormValid = isFormValid) }
     }

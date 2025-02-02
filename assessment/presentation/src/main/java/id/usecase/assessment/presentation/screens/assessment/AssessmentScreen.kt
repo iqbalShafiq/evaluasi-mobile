@@ -63,6 +63,7 @@ import id.usecase.designsystem.components.dialog.EvaluasiDatePicker
 import id.usecase.designsystem.components.dialog.StandardAlertDialog
 import id.usecase.designsystem.components.dialog.StandardLoadingDialog
 import id.usecase.designsystem.components.text_field.EvaluasiDropdown
+import id.usecase.designsystem.components.text_field.EvaluasiMultipleChoiceDropdown
 import id.usecase.designsystem.components.text_field.EvaluasiTextField
 import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
@@ -192,7 +193,9 @@ fun AssessmentScreen(
         topBar = {
             EvaluasiTopAppBar(
                 modifier = Modifier.padding(horizontal = 8.dp),
-                title = if (eventId == null) stringResource(R.string.create_assessment) else stringResource(R.string.update_assessment),
+                title = if (eventId == null) stringResource(R.string.create_assessment) else stringResource(
+                    R.string.update_assessment
+                ),
                 navigationIcon = ImageVector.vectorResource(R.drawable.ic_rounded_arrow_back),
                 onNavigationClicked = onBackPressed
             )
@@ -265,6 +268,55 @@ fun AssessmentScreen(
                                                 assessmentNameField = it
                                             )
                                         )
+                                    )
+                                }
+                            )
+
+                            // Purpose Name Field
+                            EvaluasiTextField(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 12.dp),
+                                label = "Purpose",
+                                placeholder = "Type descriptive purpose",
+                                value = state.assessmentNameField,
+                                onValueChange = {
+                                    onAction(
+                                        AssessmentAction.UpdateForms(
+                                            state.copy(
+                                                purposeField = it
+                                            )
+                                        )
+                                    )
+                                },
+                                singleLine = false,
+                                minLines = 1,
+                                maxLines = 3
+                            )
+
+                            // Sections Field
+                            EvaluasiMultipleChoiceDropdown(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 12.dp),
+                                label = "Sections",
+                                placeholder = "Choose sections",
+                                items = state.sectionNameList,
+                                selectedItems = state.selectedSectionNameList,
+                                onItemsSelected = {
+                                    onAction(
+                                        AssessmentAction.UpdateForms(
+                                            state.copy(
+                                                selectedSectionNameList = it
+                                            )
+                                        )
+                                    )
+                                },
+                                trailingContentForItem = { item ->
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(id = id.usecase.designsystem.R.drawable.ic_test_icon),
+                                        contentDescription = "Info",
+                                        tint = MaterialTheme.colorScheme.primary
                                     )
                                 }
                             )

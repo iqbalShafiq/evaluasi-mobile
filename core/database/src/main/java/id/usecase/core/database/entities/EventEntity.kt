@@ -9,6 +9,7 @@ data class EventEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val name: String,
+    val purpose: String,
     @ColumnInfo(name = "event_date")
     val eventDate: Long,
     @ColumnInfo(name = "category_id")
