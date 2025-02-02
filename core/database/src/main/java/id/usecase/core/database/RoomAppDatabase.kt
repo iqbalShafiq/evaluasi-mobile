@@ -3,6 +3,8 @@ package id.usecase.core.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import id.usecase.core.database.dao.AnalyticsDao
 import id.usecase.core.database.dao.AssessmentDao
 import id.usecase.core.database.dao.CategoryDao
@@ -30,7 +32,7 @@ import id.usecase.core.database.type_converters.StringListConverter
         SectionEntity::class,
         EventSectionCrossRef::class
     ],
-    version = 2
+    version = 3
 )
 @TypeConverters(IntListConverter::class, StringListConverter::class)
 abstract class RoomAppDatabase : RoomDatabase() {
@@ -41,4 +43,11 @@ abstract class RoomAppDatabase : RoomDatabase() {
     abstract fun classRoomDao(): ClassRoomDao
     abstract fun analyticsDao(): AnalyticsDao
     abstract fun sectionDao(): SectionDao
+}
+
+val MIGRATION_2_3 = object : Migration(2, 3) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        // Add the new column with a default value
+        database.execSQL("ALTER TABLE events ADD COLUMN purpose TEXT NOT NULL DEFAULT ''")
+    }
 }

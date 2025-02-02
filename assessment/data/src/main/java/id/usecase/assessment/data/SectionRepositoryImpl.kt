@@ -36,4 +36,12 @@ class SectionRepositoryImpl(
             emit(DataResult.Success(sections))
         }.flowOn(dispatcher)
     }
+
+    override fun getSelectedSectionOnAssessment(assessmentId: Int): Flow<DataResult<List<Section>>> {
+        return flow {
+            emit(DataResult.Loading)
+            val sections: List<Section> = dataSource.getSelectedSectionOnAssessment(assessmentId)
+            emit(DataResult.Success(sections))
+        }.flowOn(dispatcher)
+    }
 }

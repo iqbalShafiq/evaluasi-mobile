@@ -279,7 +279,7 @@ fun AssessmentScreen(
                                     .padding(top = 12.dp),
                                 label = "Purpose",
                                 placeholder = "Type descriptive purpose",
-                                value = state.assessmentNameField,
+                                value = state.purposeField,
                                 onValueChange = {
                                     onAction(
                                         AssessmentAction.UpdateForms(

@@ -17,6 +17,9 @@ interface SectionDao {
     @Query("SELECT * FROM sections WHERE class_room_id = :classRoomId")
     suspend fun getSectionsByClassRoomId(classRoomId: Int): List<SectionEntity>
 
+    @Query("SELECT * FROM sections WHERE id IN (SELECT sectionId FROM event_section_cross_ref WHERE eventId = :eventId)")
+    suspend fun getSelectedSectionOnAssessment(eventId: Int): List<SectionEntity>
+
     @Delete
     suspend fun delete(section: SectionEntity)
 }

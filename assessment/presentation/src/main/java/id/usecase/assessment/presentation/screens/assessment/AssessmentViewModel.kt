@@ -61,6 +61,7 @@ class AssessmentViewModel(
 
                     if (action.eventId != null) {
                         loadStudentsOfClassRoom(action.classRoomId)
+                        loadSelectedSections(action.eventId)
                         loadAssessmentsByEventId(action.eventId)
                         loadAssessmentDetail(
                             eventId = action.eventId
@@ -182,6 +183,38 @@ class AssessmentViewModel(
                                 it.copy(
                                     isLoading = false,
                                     studentList = result.data
+                                )
+                            }
+                        }
+                    }
+                }
+        }
+    }
+
+    private suspend fun loadSelectedSections(eventId: Int) {
+        withContext(dispatcher) {
+            sectionRepository.getSelectedSectionOnAssessment(eventId)
+                .catch { e ->
+                    _state.update { it.copy(isLoading = false) }
+                    _events.send(
+                        OnErrorOccurred(
+                            e.message ?: application.getString(
+                                R.string.unknown_error
+                            )
+                        )
+                    )
+                }
+                .collectLatest { result ->
+                    when (result) {
+                        DataResult.Loading -> _state.update { it.copy(isLoading = true) }
+
+                        is DataResult.Success -> {
+                            _state.update {
+                                it.copy(
+                                    isLoading = false,
+                                    selectedSectionNameList = result.data.map { section ->
+                                        section.name
+                                    }
                                 )
                             }
                         }
@@ -360,6 +393,9 @@ class AssessmentViewModel(
                                     startDateField = TextFieldValue(
                                         text = formattedEventDate
                                     ),
+                                    purposeField = TextFieldValue(
+                                        text = result.data?.purpose ?: ""
+                                    ),
                                     category = category,
                                     selectedCategoryName = category?.name ?: "",
                                     assessmentListField = assessmentListField
@@ -390,7 +426,7 @@ class AssessmentViewModel(
                 DataResult.Loading -> _state.update { it.copy(isLoading = true) }
                 is DataResult.Success -> {
                     Log.d("TAG", "saveEvent: ${result.data}")
-                    saveAssessments(result.data?.id ?: -1)
+                    saveEventSections(result.data?.id ?: state.value.assessmentEvent?.id ?: -1)
                 }
             }
         }

@@ -336,4 +336,12 @@ class RoomLocalAssessmentDataSource(
                 .map { it.toDomainForm() }
         }
     }
+
+    override suspend fun getSelectedSectionOnAssessment(assessmentId: Int): List<Section> {
+        return withContext(dispatcher) {
+            sectionDao
+                .getSelectedSectionOnAssessment(assessmentId)
+                .map { it.toDomainForm() }
+        }
+    }
 }

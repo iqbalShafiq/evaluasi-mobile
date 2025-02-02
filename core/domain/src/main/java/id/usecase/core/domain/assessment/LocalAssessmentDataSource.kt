@@ -58,4 +58,5 @@ interface LocalAssessmentDataSource {
     suspend fun upsertSection(section: List<Section>): List<Long>
     suspend fun getSectionById(sectionId: Int): Section?
     suspend fun getSectionsByClassRoomId(classRoomId: Int): List<Section>
+    suspend fun getSelectedSectionOnAssessment(assessmentId: Int): List<Section>
 }

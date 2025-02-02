@@ -8,4 +8,5 @@ interface SectionRepository {
     suspend fun upsertSection(sections: List<Section>): DataResult<List<Long>>
     fun getSectionById(sectionId: Int): Flow<DataResult<Section?>>
     fun getSectionsByClassRoomId(classRoomId: Int): Flow<DataResult<List<Section>>>
+    fun getSelectedSectionOnAssessment(assessmentId: Int): Flow<DataResult<List<Section>>>
 }
