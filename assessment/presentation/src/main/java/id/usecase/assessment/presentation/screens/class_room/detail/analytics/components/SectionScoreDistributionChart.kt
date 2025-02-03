@@ -37,7 +37,7 @@ fun SectionScoreDistributionChart(
         ),
         model = entryModelOf(*chartEntryData),
         startAxis = rememberStartAxis(
-            valueFormatter = { value, _ -> "${value.toInt()}%" },
+            valueFormatter = { value, _ -> "${value.toInt()}" },
             itemPlacer = AxisItemPlacer.Vertical.default(
                 maxItemCount = 6
             )

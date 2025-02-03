@@ -144,12 +144,12 @@ interface AnalyticsDao {
         """
         SELECT
             s.name as section_name,
-            COUNT(DISTINCT a.id) as total_assessments
+            (COUNT(DISTINCT a.id) * 100.0 / (SELECT COUNT(*) FROM events WHERE class_room_id = :classRoomId)) as total_assessments
         FROM sections s
         LEFT JOIN event_section_cross_ref es ON s.id = es.sectionId
-        LEFT JOIN assessments a ON es.eventId = a.event_id
+        LEFT JOIN events a ON es.eventId = a.id
         WHERE s.class_room_id = :classRoomId
-        GROUP BY s.id, s.name
+    GROUP BY s.id, s.name
     """
     )
     suspend fun getSectionUsageByClassRoomId(classRoomId: Int): List<SectionUsage>
