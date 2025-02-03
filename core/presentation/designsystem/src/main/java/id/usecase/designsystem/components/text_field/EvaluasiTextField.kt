@@ -53,7 +53,7 @@ fun EvaluasiTextField(
             },
             leadingIcon = leadingIcon,
             trailingIcon = trailingIcon,
-            singleLine = singleLine && minLines == 1 && maxLines == 1,
+            singleLine = singleLine,
             minLines = minLines,
             maxLines = maxLines,
             keyboardOptions = KeyboardOptions.Default.copy(

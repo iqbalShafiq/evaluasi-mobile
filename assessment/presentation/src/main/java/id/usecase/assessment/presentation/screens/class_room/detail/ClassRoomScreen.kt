@@ -13,8 +13,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,6 +30,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -200,9 +201,10 @@ fun ClassRoomScreen(
                 val scope = rememberCoroutineScope()
 
                 // Tab Row
-                TabRow(
+                ScrollableTabRow(
                     modifier = Modifier.padding(bottom = 16.dp),
-                    selectedTabIndex = pagerState.currentPage
+                    selectedTabIndex = pagerState.currentPage,
+                    edgePadding = 0.dp
                 ) {
                     tabs.forEachIndexed { index, title ->
                         Tab(
@@ -212,12 +214,18 @@ fun ClassRoomScreen(
                                     pagerState.animateScrollToPage(index)
                                 }
                             },
-                            text = { Text(title) }
+                            text = {
+                                Text(
+                                    text = title,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
                         )
                     }
                 }
 
-                // Horizontal Pager untuk swipe
+                // Horizontal Pager for swipe
                 HorizontalPager(
                     state = pagerState,
                     modifier = Modifier.fillMaxSize()

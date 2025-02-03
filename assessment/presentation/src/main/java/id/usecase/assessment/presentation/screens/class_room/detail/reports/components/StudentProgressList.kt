@@ -25,7 +25,7 @@ import java.util.Locale
 
 @Composable
 fun StudentProgressList(progress: List<StudentProgress>) {
-    LazyColumn(modifier = Modifier.heightIn(max = 200.dp)) {
+    LazyColumn(modifier = Modifier.heightIn(max = 2000.dp)) {
         items(items = progress, key = { it.studentName }) { studentProgress ->
             StudentProgressItem(studentProgress)
             HorizontalDivider()

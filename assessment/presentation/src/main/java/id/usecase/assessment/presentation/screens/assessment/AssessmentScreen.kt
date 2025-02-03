@@ -45,6 +45,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -292,8 +293,9 @@ fun AssessmentScreen(
                                     )
                                 },
                                 singleLine = false,
-                                minLines = 1,
-                                maxLines = 3
+                                minLines = 3,
+                                maxLines = 3,
+                                imeAction = ImeAction.Default
                             )
 
                             // Sections Field
