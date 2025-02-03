@@ -7,6 +7,8 @@ import id.usecase.core.database.model.analytics.CategoryScore
 import id.usecase.core.database.model.analytics.LowPerformanceAlert
 import id.usecase.core.database.model.analytics.MonthlyScore
 import id.usecase.core.database.model.analytics.PerformanceScore
+import id.usecase.core.database.model.analytics.SectionScore
+import id.usecase.core.database.model.analytics.SectionUsage
 import id.usecase.core.database.model.analytics.StudentProgress
 
 @Dao
@@ -121,4 +123,34 @@ interface AnalyticsDao {
     """
     )
     suspend fun getLowPerformanceStudentsByClassRoom(classRoomId: Int): List<LowPerformanceAlert>
+
+    // Section score distribution by class room
+    @Query(
+        """
+        SELECT
+            s.name as section_name,
+            AVG(COALESCE(a.score, 0.0)) as average_score
+        FROM sections s
+        LEFT JOIN event_section_cross_ref es ON s.id = es.sectionId
+        LEFT JOIN assessments a ON es.eventId = a.event_id
+        WHERE s.class_room_id = :classRoomId
+        GROUP BY s.id, s.name
+    """
+    )
+    suspend fun getSectionScoreDistributionByClassRoom(classRoomId: Int): List<SectionScore>
+
+    // Section usage by class room
+    @Query(
+        """
+        SELECT
+            s.name as section_name,
+            COUNT(DISTINCT a.id) as total_assessments
+        FROM sections s
+        LEFT JOIN event_section_cross_ref es ON s.id = es.sectionId
+        LEFT JOIN assessments a ON es.eventId = a.event_id
+        WHERE s.class_room_id = :classRoomId
+        GROUP BY s.id, s.name
+    """
+    )
+    suspend fun getSectionUsageByClassRoom(classRoomId: Int): List<SectionUsage>
 }

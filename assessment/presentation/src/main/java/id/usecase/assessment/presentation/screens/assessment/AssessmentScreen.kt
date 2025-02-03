@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
@@ -203,8 +204,9 @@ fun AssessmentScreen(
         content = { innerPadding ->
             ConstraintLayout(
                 modifier = Modifier
-                    .padding(innerPadding)
                     .fillMaxSize()
+                    .imePadding()
+                    .padding(innerPadding)
             ) {
                 val (content, button) = createRefs()
                 val (progress) = createRefs()
@@ -312,7 +314,7 @@ fun AssessmentScreen(
                                         )
                                     )
                                 },
-                                trailingContentForItem = { item ->
+                                trailingContentForItem = {
                                     Icon(
                                         imageVector = ImageVector.vectorResource(id = id.usecase.designsystem.R.drawable.ic_test_icon),
                                         contentDescription = "Info",
