@@ -3,6 +3,9 @@ package id.usecase.assessment.data
 import id.usecase.assessment.domain.AnalyticsRepository
 import id.usecase.core.domain.assessment.LocalAssessmentDataSource
 import id.usecase.core.domain.assessment.model.analytics.CategoryAnalysis
+import id.usecase.core.domain.assessment.model.analytics.LowPerformanceAlert
+import id.usecase.core.domain.assessment.model.analytics.SectionScore
+import id.usecase.core.domain.assessment.model.analytics.SectionUsage
 import id.usecase.core.domain.assessment.model.analytics.StudentProgress
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -49,6 +52,28 @@ class AnalyticsRepositoryImpl(
         return flow {
             val result = dataSource.getCategoryAnalysisByClassRoom(classRoomId)
                 .map { CategoryAnalysis(it.categoryName, it.averageScore) }
+            emit(result)
+        }.flowOn(dispatcher)
+    }
+
+    override fun getLowPerformanceStudentsByClassRoomId(classRoomId: Int): Flow<List<LowPerformanceAlert>> {
+        return flow {
+            val result = dataSource.getLowPerformanceStudentsByClassRoomId(classRoomId)
+                .map { LowPerformanceAlert(it.studentName, it.averageScore, it.lastUpdated) }
+            emit(result)
+        }.flowOn(dispatcher)
+    }
+
+    override fun getSectionScoreDistributionByClassRoomId(classRoomId: Int): Flow<List<SectionScore>> {
+        return flow {
+            val result = dataSource.getSectionScoreDistributionByClassRoomId(classRoomId)
+            emit(result)
+        }.flowOn(dispatcher)
+    }
+
+    override fun getSectionUsageByClassRoomId(classRoomId: Int): Flow<List<SectionUsage>> {
+        return flow {
+            val result = dataSource.getSectionUsageByClassRoomId(classRoomId)
             emit(result)
         }.flowOn(dispatcher)
     }

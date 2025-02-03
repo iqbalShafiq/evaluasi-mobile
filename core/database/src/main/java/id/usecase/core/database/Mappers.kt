@@ -7,6 +7,9 @@ import id.usecase.core.database.entities.EventEntity
 import id.usecase.core.database.entities.EventSectionCrossRef
 import id.usecase.core.database.entities.SectionEntity
 import id.usecase.core.database.entities.StudentEntity
+import id.usecase.core.database.model.analytics.LowPerformanceAlert
+import id.usecase.core.database.model.analytics.SectionScore
+import id.usecase.core.database.model.analytics.SectionUsage
 import id.usecase.core.domain.assessment.model.analytics.CategoryAnalysis
 import id.usecase.core.domain.assessment.model.analytics.CategoryScore
 import id.usecase.core.domain.assessment.model.analytics.MonthlyScore
@@ -170,5 +173,21 @@ fun SectionEntity.toDomainForm() = Section(
 fun EventSection.toEntity() = EventSectionCrossRef(
     eventId = eventId,
     sectionId = sectionId
+)
+
+fun LowPerformanceAlert.toDomainForm() = id.usecase.core.domain.assessment.model.analytics.LowPerformanceAlert(
+    studentName = studentName,
+    averageScore = averageScore,
+    lastUpdated = lastUpdated
+)
+
+fun SectionUsage.toDomainForm() = id.usecase.core.domain.assessment.model.analytics.SectionUsage(
+    sectionName = sectionName,
+    totalAssessments = totalAssessments
+)
+
+fun SectionScore.toDomainForm() = id.usecase.core.domain.assessment.model.analytics.SectionScore(
+    sectionName = sectionName,
+    averageScore = averageScore
 )
 

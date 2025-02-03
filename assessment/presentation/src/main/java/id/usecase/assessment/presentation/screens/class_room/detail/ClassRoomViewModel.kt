@@ -56,6 +56,9 @@ class ClassRoomViewModel(
                     getPerformanceDistribution()
                     getStudentProgress()
                     getCategoryAnalysis()
+                    getLowPerformanceStudents()
+                    getSectionScores()
+                    getSectionUsages()
                 }
             }
         }
@@ -364,6 +367,29 @@ class ClassRoomViewModel(
         }
     }
 
+    private suspend fun getCategoryAnalysis() {
+        withContext(dispatcher) {
+            val classRoomId = state.value.classRoom?.id ?: 0
+            if (classRoomId == 0) return@withContext
+
+            analyticsRepository.getCategoryAnalysis(classRoomId)
+                .catch { e ->
+                    _events.send(
+                        ClassRoomEvent.OnErrorOccurred(
+                            message = e.message ?: application.getString(
+                                R.string.unknown_error
+                            )
+                        )
+                    )
+                }
+                .collectLatest { result ->
+                    _state.update {
+                        it.copy(categoryAnalysis = result)
+                    }
+                }
+        }
+    }
+
     private suspend fun getStudentProgress() {
         withContext(dispatcher) {
             val classRoomId = state.value.classRoom?.id ?: 0
@@ -387,12 +413,12 @@ class ClassRoomViewModel(
         }
     }
 
-    private suspend fun getCategoryAnalysis() {
+    private suspend fun getLowPerformanceStudents() {
         withContext(dispatcher) {
             val classRoomId = state.value.classRoom?.id ?: 0
             if (classRoomId == 0) return@withContext
 
-            analyticsRepository.getCategoryAnalysis(classRoomId)
+            analyticsRepository.getLowPerformanceStudentsByClassRoomId(classRoomId)
                 .catch { e ->
                     _events.send(
                         ClassRoomEvent.OnErrorOccurred(
@@ -404,7 +430,53 @@ class ClassRoomViewModel(
                 }
                 .collectLatest { result ->
                     _state.update {
-                        it.copy(categoryAnalysis = result)
+                        it.copy(lowPerformanceAlerts = result)
+                    }
+                }
+        }
+    }
+
+    private suspend fun getSectionScores() {
+        withContext(dispatcher) {
+            val classRoomId = state.value.classRoom?.id ?: 0
+            if (classRoomId == 0) return@withContext
+
+            analyticsRepository.getSectionScoreDistributionByClassRoomId(classRoomId)
+                .catch { e ->
+                    _events.send(
+                        ClassRoomEvent.OnErrorOccurred(
+                            message = e.message ?: application.getString(
+                                R.string.unknown_error
+                            )
+                        )
+                    )
+                }
+                .collectLatest { result ->
+                    _state.update {
+                        it.copy(sectionScores = result)
+                    }
+                }
+        }
+    }
+
+    private suspend fun getSectionUsages() {
+        withContext(dispatcher) {
+            val classRoomId = state.value.classRoom?.id ?: 0
+            if (classRoomId == 0) return@withContext
+
+            analyticsRepository.getSectionUsageByClassRoomId(classRoomId)
+                .catch { e ->
+                    _events.send(
+                        ClassRoomEvent.OnErrorOccurred(
+                            message = e.message ?: application.getString(
+                                R.string.unknown_error
+                            )
+                        )
+                    )
+                }
+                .collectLatest { result ->
+                    _state.update {
+                        it.copy(sectionUsages = result)
                     }
                 }
         }

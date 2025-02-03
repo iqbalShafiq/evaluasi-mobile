@@ -11,8 +11,11 @@ import id.usecase.core.database.entities.EventSectionCrossRef
 import id.usecase.core.domain.assessment.LocalAssessmentDataSource
 import id.usecase.core.domain.assessment.model.analytics.CategoryAnalysis
 import id.usecase.core.domain.assessment.model.analytics.CategoryScore
+import id.usecase.core.domain.assessment.model.analytics.LowPerformanceAlert
 import id.usecase.core.domain.assessment.model.analytics.MonthlyScore
 import id.usecase.core.domain.assessment.model.analytics.PerformanceScore
+import id.usecase.core.domain.assessment.model.analytics.SectionScore
+import id.usecase.core.domain.assessment.model.analytics.SectionUsage
 import id.usecase.core.domain.assessment.model.analytics.StudentProgress
 import id.usecase.core.domain.assessment.model.assessment.Assessment
 import id.usecase.core.domain.assessment.model.assessment.category.Category
@@ -265,7 +268,7 @@ class RoomLocalAssessmentDataSource(
         }
     }
 
-    override suspend fun getLastAssessmentByClassRoomId(classRoomId: Int): String? {
+    override suspend fun getLastAssessmentByClassRoomId(classRoomId: Int): String {
         return withContext(dispatcher) {
             assessmentDao.getLastAssessmentByClassRoomId(classRoomId)
         }
@@ -314,6 +317,27 @@ class RoomLocalAssessmentDataSource(
     override suspend fun getCategoryAnalysisByClassRoom(classRoomId: Int): List<CategoryAnalysis> {
         return withContext(dispatcher) {
             val result = analyticsDao.getCategoryAnalysisByClassRoom(classRoomId)
+            result.map { it.toDomainForm() }
+        }
+    }
+
+    override suspend fun getLowPerformanceStudentsByClassRoomId(classRoomId: Int): List<LowPerformanceAlert> {
+        return withContext(dispatcher) {
+            val result = analyticsDao.getLowPerformanceStudentsByClassRoomId(classRoomId)
+            result.map { it.toDomainForm() }
+        }
+    }
+
+    override suspend fun getSectionUsageByClassRoomId(classRoomId: Int): List<SectionUsage> {
+        return withContext(dispatcher) {
+            val result = analyticsDao.getSectionUsageByClassRoomId(classRoomId)
+            result.map { it.toDomainForm() }
+        }
+    }
+
+    override suspend fun getSectionScoreDistributionByClassRoomId(classRoomId: Int): List<SectionScore> {
+        return withContext(dispatcher) {
+            val result = analyticsDao.getSectionScoreDistributionByClassRoomId(classRoomId)
             result.map { it.toDomainForm() }
         }
     }

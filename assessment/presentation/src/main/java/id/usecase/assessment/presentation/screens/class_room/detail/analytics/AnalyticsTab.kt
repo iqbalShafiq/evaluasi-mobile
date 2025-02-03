@@ -19,6 +19,8 @@ import androidx.compose.ui.unit.dp
 import id.usecase.assessment.presentation.screens.class_room.detail.ClassRoomState
 import id.usecase.assessment.presentation.screens.class_room.detail.analytics.components.CategoryAnalysisChart
 import id.usecase.assessment.presentation.screens.class_room.detail.analytics.components.PerformanceDistributionChart
+import id.usecase.assessment.presentation.screens.class_room.detail.analytics.components.SectionScoreDistributionChart
+import id.usecase.assessment.presentation.screens.class_room.detail.analytics.components.SectionUsageDistributionChart
 import id.usecase.assessment.presentation.screens.class_room.detail.analytics.components.StudentProgressList
 import id.usecase.assessment.presentation.screens.class_room.detail.components.EmptyDataText
 import id.usecase.core.domain.assessment.model.analytics.CategoryAnalysis
@@ -119,6 +121,56 @@ fun AnalyticsTab(
                     }
 
                     CategoryAnalysisChart(state.categoryAnalysis)
+                }
+            }
+
+            // Section usage distribution Card
+            ElevatedCard(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Text(
+                        text = "Section Usages Distribution",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    if (state.sectionUsages.isEmpty()) {
+                        EmptyDataText()
+                        return@ElevatedCard
+                    }
+
+                    SectionUsageDistributionChart(state.sectionUsages)
+                }
+            }
+
+            // Section score distribution Card
+            ElevatedCard(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Text(
+                        text = "Section Scores Distribution",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    if (state.sectionScores.isEmpty()) {
+                        EmptyDataText()
+                        return@ElevatedCard
+                    }
+
+                    SectionScoreDistributionChart(state.sectionScores)
                 }
             }
         }
