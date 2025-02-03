@@ -1,4 +1,4 @@
-package id.usecase.assessment.presentation.screens.class_room.detail.analytics.components
+package id.usecase.assessment.presentation.screens.class_room.detail.reports.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

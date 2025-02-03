@@ -59,7 +59,14 @@ class AnalyticsRepositoryImpl(
     override fun getLowPerformanceStudentsByClassRoomId(classRoomId: Int): Flow<List<LowPerformanceAlert>> {
         return flow {
             val result = dataSource.getLowPerformanceStudentsByClassRoomId(classRoomId)
-                .map { LowPerformanceAlert(it.studentName, it.averageScore, it.lastUpdated) }
+                .map {
+                    LowPerformanceAlert(
+                        studentIdentifier = it.studentIdentifier,
+                        studentName = it.studentName,
+                        averageScore = it.averageScore,
+                        lastUpdated = it.lastUpdated
+                    )
+                }
             emit(result)
         }.flowOn(dispatcher)
     }

@@ -21,7 +21,7 @@ import id.usecase.assessment.presentation.screens.class_room.detail.analytics.co
 import id.usecase.assessment.presentation.screens.class_room.detail.analytics.components.PerformanceDistributionChart
 import id.usecase.assessment.presentation.screens.class_room.detail.analytics.components.SectionScoreDistributionChart
 import id.usecase.assessment.presentation.screens.class_room.detail.analytics.components.SectionUsageDistributionChart
-import id.usecase.assessment.presentation.screens.class_room.detail.analytics.components.StudentProgressList
+import id.usecase.assessment.presentation.screens.class_room.detail.reports.components.StudentProgressList
 import id.usecase.assessment.presentation.screens.class_room.detail.components.EmptyDataText
 import id.usecase.core.domain.assessment.model.analytics.CategoryAnalysis
 import id.usecase.core.domain.assessment.model.analytics.StudentProgress
@@ -71,31 +71,6 @@ fun AnalyticsTab(
                         )
                         order[a]!!.compareTo(order[b]!!)
                     })
-                }
-            }
-
-            // Student Progress Card
-            ElevatedCard(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = "Student Progress",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    if (state.studentProgress.isEmpty()) {
-                        EmptyDataText()
-                        return@ElevatedCard
-                    }
-
-                    StudentProgressList(state.studentProgress)
                 }
             }
 

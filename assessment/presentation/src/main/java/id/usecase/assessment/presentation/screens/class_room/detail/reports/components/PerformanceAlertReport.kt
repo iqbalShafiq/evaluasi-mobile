@@ -1,13 +1,17 @@
-package id.usecase.assessment.presentation.screens.class_room.detail.recent_alert
+package id.usecase.assessment.presentation.screens.class_room.detail.reports.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -23,9 +27,32 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import id.usecase.assessment.presentation.model.AlertUi
+import id.usecase.assessment.presentation.utils.toUi
+import id.usecase.core.domain.assessment.model.analytics.LowPerformanceAlert
 
 @Composable
-fun RecentAlertCard(
+fun PerformanceAlertReport(
+    modifier: Modifier = Modifier,
+    alerts: List<LowPerformanceAlert>,
+    onClicked: (AlertUi) -> Unit
+) {
+    LazyRow(
+        modifier = modifier.heightIn(max = 200.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp)
+    ) {
+        items(items = alerts, key = { it.studentName }) { alert ->
+            PerformanceAlertCard(
+                modifier = modifier.fillParentMaxWidth(1f),
+                alert = alert.toUi(),
+                onClicked = onClicked
+            )
+        }
+    }
+}
+
+@Composable
+fun PerformanceAlertCard(
     modifier: Modifier = Modifier,
     alert: AlertUi,
     onClicked: (AlertUi) -> Unit
@@ -94,9 +121,7 @@ fun RecentAlertCard(
                             .weight(1f)
                             .height(8.dp)
                             .clip(RoundedCornerShape(4.dp)),
-                        color = if (alert.studentAverageScore < alert.classAverageScore)
-                            MaterialTheme.colorScheme.error
-                        else MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.error
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
@@ -104,46 +129,19 @@ fun RecentAlertCard(
                         style = MaterialTheme.typography.labelMedium
                     )
                 }
-
-                // Class Average Reference
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = "Class Average: ${alert.classAverageScore}%",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = alert.detectedDate,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
             }
-
-            // Alert Message
-            Text(
-                text = alert.alert,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.error
-            )
         }
     }
 }
 
 @Preview
 @Composable
-private fun RecentAlertCardPreview() {
-    RecentAlertCard(
+private fun PerformanceAlertCardPreview() {
+    PerformanceAlertCard(
         alert = AlertUi(
+            studentIdentifier = 123,
             studentName = "John Doe",
-            studentIdentifier = 1,
             studentAverageScore = 60.7,
-            classAverageScore = 80.0,
-            detectedDate = "2021-08-01 00:00:00",
-            alert = "Student's score is below class average"
         )
     ) {}
 }

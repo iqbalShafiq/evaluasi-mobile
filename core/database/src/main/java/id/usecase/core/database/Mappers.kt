@@ -176,6 +176,7 @@ fun EventSection.toEntity() = EventSectionCrossRef(
 )
 
 fun LowPerformanceAlert.toDomainForm() = id.usecase.core.domain.assessment.model.analytics.LowPerformanceAlert(
+    studentIdentifier = studentIdentifier,
     studentName = studentName,
     averageScore = averageScore,
     lastUpdated = lastUpdated

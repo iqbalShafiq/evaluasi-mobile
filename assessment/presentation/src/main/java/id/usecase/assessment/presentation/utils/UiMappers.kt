@@ -2,12 +2,14 @@ package id.usecase.assessment.presentation.utils
 
 import androidx.compose.ui.text.input.TextFieldValue
 import id.usecase.assessment.presentation.model.AddStudentUi
+import id.usecase.assessment.presentation.model.AlertUi
 import id.usecase.assessment.presentation.model.AssessmentEventUi
 import id.usecase.assessment.presentation.model.ClassRoomUi
 import id.usecase.assessment.presentation.screens.class_room.create.categories.components.CategoryItemState
 import id.usecase.assessment.presentation.screens.class_room.create.sections.components.SectionCardState
 import id.usecase.assessment.presentation.screens.class_room.create.sections.components.SubSectionState
 import id.usecase.assessment.presentation.screens.class_room.create.students.components.AddStudentItemState
+import id.usecase.core.domain.assessment.model.analytics.LowPerformanceAlert
 import id.usecase.core.domain.assessment.model.assessment.category.Category
 import id.usecase.core.domain.assessment.model.assessment.event.Event
 import id.usecase.core.domain.assessment.model.classroom.ClassRoom
@@ -87,4 +89,10 @@ fun Section.toItemState() = SectionCardState(
     subSections = topics.map { SubSectionState(description = TextFieldValue(text = it)) },
     isExpanded = false,
     isValid = true
+)
+
+fun LowPerformanceAlert.toUi() = AlertUi(
+    studentIdentifier = studentIdentifier,
+    studentName = studentName,
+    studentAverageScore = averageScore.toDouble()
 )

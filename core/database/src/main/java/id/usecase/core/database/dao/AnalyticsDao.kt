@@ -109,6 +109,7 @@ interface AnalyticsDao {
         """
         SELECT 
             s.name as student_name,
+            s.identifier as student_identifier,
             AVG(COALESCE(a.score, 0.0)) as average_score,
             MAX(a.created_time) as last_updated
         FROM students s

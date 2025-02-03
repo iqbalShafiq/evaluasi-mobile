@@ -39,6 +39,7 @@ import id.usecase.assessment.presentation.model.AssessmentEventUi
 import id.usecase.assessment.presentation.screens.class_room.detail.analytics.AnalyticsTab
 import id.usecase.assessment.presentation.screens.class_room.detail.assessment_history.AssessmentHistoryTab
 import id.usecase.assessment.presentation.screens.class_room.detail.class_overview.ClassOverviewTab
+import id.usecase.assessment.presentation.screens.class_room.detail.reports.ReportsTab
 import id.usecase.core.domain.assessment.model.analytics.CategoryAnalysis
 import id.usecase.core.domain.assessment.model.analytics.StudentProgress
 import id.usecase.core.presentation.ui.ObserveAsEvents
@@ -131,7 +132,7 @@ fun ClassRoomScreen(
     onStudentEditClicked: () -> Unit,
     onAddAssessmentClicked: () -> Unit,
 ) {
-    val tabs = listOf("Overview", "Assessments", "Analytics")
+    val tabs = listOf("Overview", "Assessments", "Analytics", "Reports")
     var fabHeight by remember { mutableIntStateOf(0) }
     val heightInDp = with(LocalDensity.current) { fabHeight.toDp() }
 
@@ -195,7 +196,7 @@ fun ClassRoomScreen(
                         bottom = innerPadding.calculateBottomPadding()
                     )
             ) {
-                val pagerState = rememberPagerState(pageCount = { 3 })
+                val pagerState = rememberPagerState(pageCount = { 4 })
                 val scope = rememberCoroutineScope()
 
                 // Tab Row
@@ -237,6 +238,13 @@ fun ClassRoomScreen(
                             state = state,
                             bottomPadding = heightInDp + 24.dp
                         )
+
+                        3 -> {
+                            ReportsTab(
+                                state = state,
+                                bottomPadding = heightInDp + 24.dp
+                            )
+                        }
                     }
                 }
             }
