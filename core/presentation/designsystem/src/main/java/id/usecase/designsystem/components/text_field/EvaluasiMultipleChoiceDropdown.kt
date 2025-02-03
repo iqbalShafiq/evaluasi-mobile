@@ -1,5 +1,6 @@
 package id.usecase.designsystem.components.text_field
 
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -12,6 +13,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.vectorResource
@@ -43,17 +45,29 @@ fun EvaluasiMultipleChoiceDropdown(
                 .fillMaxWidth()
                 .onGloballyPositioned { layoutCoordinates ->
                     fieldSize = layoutCoordinates.size.toSize()
+                }
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onTap = {
+                            if (enabled) expanded = !expanded
+                        }
+                    )
                 },
             value = if (selectedItems.isEmpty()) "" else selectedItems.joinToString(", "),
             onValueChange = { },
             readOnly = true,
-            enabled = enabled,
+            enabled = false,
             shape = MaterialTheme.shapes.small,
             colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent,
-                errorIndicatorColor = MaterialTheme.colorScheme.error
+                errorIndicatorColor = MaterialTheme.colorScheme.error,
+                disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                disabledLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                disabledTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant
             ),
             label = { Text(text = label) },
             placeholder = {

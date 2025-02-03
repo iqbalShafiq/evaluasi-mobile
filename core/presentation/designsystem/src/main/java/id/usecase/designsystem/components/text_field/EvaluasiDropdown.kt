@@ -1,5 +1,8 @@
 package id.usecase.designsystem.components.text_field
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -23,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
@@ -49,17 +53,29 @@ fun EvaluasiDropdown(
                 .fillMaxWidth()
                 .onGloballyPositioned { layoutCoordinates ->
                     fieldSize = layoutCoordinates.size.toSize()
+                }
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onTap = {
+                            if (enabled) expanded = !expanded
+                        }
+                    )
                 },
             value = selectedItem,
             onValueChange = { },
             readOnly = true,
-            enabled = enabled,
+            enabled = false,
             shape = MaterialTheme.shapes.small,
             colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent,
-                errorIndicatorColor = MaterialTheme.colorScheme.error
+                errorIndicatorColor = MaterialTheme.colorScheme.error,
+                disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                disabledLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                disabledTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant
             ),
             label = { Text(text = label) },
             placeholder = {
@@ -67,16 +83,15 @@ fun EvaluasiDropdown(
             },
             leadingIcon = leadingIcon,
             trailingIcon = {
-                IconButton(onClick = { expanded = !expanded }) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowDropDown,
-                        contentDescription = "Toggle dropdown",
-                        modifier = Modifier.rotate(if (expanded) 180f else 0f)
-                    )
-                }
+                Icon(
+                    imageVector = Icons.Default.ArrowDropDown,
+                    contentDescription = "Toggle dropdown",
+                    modifier = Modifier.rotate(if (expanded) 180f else 0f)
+                )
             },
             singleLine = true,
             isError = !errorMessage.isNullOrEmpty(),
+            interactionSource = remember { MutableInteractionSource() }
         )
 
         DropdownMenu(
