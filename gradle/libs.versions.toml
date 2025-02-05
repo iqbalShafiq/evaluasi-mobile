@@ -25,6 +25,8 @@ roomRuntime = "2.6.1"
 uiTextGoogleFonts = "1.7.7"
 uiTooling = "1.7.7"
 vico = "1.13.1"
+googleFirebaseAppdistribution = "5.1.0"
+googleGmsGoogleServices = "4.4.2"
 
 [libraries]
 androidx-animation = { module = "androidx.compose.animation:animation", version.ref = "animation" }
@@ -71,4 +73,6 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 realm-kotlin = { id = "io.realm.kotlin", version.ref = "realmKotlin" }
+google-firebase-appdistribution = { id = "com.google.firebase.appdistribution", version.ref = "googleFirebaseAppdistribution" }
+google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
 

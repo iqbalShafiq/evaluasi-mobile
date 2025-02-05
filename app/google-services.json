@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "395706301438",
+    "project_id": "evaluasi-app",
+    "storage_bucket": "evaluasi-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:395706301438:android:b774bec1c83e5283029eaf",
+        "android_client_info": {
+          "package_name": "id.usecase.evaluasi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDT0549Rd4r8sD7-FF3Jf8-4uQWw9YI1Hs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

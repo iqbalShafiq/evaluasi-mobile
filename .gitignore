@@ -16,3 +16,4 @@ local.properties
 .idea
 .kotlin/errors
 core/database/schemas
+app/release
