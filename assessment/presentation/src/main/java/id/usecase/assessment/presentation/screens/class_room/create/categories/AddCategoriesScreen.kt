@@ -142,11 +142,11 @@ fun AddCategoriesScreen(
                 ),
                 navigationIconTint = MaterialTheme.colorScheme.onSurface,
                 trailingIcons = listOf(
-                    ActionItem(
-                        icon = Icons.Rounded.Clear,
-                        contentDescription = "Cross X",
-                        onClick = onClearStudentPressed
-                    ),
+//                    ActionItem(
+//                        icon = Icons.Rounded.Clear,
+//                        contentDescription = "Cross X",
+//                        onClick = onClearStudentPressed
+//                    ),
                 ),
                 onNavigationClicked = onBackPressed,
             )

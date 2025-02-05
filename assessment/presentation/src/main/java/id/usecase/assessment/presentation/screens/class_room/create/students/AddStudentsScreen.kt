@@ -143,16 +143,16 @@ fun AddStudentsScreen(
                 navigationIconTint = MaterialTheme.colorScheme.onSurface,
                 onNavigationClicked = onBackPressed,
                 trailingIcons = listOf(
-                    ActionItem(
-                        icon = Icons.Rounded.Clear,
-                        contentDescription = "Cross X",
-                        onClick = onClearStudentPressed
-                    ),
-                    ActionItem(
-                        icon = ImageVector.vectorResource(R.drawable.ic_clipboard),
-                        contentDescription = "Clipboard",
-                        onClick = onPastePressed
-                    ),
+//                    ActionItem(
+//                        icon = Icons.Rounded.Clear,
+//                        contentDescription = "Cross X",
+//                        onClick = onClearStudentPressed
+//                    ),
+//                    ActionItem(
+//                        icon = ImageVector.vectorResource(R.drawable.ic_clipboard),
+//                        contentDescription = "Clipboard",
+//                        onClick = onPastePressed
+//                    ),
                 )
             )
         },

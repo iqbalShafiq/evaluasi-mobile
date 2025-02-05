@@ -109,7 +109,7 @@ fun AnalyticsTab(
                     modifier = Modifier.padding(16.dp)
                 ) {
                     Text(
-                        text = "Section Usages Distribution",
+                        text = "Section Distribution",
                         style = MaterialTheme.typography.titleMedium
                     )
 
@@ -134,7 +134,7 @@ fun AnalyticsTab(
                     modifier = Modifier.padding(16.dp)
                 ) {
                     Text(
-                        text = "Section Scores Distribution",
+                        text = "Section Analysis",
                         style = MaterialTheme.typography.titleMedium
                     )
 
