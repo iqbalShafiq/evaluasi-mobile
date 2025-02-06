@@ -4,7 +4,6 @@ import id.usecase.core.database.entities.AssessmentEntity
 import id.usecase.core.database.entities.CategoryEntity
 import id.usecase.core.database.entities.ClassRoomEntity
 import id.usecase.core.database.entities.EventEntity
-import id.usecase.core.database.entities.EventSectionCrossRef
 import id.usecase.core.database.entities.SectionEntity
 import id.usecase.core.database.entities.StudentEntity
 import id.usecase.core.database.model.analytics.LowPerformanceAlert
@@ -19,7 +18,6 @@ import id.usecase.core.domain.assessment.model.assessment.Assessment
 import id.usecase.core.domain.assessment.model.assessment.category.Category
 import id.usecase.core.domain.assessment.model.assessment.event.Event
 import id.usecase.core.domain.assessment.model.classroom.ClassRoom
-import id.usecase.core.domain.assessment.model.section.EventSection
 import id.usecase.core.domain.assessment.model.section.Section
 import id.usecase.core.domain.assessment.model.student.Student
 import id.usecase.core.database.model.analytics.CategoryAnalysis as CategoryAnalysisDb
@@ -170,17 +168,13 @@ fun SectionEntity.toDomainForm() = Section(
     lastModifiedTime = lastModifiedTime
 )
 
-fun EventSection.toEntity() = EventSectionCrossRef(
-    eventId = eventId,
-    sectionId = sectionId
-)
-
-fun LowPerformanceAlert.toDomainForm() = id.usecase.core.domain.assessment.model.analytics.LowPerformanceAlert(
-    studentIdentifier = studentIdentifier,
-    studentName = studentName,
-    averageScore = averageScore,
-    lastUpdated = lastUpdated
-)
+fun LowPerformanceAlert.toDomainForm() =
+    id.usecase.core.domain.assessment.model.analytics.LowPerformanceAlert(
+        studentIdentifier = studentIdentifier,
+        studentName = studentName,
+        averageScore = averageScore,
+        lastUpdated = lastUpdated
+    )
 
 fun SectionUsage.toDomainForm() = id.usecase.core.domain.assessment.model.analytics.SectionUsage(
     sectionName = sectionName,

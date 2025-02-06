@@ -46,8 +46,8 @@ abstract class RoomAppDatabase : RoomDatabase() {
 }
 
 val MIGRATION_2_3 = object : Migration(2, 3) {
-    override fun migrate(database: SupportSQLiteDatabase) {
+    override fun migrate(db: SupportSQLiteDatabase) {
         // Add the new column with a default value
-        database.execSQL("ALTER TABLE events ADD COLUMN purpose TEXT NOT NULL DEFAULT ''")
+        db.execSQL("ALTER TABLE events ADD COLUMN purpose TEXT NOT NULL DEFAULT ''")
     }
 }

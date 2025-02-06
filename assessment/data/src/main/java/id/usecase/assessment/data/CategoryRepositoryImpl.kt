@@ -1,3 +1,5 @@
+@file:Suppress("FoldInitializerAndIfToElvis")
+
 package id.usecase.assessment.data
 
 import id.usecase.assessment.domain.CategoryRepository
@@ -29,9 +31,8 @@ class CategoryRepositoryImpl(
             val id = dataSource
                 .upsertCategory(category)
                 .toInt()
-            val category = dataSource.getCategoryById(id)
-
-            return@withContext DataResult.Success(category)
+            val result = dataSource.getCategoryById(id)
+            return@withContext DataResult.Success(result)
         }
     }
 
