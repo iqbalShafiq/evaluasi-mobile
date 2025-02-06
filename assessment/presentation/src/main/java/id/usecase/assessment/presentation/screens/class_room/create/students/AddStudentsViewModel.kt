@@ -8,7 +8,7 @@ import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.screens.class_room.create.students.components.AddStudentItemState
 import id.usecase.assessment.presentation.utils.toDomainForm
 import id.usecase.assessment.presentation.utils.toItemState
-import id.usecase.core.domain.assessment.DataResult
+import id.usecase.core.domain.assessment.utils.DataResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow

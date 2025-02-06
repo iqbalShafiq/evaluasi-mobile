@@ -1,4 +1,4 @@
-package id.usecase.core.domain.assessment
+package id.usecase.core.domain.assessment.utils
 
 sealed class DataResult <out T>() {
     class Success<T>(val data: T) : DataResult<T>()

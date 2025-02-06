@@ -33,10 +33,18 @@ android {
 }
 
 dependencies {
+    // other modules
+    implementation(project(":authentication:domain"))
+    implementation(project(":core:domain"))
 
+    // core
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+
+    // ktor
+    implementation(libs.bundles.ktor)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

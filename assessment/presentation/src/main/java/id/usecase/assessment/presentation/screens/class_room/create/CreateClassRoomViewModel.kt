@@ -10,7 +10,7 @@ import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.screens.class_room.create.CreateClassRoomEvent.OnClassRoomCreated
 import id.usecase.assessment.presentation.screens.class_room.create.CreateClassRoomEvent.OnErrorOccurred
 import id.usecase.assessment.presentation.utils.toUi
-import id.usecase.core.domain.assessment.DataResult
+import id.usecase.core.domain.assessment.utils.DataResult
 import id.usecase.core.domain.assessment.model.classroom.ClassRoom
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.Channel

@@ -2,7 +2,7 @@ package id.usecase.assessment.data
 
 import android.util.Log
 import id.usecase.assessment.domain.AssessmentRepository
-import id.usecase.core.domain.assessment.DataResult
+import id.usecase.core.domain.assessment.utils.DataResult
 import id.usecase.core.domain.assessment.LocalAssessmentDataSource
 import id.usecase.core.domain.assessment.model.assessment.Assessment
 import kotlinx.coroutines.CoroutineDispatcher

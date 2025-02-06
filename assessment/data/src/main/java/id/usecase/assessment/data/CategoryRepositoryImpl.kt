@@ -3,7 +3,7 @@
 package id.usecase.assessment.data
 
 import id.usecase.assessment.domain.CategoryRepository
-import id.usecase.core.domain.assessment.DataResult
+import id.usecase.core.domain.assessment.utils.DataResult
 import id.usecase.core.domain.assessment.LocalAssessmentDataSource
 import id.usecase.core.domain.assessment.model.assessment.category.Category
 import kotlinx.coroutines.CoroutineDispatcher

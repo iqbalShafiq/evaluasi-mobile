@@ -1,6 +1,6 @@
 package id.usecase.assessment.domain
 
-import id.usecase.core.domain.assessment.DataResult
+import id.usecase.core.domain.assessment.utils.DataResult
 import id.usecase.core.domain.assessment.model.assessment.Assessment
 import kotlinx.coroutines.flow.Flow
 

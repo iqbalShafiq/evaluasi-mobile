@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
+    kotlin("plugin.serialization") version "2.0.20"
 }
 
 android {
@@ -33,6 +34,8 @@ android {
 }
 
 dependencies {
+    // other modules
+    implementation(project(":core:domain"))
 
     // coroutines
     implementation(libs.kotlinx.coroutines.core)
@@ -40,6 +43,9 @@ dependencies {
     // koin
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)
+
+    // ktor
+    implementation(libs.bundles.ktor)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

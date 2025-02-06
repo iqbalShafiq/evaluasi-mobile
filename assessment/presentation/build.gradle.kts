@@ -40,7 +40,6 @@ android {
 }
 
 dependencies {
-
     // other modules
     implementation(project(":assessment:domain"))
     implementation(project(":core:domain"))
