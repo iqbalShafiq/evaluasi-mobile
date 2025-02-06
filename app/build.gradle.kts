@@ -17,7 +17,7 @@ android {
         minSdk = 26
         targetSdk = 35
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -65,6 +65,9 @@ dependencies {
     implementation(project(":assessment:presentation"))
     implementation(project(":assessment:domain"))
     implementation(project(":assessment:data"))
+    implementation(project(":authentication:presentation"))
+    implementation(project(":authentication:domain"))
+    implementation(project(":authentication:data"))
 
     // core
     implementation(libs.androidx.core.ktx)
