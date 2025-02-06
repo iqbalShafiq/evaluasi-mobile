@@ -13,7 +13,7 @@ import id.usecase.assessment.domain.EventRepository
 import id.usecase.assessment.domain.StudentRepository
 import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.model.AssessmentEventUi
-import id.usecase.core.domain.assessment.utils.DataResult
+import id.usecase.core.domain.utils.DataResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow

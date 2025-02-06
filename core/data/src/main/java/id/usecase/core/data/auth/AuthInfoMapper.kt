@@ -1,6 +1,6 @@
 package id.usecase.core.data.auth
 
-import id.usecase.core.domain.assessment.auth.AuthInfo
+import id.usecase.core.domain.auth.AuthInfo
 
 
 fun AuthInfo.toAuthInfoSerializable(): AuthInfoSerializable {

@@ -6,7 +6,7 @@ import id.usecase.assessment.domain.AssessmentRepository
 import id.usecase.assessment.domain.ClassRoomRepository
 import id.usecase.assessment.domain.StudentRepository
 import id.usecase.assessment.presentation.utils.toUi
-import id.usecase.core.domain.assessment.utils.DataResult
+import id.usecase.core.domain.utils.DataResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -1,7 +1,7 @@
 package id.usecase.core.data.networking
 
 import android.util.Log
-import id.usecase.core.domain.assessment.auth.SessionStorage
+import id.usecase.core.domain.auth.SessionStorage
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.auth.Auth

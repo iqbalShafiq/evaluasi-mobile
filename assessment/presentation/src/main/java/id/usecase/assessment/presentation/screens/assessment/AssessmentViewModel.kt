@@ -15,7 +15,7 @@ import id.usecase.assessment.presentation.model.StudentScoreUi
 import id.usecase.assessment.presentation.screens.assessment.AssessmentEvent.AssessmentHasSaved
 import id.usecase.assessment.presentation.screens.assessment.AssessmentEvent.OnErrorOccurred
 import id.usecase.assessment.presentation.screens.assessment.students.StudentAssessmentState
-import id.usecase.core.domain.assessment.utils.DataResult
+import id.usecase.core.domain.utils.DataResult
 import id.usecase.core.domain.assessment.model.assessment.Assessment
 import id.usecase.core.domain.assessment.model.assessment.category.Category
 import id.usecase.core.domain.assessment.model.assessment.event.Event

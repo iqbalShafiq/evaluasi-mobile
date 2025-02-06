@@ -1,4 +1,4 @@
-package id.usecase.core.domain.assessment.auth
+package id.usecase.core.domain.auth
 
 data class AuthInfo(
     val accessToken: String,

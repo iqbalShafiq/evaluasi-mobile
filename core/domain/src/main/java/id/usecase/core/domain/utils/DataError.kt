@@ -1,4 +1,4 @@
-package id.usecase.core.domain.assessment.utils
+package id.usecase.core.domain.utils
 
 sealed interface DataError: Error {
     enum class Network: DataError {

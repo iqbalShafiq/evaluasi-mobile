@@ -1,4 +1,4 @@
-package id.usecase.evaluasi.authentication.data.model
+package id.usecase.evaluasi.authentication.data
 
 data class LoginRequest(
     val email: String,

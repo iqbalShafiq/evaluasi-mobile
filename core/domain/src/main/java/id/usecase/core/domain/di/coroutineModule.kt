@@ -1,4 +1,4 @@
-package id.usecase.core.domain.assessment.di
+package id.usecase.core.domain.di
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

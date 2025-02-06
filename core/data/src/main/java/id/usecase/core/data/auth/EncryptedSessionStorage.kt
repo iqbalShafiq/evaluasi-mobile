@@ -1,8 +1,8 @@
 package id.usecase.core.data.auth
 
 import android.content.SharedPreferences
-import id.usecase.core.domain.assessment.auth.AuthInfo
-import id.usecase.core.domain.assessment.auth.SessionStorage
+import id.usecase.core.domain.auth.AuthInfo
+import id.usecase.core.domain.auth.SessionStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
@@ -33,6 +33,12 @@ class EncryptedSessionStorage(
                 .edit()
                 .putString(KEY_AUTH_INFO, json)
                 .commit()
+        }
+    }
+
+    override suspend fun clear() {
+        withContext(Dispatchers.IO) {
+            sharedPreferences.edit().remove(KEY_AUTH_INFO).apply()
         }
     }
 

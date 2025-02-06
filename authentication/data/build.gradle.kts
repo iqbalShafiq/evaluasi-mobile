@@ -36,6 +36,7 @@ dependencies {
     // other modules
     implementation(project(":authentication:domain"))
     implementation(project(":core:domain"))
+    implementation(project(":core:data"))
 
     // core
     implementation(libs.androidx.core.ktx)

@@ -1,7 +1,7 @@
 package id.usecase.assessment.data
 
 import id.usecase.assessment.domain.StudentRepository
-import id.usecase.core.domain.assessment.utils.DataResult
+import id.usecase.core.domain.utils.DataResult
 import id.usecase.core.domain.assessment.LocalAssessmentDataSource
 import id.usecase.core.domain.assessment.model.student.Student
 import kotlinx.coroutines.CoroutineDispatcher

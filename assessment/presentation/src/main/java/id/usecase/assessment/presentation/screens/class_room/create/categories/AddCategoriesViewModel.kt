@@ -8,7 +8,7 @@ import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.screens.class_room.create.categories.components.CategoryItemState
 import id.usecase.assessment.presentation.utils.toDomainForm
 import id.usecase.assessment.presentation.utils.toItemState
-import id.usecase.core.domain.assessment.utils.DataResult
+import id.usecase.core.domain.utils.DataResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel

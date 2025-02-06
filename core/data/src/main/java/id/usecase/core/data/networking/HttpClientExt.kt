@@ -1,7 +1,7 @@
 package id.usecase.core.data.networking
 
-import id.usecase.core.domain.assessment.utils.DataError
-import id.usecase.core.domain.assessment.utils.Result
+import id.usecase.core.domain.utils.DataError
+import id.usecase.core.domain.utils.Result
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.delete

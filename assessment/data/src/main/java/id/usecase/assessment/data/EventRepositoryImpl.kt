@@ -1,7 +1,7 @@
 package id.usecase.assessment.data
 
 import id.usecase.assessment.domain.EventRepository
-import id.usecase.core.domain.assessment.utils.DataResult
+import id.usecase.core.domain.utils.DataResult
 import id.usecase.core.domain.assessment.LocalAssessmentDataSource
 import id.usecase.core.domain.assessment.model.assessment.event.Event
 import id.usecase.core.domain.assessment.model.section.EventSection
