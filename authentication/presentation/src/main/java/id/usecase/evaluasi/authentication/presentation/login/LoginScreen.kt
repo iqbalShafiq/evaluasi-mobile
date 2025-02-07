@@ -1,5 +1,7 @@
 package id.usecase.evaluasi.authentication.presentation.login
 
+import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -30,15 +32,58 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import id.usecase.core.presentation.ui.ObserveAsEvents
 import id.usecase.designsystem.EvaluasiTheme
 import id.usecase.designsystem.components.button.ButtonType
 import id.usecase.designsystem.components.button.EvaluasiButton
+import id.usecase.designsystem.components.dialog.EvaluasiAlertDialog
 import id.usecase.designsystem.components.text_field.EvaluasiTextField
 import id.usecase.evaluasi.authentication.presentation.R
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun LoginScreenRoot(modifier: Modifier = Modifier) {
+fun LoginScreenRoot(
+    modifier: Modifier = Modifier,
+    onRegisterButtonClicked: () -> Unit,
+    onLoginSuccess: () -> Unit,
+    viewModel: LoginViewModel = koinViewModel()
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    var errorMessage by remember {
+        mutableStateOf("")
+    }
+    var showErrorDialog by remember {
+        mutableStateOf(false)
+    }
 
+    ObserveAsEvents(flow = viewModel.event) { event ->
+        when(event) {
+            is LoginEvent.OnErrorOccurred -> {
+                errorMessage = event.message
+                showErrorDialog = true
+            }
+            LoginEvent.OnLoginSuccess -> onLoginSuccess()
+        }
+    }
+
+    // Show error dialog
+    EvaluasiAlertDialog(
+        showDialog = showErrorDialog,
+        title = "Error Has Occurred",
+        message = errorMessage,
+        onConfirmation = {
+            showErrorDialog = false
+            errorMessage = ""
+        }
+    )
+
+    LoginScreen(
+        modifier = modifier,
+        state = state,
+        onAction = viewModel::onAction,
+        onRegisterButtonClicked = onRegisterButtonClicked
+    )
 }
 
 @Composable
@@ -54,6 +99,7 @@ fun LoginScreen(
         Column(
             modifier = modifier
                 .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surface)
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.Center,
@@ -63,7 +109,15 @@ fun LoginScreen(
             Text(
                 text = "Welcome Back",
                 style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(bottom = 32.dp)
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "Please login to your account",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 24.dp)
             )
 
             // Email Field
@@ -148,7 +202,7 @@ fun LoginScreen(
                 buttonType = ButtonType.PRIMARY
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
             // Register Button
             EvaluasiButton(
@@ -162,7 +216,7 @@ fun LoginScreen(
     }
 }
 
-@Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun LoginScreenPreview() {
     EvaluasiTheme {
