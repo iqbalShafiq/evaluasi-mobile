@@ -15,6 +15,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -30,6 +31,7 @@ fun EvaluasiTextField(
     minLines: Int = 1,
     maxLines: Int = 1,
     errorMessage: String? = null,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
     value: TextFieldValue,
     onValueChange: (TextFieldValue) -> Unit,
     label: String,
@@ -61,7 +63,8 @@ fun EvaluasiTextField(
                 keyboardType = keyboardType,
                 imeAction = imeAction
             ),
-            isError = !errorMessage.isNullOrEmpty()
+            isError = !errorMessage.isNullOrEmpty(),
+            visualTransformation = visualTransformation
         )
         if (!errorMessage.isNullOrEmpty()) {
             Text(

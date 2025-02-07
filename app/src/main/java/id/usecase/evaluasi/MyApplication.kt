@@ -5,6 +5,7 @@ package id.usecase.evaluasi
 import android.app.Application
 import id.usecase.assessment.data.di.assessmentRepositoryModule
 import id.usecase.assessment.presentation.di.assessmentViewModelModule
+import id.usecase.core.data.di.coreDataModule
 import id.usecase.core.database.di.dataSourceModule
 import id.usecase.core.domain.di.coroutineModule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -19,6 +20,7 @@ class MyApplication : Application() {
             androidContext(this@MyApplication)
             modules(
                 dataSourceModule,
+                coreDataModule,
                 assessmentViewModelModule,
                 assessmentRepositoryModule,
                 coroutineModule
