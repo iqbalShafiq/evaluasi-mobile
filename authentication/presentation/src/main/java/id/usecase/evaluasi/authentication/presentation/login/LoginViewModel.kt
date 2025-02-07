@@ -44,13 +44,6 @@ class LoginViewModel(
                     when (val result = repository.login(request)) {
                         is Result.Error -> {
                             val errorMessage = result.error.name
-                            _state.update {
-                                it.copy(
-                                    password = state.value.password.copy(
-                                        annotatedString = AnnotatedString(errorMessage)
-                                    )
-                                )
-                            }
                             _event.send(LoginEvent.OnErrorOccurred(errorMessage))
                         }
 
