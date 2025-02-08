@@ -78,6 +78,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.security.crypto.ktx)
 
     // coroutines
     implementation(libs.kotlinx.coroutines.core)

@@ -33,9 +33,12 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import id.usecase.core.presentation.ui.ObserveAsEvents
 import id.usecase.designsystem.EvaluasiTheme
 import id.usecase.designsystem.components.button.ButtonType
 import id.usecase.designsystem.components.button.EvaluasiButton
+import id.usecase.designsystem.components.dialog.EvaluasiAlertDialog
 import id.usecase.designsystem.components.text_field.EvaluasiTextField
 import id.usecase.evaluasi.authentication.presentation.R
 import org.koin.androidx.compose.koinViewModel
@@ -47,6 +50,49 @@ fun RegisterScreenRoot(
     onRegisterSuccess: () -> Unit,
     viewModel: RegisterViewModel = koinViewModel()
 ) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    var errorMessage by remember {
+        mutableStateOf("")
+    }
+    var showErrorDialog by remember {
+        mutableStateOf(false)
+    }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    ObserveAsEvents(
+        flow = viewModel.event
+    ) { event ->
+        when (event) {
+            is RegisterEvent.OnErrorOccurred -> {
+                keyboardController?.hide()
+                errorMessage = event.message
+                showErrorDialog = true
+            }
+
+            RegisterEvent.OnRegisterSuccess -> {
+                keyboardController?.hide()
+                onRegisterSuccess()
+            }
+        }
+    }
+
+    // Show error dialog
+    EvaluasiAlertDialog(
+        showDialog = showErrorDialog,
+        title = "Error Has Occurred",
+        message = errorMessage,
+        onConfirmation = {
+            showErrorDialog = false
+            errorMessage = ""
+        }
+    )
+
+    RegisterScreen(
+        modifier = modifier,
+        state = state,
+        onAction = viewModel::onAction,
+        onBackPressed = onBackPressed
+    )
 
 }
 
@@ -59,7 +105,6 @@ fun RegisterScreen(
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
     var passwordConfirmationVisible by remember { mutableStateOf(false) }
-    val keyboardController = LocalSoftwareKeyboardController.current
 
     Scaffold { innerPadding ->
         Column(
@@ -180,6 +225,8 @@ fun RegisterScreen(
                     PasswordVisualTransformation()
                 }
             )
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             // Password Confirmation Field
             EvaluasiTextField(

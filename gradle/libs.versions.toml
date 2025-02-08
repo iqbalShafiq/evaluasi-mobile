@@ -24,10 +24,11 @@ navigationCompose = "2.8.6"
 realmKotlin = "1.16.0"
 koin-bom = "4.0.0"
 roomRuntime = "2.6.1"
+securityCryptoKtx = "1.1.0-alpha06"
 uiTextGoogleFonts = "1.7.7"
 uiTooling = "1.7.7"
 vico = "1.13.1"
-googleFirebaseAppdistribution = "5.1.0"
+googleFirebaseAppdistribution = "5.1.1"
 googleGmsGoogleServices = "4.4.2"
 
 [libraries]
@@ -40,6 +41,7 @@ androidx-navigation-compose = { module = "androidx.navigation:navigation-compose
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
+androidx-security-crypto-ktx = { module = "androidx.security:security-crypto-ktx", version.ref = "securityCryptoKtx" }
 androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
 compose-charts = { module = "io.github.ehsannarmani:compose-charts", version.ref = "composeCharts" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

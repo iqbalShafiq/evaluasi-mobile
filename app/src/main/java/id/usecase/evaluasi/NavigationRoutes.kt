@@ -3,6 +3,12 @@ package id.usecase.evaluasi
 import kotlinx.serialization.Serializable
 
 @Serializable
+internal object Login
+
+@Serializable
+internal object Register
+
+@Serializable
 internal object Home
 
 @Serializable

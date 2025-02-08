@@ -1,5 +1,6 @@
 package id.usecase.evaluasi.authentication.presentation.register
 
+import androidx.compose.ui.text.AnnotatedString
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import id.usecase.core.domain.utils.Result
@@ -30,20 +31,60 @@ class RegisterViewModel(
             is RegisterAction.OnFormUpdated -> {
                 _state.update { action.state }
 
-                val passwordValidationState = userDataValidator
-                    .validatePassword(state.value.password.text)
-
-                val isValidEmail = userDataValidator
-                    .isValidEmail(state.value.email.text)
+                val isValidEmail = userDataValidator.isValidEmail(state.value.email.text)
+                if (state.value.email.text.isNotEmpty() && !isValidEmail) {
+                    _state.update {
+                        it.copy(
+                            email = state.value.email.copy(
+                                annotatedString = AnnotatedString("Invalid email address")
+                            )
+                        )
+                    }
+                }
 
                 val isValidName = state.value.name.text.isNotEmpty()
+                if (state.value.name.text.isNotEmpty() && !isValidName) {
+                    _state.update {
+                        it.copy(
+                            name = state.value.name.copy(
+                                annotatedString = AnnotatedString("Name must not be empty")
+                            )
+                        )
+                    }
+                }
+
+                val passwordValidationState = userDataValidator.validatePassword(
+                    state.value.password.text
+                )
+                val isValidPassword = passwordValidationState.isValid
+                if (state.value.password.text.isNotEmpty() && !isValidPassword) {
+                    _state.update {
+                        it.copy(
+                            password = state.value.password.copy(
+                                annotatedString = AnnotatedString("Invalid password")
+                            )
+                        )
+                    }
+                }
+
+                val isValidPasswordConfirmation = state.value.password.text ==
+                        state.value.passwordConfirmation.text
+                if (state.value.passwordConfirmation.text.isNotEmpty() && !isValidPasswordConfirmation) {
+                    _state.update {
+                        it.copy(
+                            passwordConfirmation = state.value.passwordConfirmation.copy(
+                                annotatedString = AnnotatedString("Password confirmation must match")
+                            )
+                        )
+                    }
+                }
 
                 _state.update {
                     it.copy(
-                        passwordValidation = passwordValidationState,
                         canRegister = isValidEmail &&
                                 isValidName &&
-                                passwordValidationState.isValid
+                                isValidPassword &&
+                                isValidPasswordConfirmation
                     )
                 }
             }

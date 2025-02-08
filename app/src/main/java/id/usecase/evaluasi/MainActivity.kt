@@ -15,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -27,17 +28,27 @@ import id.usecase.assessment.presentation.screens.class_room.create.students.Add
 import id.usecase.assessment.presentation.screens.class_room.detail.ClassRoomScreenRoot
 import id.usecase.assessment.presentation.screens.home.HomeScreenRoot
 import id.usecase.designsystem.EvaluasiTheme
+import id.usecase.evaluasi.authentication.presentation.login.LoginScreenRoot
+import id.usecase.evaluasi.authentication.presentation.register.RegisterScreenRoot
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
+    private val viewModel by viewModel<MainViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        installSplashScreen()
+        installSplashScreen().apply {
+            setKeepOnScreenCondition {
+                viewModel.state.value.isCheckingSession
+            }
+        }
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         enableEdgeToEdge()
         setContent {
+            val state = viewModel.state.collectAsStateWithLifecycle()
             EvaluasiTheme {
                 Column(modifier = Modifier.fillMaxSize()) {
-                    MyNavigation()
+                    MyNavigation(isLoggedIn = state.value.isCheckingSession)
                 }
             }
         }
@@ -45,7 +56,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MyNavigation() {
+fun MyNavigation(isLoggedIn: Boolean) {
     val navController = rememberNavController()
     val animationSpec = tween<IntOffset>(
         durationMillis = 300,
@@ -53,9 +64,81 @@ fun MyNavigation() {
     )
 
     NavHost(
-        startDestination = Home,
+        startDestination = if (isLoggedIn) Home else Login,
         navController = navController
     ) {
+        composable<Login>(
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = animationSpec
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = animationSpec
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = animationSpec
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = animationSpec
+                )
+            }
+        ) {
+            LoginScreenRoot(
+                onRegisterButtonClicked = {
+                    navController.navigate(Register)
+                },
+                onLoginSuccess = {
+                    navController.navigate(Home)
+                }
+            )
+        }
+
+        composable<Register>(
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = animationSpec
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = animationSpec
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = animationSpec
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = animationSpec
+                )
+            }
+        ) {
+            RegisterScreenRoot(
+                onBackPressed = {
+                    navController.popBackStack()
+                },
+                onRegisterSuccess = {
+                    navController.navigate(Home)
+                }
+            )
+        }
+
         composable<Home>(
             enterTransition = {
                 slideIntoContainer(
@@ -420,6 +503,6 @@ fun MyNavigation() {
 @Composable
 fun GreetingPreview() {
     EvaluasiTheme {
-        MyNavigation()
+        MyNavigation(isLoggedIn = false)
     }
 }
