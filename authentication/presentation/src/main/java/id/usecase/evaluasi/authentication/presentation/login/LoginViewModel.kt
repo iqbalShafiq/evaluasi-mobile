@@ -43,7 +43,7 @@ class LoginViewModel(
 
                     when (val result = repository.login(request)) {
                         is Result.Error -> {
-                            val errorMessage = result.error.name
+                            val errorMessage = result.error.message ?: "An error occurred"
                             _event.send(LoginEvent.OnErrorOccurred(errorMessage))
                         }
 

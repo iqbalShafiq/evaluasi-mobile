@@ -103,7 +103,7 @@ class RegisterViewModel(
 
                     when (val result = repository.register(request)) {
                         is Result.Error -> {
-                            val errorMessage = result.error.name
+                            val errorMessage = result.error.message ?: "An error occurred"
                             _event.send(RegisterEvent.OnErrorOccurred(errorMessage))
                         }
 
