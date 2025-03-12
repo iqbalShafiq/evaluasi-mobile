@@ -143,7 +143,7 @@ fun RegisterScreen(
                 },
                 label = "Email",
                 placeholder = "Enter your email",
-                errorMessage = state.email.annotatedString.text,
+                errorMessage = state.errorEmail,
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next,
                 leadingIcon = {
@@ -168,7 +168,7 @@ fun RegisterScreen(
                 },
                 label = "Name",
                 placeholder = "Enter your name",
-                errorMessage = state.name.annotatedString.text,
+                errorMessage = state.errorName,
                 imeAction = ImeAction.Next,
                 leadingIcon = {
                     Icon(
@@ -192,7 +192,7 @@ fun RegisterScreen(
                 },
                 label = "Password",
                 placeholder = "Enter your password",
-                errorMessage = state.password.annotatedString.text,
+                errorMessage = state.errorPassword,
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done,
                 leadingIcon = {
@@ -240,7 +240,7 @@ fun RegisterScreen(
                 },
                 label = "Password Confirmation",
                 placeholder = "Enter your password confirmation",
-                errorMessage = state.passwordConfirmation.annotatedString.text,
+                errorMessage = state.errorPasswordConfirmation,
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done,
                 leadingIcon = {

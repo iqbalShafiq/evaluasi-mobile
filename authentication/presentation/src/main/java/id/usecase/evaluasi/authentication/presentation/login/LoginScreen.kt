@@ -132,7 +132,6 @@ fun LoginScreen(
                 },
                 label = "Email",
                 placeholder = "Enter your email",
-                errorMessage = state.email.annotatedString.text,
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next,
                 leadingIcon = {
@@ -157,7 +156,6 @@ fun LoginScreen(
                 },
                 label = "Password",
                 placeholder = "Enter your password",
-                errorMessage = state.password.annotatedString.text,
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done,
                 leadingIcon = {

@@ -35,9 +35,13 @@ class RegisterViewModel(
                 if (state.value.email.text.isNotEmpty() && !isValidEmail) {
                     _state.update {
                         it.copy(
-                            email = state.value.email.copy(
-                                annotatedString = AnnotatedString("Invalid email address")
-                            )
+                            errorEmail = "Invalid email format",
+                        )
+                    }
+                } else {
+                    _state.update {
+                        it.copy(
+                            errorEmail = null
                         )
                     }
                 }
@@ -46,9 +50,13 @@ class RegisterViewModel(
                 if (state.value.name.text.isNotEmpty() && !isValidName) {
                     _state.update {
                         it.copy(
-                            name = state.value.name.copy(
-                                annotatedString = AnnotatedString("Name must not be empty")
-                            )
+                            errorName = "Name must not be empty"
+                        )
+                    }
+                } else {
+                    _state.update {
+                        it.copy(
+                            errorName = null
                         )
                     }
                 }
@@ -60,9 +68,13 @@ class RegisterViewModel(
                 if (state.value.password.text.isNotEmpty() && !isValidPassword) {
                     _state.update {
                         it.copy(
-                            password = state.value.password.copy(
-                                annotatedString = AnnotatedString("Invalid password")
-                            )
+                            errorPassword = "Invalid password"
+                        )
+                    }
+                } else {
+                    _state.update {
+                        it.copy(
+                            errorPassword = null
                         )
                     }
                 }
@@ -72,9 +84,13 @@ class RegisterViewModel(
                 if (state.value.passwordConfirmation.text.isNotEmpty() && !isValidPasswordConfirmation) {
                     _state.update {
                         it.copy(
-                            passwordConfirmation = state.value.passwordConfirmation.copy(
-                                annotatedString = AnnotatedString("Password confirmation must match")
-                            )
+                            errorPasswordConfirmation = "Password confirmation must match",
+                        )
+                    }
+                } else {
+                    _state.update {
+                        it.copy(
+                            errorPasswordConfirmation = null
                         )
                     }
                 }
