@@ -38,16 +38,18 @@ class LoginViewModel(
                         email = state.value.email.text,
                         password = state.value.password.text
                     )
-
+                    val result = repository.login(request)
                     _state.update { it.copy(isLoading = false) }
 
-                    when (val result = repository.login(request)) {
+                    when (result) {
                         is Result.Error -> {
                             val errorMessage = result.error.message ?: "An error occurred"
                             _event.send(LoginEvent.OnErrorOccurred(errorMessage))
                         }
 
-                        is Result.Success -> _event.send(LoginEvent.OnLoginSuccess)
+                        is Result.Success -> {
+                            _event.send(LoginEvent.OnLoginSuccess)
+                        }
                     }
                 }
             }

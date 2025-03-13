@@ -115,9 +115,10 @@ class RegisterViewModel(
                         password = state.value.password.text
                     )
 
+                    val result = repository.register(request)
                     _state.update { it.copy(isRegistering = false) }
 
-                    when (val result = repository.register(request)) {
+                    when (result) {
                         is Result.Error -> {
                             val errorMessage = result.error.message ?: "An error occurred"
                             _event.send(RegisterEvent.OnErrorOccurred(errorMessage))

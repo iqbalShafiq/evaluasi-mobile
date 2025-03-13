@@ -1,4 +1,4 @@
-package id.usecase.evaluasi.authentication.data
+package id.usecase.evaluasi.authentication.data.model
 
 import kotlinx.serialization.Serializable
 

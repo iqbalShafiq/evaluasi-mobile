@@ -31,7 +31,7 @@ suspend inline fun <reified Response : Any> HttpClient.get(
     }
 }
 
-suspend inline fun <reified Request, reified Response : Any> HttpClient.post(
+suspend inline fun <reified Request, reified Response : NetworkResponse<*>> HttpClient.post(
     route: String,
     body: Request
 ): Result<Response, DataError.Network> {
