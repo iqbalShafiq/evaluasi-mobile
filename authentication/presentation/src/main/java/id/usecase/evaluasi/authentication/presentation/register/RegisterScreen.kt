@@ -39,6 +39,7 @@ import id.usecase.designsystem.EvaluasiTheme
 import id.usecase.designsystem.components.button.ButtonType
 import id.usecase.designsystem.components.button.EvaluasiButton
 import id.usecase.designsystem.components.dialog.EvaluasiAlertDialog
+import id.usecase.designsystem.components.dialog.StandardLoadingDialog
 import id.usecase.designsystem.components.text_field.EvaluasiTextField
 import id.usecase.evaluasi.authentication.presentation.R
 import org.koin.androidx.compose.koinViewModel
@@ -47,16 +48,12 @@ import org.koin.androidx.compose.koinViewModel
 fun RegisterScreenRoot(
     modifier: Modifier = Modifier,
     onBackPressed: () -> Unit,
-    onRegisterSuccess: () -> Unit,
     viewModel: RegisterViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    var errorMessage by remember {
-        mutableStateOf("")
-    }
-    var showErrorDialog by remember {
-        mutableStateOf(false)
-    }
+    var errorMessage by remember { mutableStateOf("") }
+    var showErrorDialog by remember { mutableStateOf(false) }
+    var showCompleteDialog by remember { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
 
     ObserveAsEvents(
@@ -71,9 +68,14 @@ fun RegisterScreenRoot(
 
             RegisterEvent.OnRegisterSuccess -> {
                 keyboardController?.hide()
-                onRegisterSuccess()
+                showCompleteDialog = true
             }
         }
+    }
+
+    // Show loading dialog
+    if (state.isRegistering) {
+        StandardLoadingDialog()
     }
 
     // Show error dialog
@@ -84,6 +86,17 @@ fun RegisterScreenRoot(
         onConfirmation = {
             showErrorDialog = false
             errorMessage = ""
+        }
+    )
+
+    // Show complete dialog
+    EvaluasiAlertDialog(
+        showDialog = showCompleteDialog,
+        title = "User Registered",
+        message = "User has been registered successfully",
+        onConfirmation = {
+            showErrorDialog = false
+            onBackPressed()
         }
     )
 

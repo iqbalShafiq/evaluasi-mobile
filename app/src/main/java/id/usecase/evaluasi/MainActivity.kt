@@ -132,9 +132,6 @@ fun MyNavigation(isLoggedIn: Boolean) {
             RegisterScreenRoot(
                 onBackPressed = {
                     navController.popBackStack()
-                },
-                onRegisterSuccess = {
-                    navController.navigate(Home)
                 }
             )
         }

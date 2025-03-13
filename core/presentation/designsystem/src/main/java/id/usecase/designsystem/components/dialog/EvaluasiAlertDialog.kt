@@ -1,15 +1,11 @@
 package id.usecase.designsystem.components.dialog
 
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
-import id.usecase.designsystem.R
 
 @Composable
 fun EvaluasiAlertDialog(
@@ -18,16 +14,11 @@ fun EvaluasiAlertDialog(
     onConfirmation: () -> Unit,
     title: String,
     message: String,
-    icon: ImageVector = ImageVector.vectorResource(R.drawable.ic_test_icon),
-    iconDescription: String = "I letter with circle background",
     confirmationText: String = "Confirm",
     dismissText: String = "Dismiss"
 ) {
     if (showDialog) {
         AlertDialog(
-            icon = {
-                Icon(icon, contentDescription = iconDescription)
-            },
             title = {
                 Text(
                     text = title,
@@ -81,8 +72,6 @@ private fun EvaluasiAlertDialogPreview() {
         onDismissRequest = {},
         onConfirmation = {},
         title = "Title",
-        message = "Text",
-        icon = ImageVector.vectorResource(id = 0),
-        iconDescription = "Icon Description"
+        message = "Text"
     )
 }

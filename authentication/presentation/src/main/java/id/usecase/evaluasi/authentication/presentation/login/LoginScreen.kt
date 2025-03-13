@@ -38,6 +38,7 @@ import id.usecase.designsystem.EvaluasiTheme
 import id.usecase.designsystem.components.button.ButtonType
 import id.usecase.designsystem.components.button.EvaluasiButton
 import id.usecase.designsystem.components.dialog.EvaluasiAlertDialog
+import id.usecase.designsystem.components.dialog.StandardLoadingDialog
 import id.usecase.designsystem.components.text_field.EvaluasiTextField
 import id.usecase.evaluasi.authentication.presentation.R
 import org.koin.androidx.compose.koinViewModel
@@ -50,22 +51,22 @@ fun LoginScreenRoot(
     viewModel: LoginViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    var errorMessage by remember {
-        mutableStateOf("")
-    }
-    var showErrorDialog by remember {
-        mutableStateOf(false)
-    }
+    var errorMessage by remember { mutableStateOf("") }
+    var showErrorDialog by remember { mutableStateOf(false) }
 
     ObserveAsEvents(flow = viewModel.event) { event ->
-        when(event) {
+        when (event) {
             is LoginEvent.OnErrorOccurred -> {
                 errorMessage = event.message
                 showErrorDialog = true
             }
+
             LoginEvent.OnLoginSuccess -> onLoginSuccess()
         }
     }
+
+    // Show loading dialog
+    if (state.isLoading) StandardLoadingDialog()
 
     // Show error dialog
     EvaluasiAlertDialog(
