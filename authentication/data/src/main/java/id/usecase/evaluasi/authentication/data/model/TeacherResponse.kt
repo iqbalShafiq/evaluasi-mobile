@@ -3,7 +3,8 @@ package id.usecase.evaluasi.authentication.data.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class AuthResponse(
-    val teacher: TeacherResponse,
-    val token: String
+data class TeacherResponse(
+    val id: Int,
+    val name: String,
+    val email: String
 )

@@ -1,10 +1,10 @@
 package id.usecase.evaluasi.authentication.data
 
+import id.usecase.core.data.networking.NetworkResponse
 import id.usecase.core.data.networking.post
 import id.usecase.core.domain.auth.AuthInfo
 import id.usecase.core.domain.auth.SessionStorage
 import id.usecase.core.domain.utils.DataError
-import id.usecase.core.data.networking.NetworkResponse
 import id.usecase.core.domain.utils.Result
 import id.usecase.core.domain.utils.map
 import id.usecase.evaluasi.authentication.data.model.AuthResponse
@@ -31,8 +31,8 @@ class AuthRepositoryImpl(
         if (result is Result.Success) {
             sessionStorage.set(
                 AuthInfo(
-                    accessToken = result.data.data.accessToken,
-                    userId = result.data.data.id
+                    accessToken = result.data.data.token,
+                    userId = result.data.data.teacher.id
                 )
             )
         }
