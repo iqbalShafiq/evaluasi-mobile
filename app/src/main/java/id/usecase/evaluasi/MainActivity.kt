@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
             val state = viewModel.state.collectAsStateWithLifecycle()
             EvaluasiTheme {
                 Column(modifier = Modifier.fillMaxSize()) {
-                    MyNavigation(isLoggedIn = state.value.isCheckingSession)
+                    MyNavigation(isLoggedIn = state.value.isLoggedIn)
                 }
             }
         }
