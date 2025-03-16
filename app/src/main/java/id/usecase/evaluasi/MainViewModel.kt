@@ -23,4 +23,15 @@ class MainViewModel(
             _state.update { it.copy(isCheckingSession = false) }
         }
     }
+
+    fun onAction(action: MainAction) {
+        when (action) {
+            MainAction.Logout -> {
+                viewModelScope.launch {
+                    sessionStorage.clear()
+                    _state.update { it.copy(isLoggedIn = false) }
+                }
+            }
+        }
+    }
 }

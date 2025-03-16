@@ -36,10 +36,9 @@ class MainActivity : ComponentActivity() {
     private val viewModel by viewModel<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        installSplashScreen().apply {
-            setKeepOnScreenCondition {
-                viewModel.state.value.isCheckingSession
-            }
+        val splashScreen = installSplashScreen()
+        splashScreen.setKeepOnScreenCondition {
+            viewModel.state.value.isCheckingSession
         }
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -48,7 +47,14 @@ class MainActivity : ComponentActivity() {
             val state = viewModel.state.collectAsStateWithLifecycle()
             EvaluasiTheme {
                 Column(modifier = Modifier.fillMaxSize()) {
-                    MyNavigation(isLoggedIn = state.value.isLoggedIn)
+                    if (!state.value.isCheckingSession) {
+                        MyNavigation(
+                            isLoggedIn = state.value.isLoggedIn,
+                            onLogoutMenuClicked = {
+                                viewModel.onAction(MainAction.Logout)
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -56,7 +62,10 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MyNavigation(isLoggedIn: Boolean) {
+fun MyNavigation(
+    isLoggedIn: Boolean,
+    onLogoutMenuClicked: () -> Unit
+) {
     val navController = rememberNavController()
     val animationSpec = tween<IntOffset>(
         durationMillis = 300,
@@ -95,10 +104,18 @@ fun MyNavigation(isLoggedIn: Boolean) {
         ) {
             LoginScreenRoot(
                 onRegisterButtonClicked = {
-                    navController.navigate(Register)
+                    navController.navigate(Register) {
+                        popUpTo(Register) {
+                            inclusive = true
+                        }
+                    }
                 },
                 onLoginSuccess = {
-                    navController.navigate(Home)
+                    navController.navigate(Home) {
+                        popUpTo(Login) {
+                            inclusive = true
+                        }
+                    }
                 }
             )
         }
@@ -170,6 +187,14 @@ fun MyNavigation(isLoggedIn: Boolean) {
                     navController.navigate(
                         CreateClassRoom(classRoomId = null)
                     )
+                },
+                onLogoutMenuClicked = {
+                    onLogoutMenuClicked()
+                    navController.navigate(Login) {
+                        popUpTo(Home) {
+                            inclusive = true
+                        }
+                    }
                 }
             )
         }
@@ -500,6 +525,9 @@ fun MyNavigation(isLoggedIn: Boolean) {
 @Composable
 fun GreetingPreview() {
     EvaluasiTheme {
-        MyNavigation(isLoggedIn = false)
+        MyNavigation(
+            isLoggedIn = false,
+            onLogoutMenuClicked = {}
+        )
     }
 }

@@ -56,16 +56,19 @@ import id.usecase.designsystem.EvaluasiTheme
 import id.usecase.designsystem.components.app_bar.ActionItem
 import id.usecase.designsystem.components.app_bar.EvaluasiTopAppBar
 import id.usecase.designsystem.components.button.EvaluasiFloatingActionButton
+import id.usecase.designsystem.components.dialog.StandardAlertDialog
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeScreenRoot(
     onClassRoomChosen: (Int) -> Unit,
     onCreateClassRoomClicked: () -> Unit,
+    onLogoutMenuClicked: () -> Unit,
     homeViewModel: HomeViewModel = koinViewModel()
 ) {
     // States
     val state by homeViewModel.state.collectAsStateWithLifecycle()
+    var showLogoutConfirmationDialog by remember { mutableStateOf(false) }
 
     // Error dialog state
     var errorMessage by remember { mutableStateOf<String?>(null) }
@@ -85,6 +88,20 @@ fun HomeScreenRoot(
         }
     }
 
+    if (showLogoutConfirmationDialog) {
+        StandardAlertDialog(
+            icon = ImageVector.vectorResource(R.drawable.ic_logout),
+            iconDescription = "Logout",
+            dialogTitle = "Logout",
+            dialogText = "Are you sure you want to logout?",
+            onDismissRequest = { showLogoutConfirmationDialog = false },
+            onConfirmation = {
+                showLogoutConfirmationDialog = false
+                onLogoutMenuClicked()
+            }
+        )
+    }
+
     // Render home screen
     HomeScreen(
         modifier = Modifier.fillMaxSize(),
@@ -92,6 +109,7 @@ fun HomeScreenRoot(
         state = state,
         onCreateClassRoomClicked = onCreateClassRoomClicked,
         onClassRoomChosen = onClassRoomChosen,
+        onLogoutMenuClicked = { showLogoutConfirmationDialog = true },
         onAction = homeViewModel::onAction
     )
 }
@@ -103,8 +121,9 @@ fun HomeScreen(
     state: HomeState,
     onCreateClassRoomClicked: () -> Unit,
     onClassRoomChosen: (Int) -> Unit,
-    onAction: (HomeAction) -> Unit
-) {
+    onAction: (HomeAction) -> Unit,
+    onLogoutMenuClicked: () -> Unit
+) { 
     val context = LocalContext.current
     var fabHeight by remember { mutableIntStateOf(0) }
     val heightInDp = with(LocalDensity.current) { fabHeight.toDp() }
@@ -125,6 +144,11 @@ fun HomeScreen(
                             icon = Icons.Rounded.Search,
                             contentDescription = "Search",
                             onClick = { expanded = true }
+                        ),
+                        ActionItem(
+                            icon = ImageVector.vectorResource(R.drawable.ic_logout),
+                            contentDescription = "Logout",
+                            onClick = onLogoutMenuClicked
                         )
                     )
                 )
@@ -309,6 +333,7 @@ private fun HomeScreenPreview() {
         HomeScreen(
             onCreateClassRoomClicked = { },
             onClassRoomChosen = { },
+            onLogoutMenuClicked = { },
             state = HomeState(
                 classRooms = listOf(
                     ClassRoomUi(
