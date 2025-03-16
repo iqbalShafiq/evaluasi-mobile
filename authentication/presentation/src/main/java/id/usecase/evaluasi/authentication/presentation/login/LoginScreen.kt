@@ -134,6 +134,7 @@ fun LoginScreen(
                 },
                 label = "Email",
                 placeholder = "Enter your email",
+                errorMessage = state.errorEmail,
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next,
                 leadingIcon = {

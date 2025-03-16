@@ -1,10 +1,10 @@
 package id.usecase.evaluasi.authentication.presentation.login
 
-import androidx.compose.ui.text.AnnotatedString
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import id.usecase.core.domain.utils.Result
 import id.usecase.evaluasi.authentication.domain.AuthRepository
+import id.usecase.evaluasi.authentication.domain.UserDataValidator
 import id.usecase.evaluasi.authentication.domain.model.Login
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.Channel
@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 
 class LoginViewModel(
     private val repository: AuthRepository,
+    private val userDataValidator: UserDataValidator,
     private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
     private val _event = Channel<LoginEvent>()
@@ -28,6 +29,21 @@ class LoginViewModel(
         when (action) {
             is LoginAction.OnFormUpdated -> {
                 _state.update { action.state }
+
+                val isValidEmail = userDataValidator.isValidEmail(state.value.email.text)
+                if (state.value.email.text.isNotEmpty() && !isValidEmail) {
+                    _state.update {
+                        it.copy(
+                            errorEmail = "Invalid email format",
+                        )
+                    }
+                } else {
+                    _state.update {
+                        it.copy(
+                            errorEmail = null
+                        )
+                    }
+                }
             }
 
             LoginAction.Login -> {
