@@ -28,6 +28,16 @@ interface EventDao {
     )
     suspend fun getEventsByClassRoomId(classRoomId: Int): List<EventEntity>
 
+    @Query(
+        """
+        SELECT events.* FROM events
+        INNER JOIN event_section_cross_ref ON events.id = event_section_cross_ref.eventId
+        WHERE event_section_cross_ref.sectionId = :sectionId
+        ORDER BY events.last_modified_time DESC
+        """
+    )
+    suspend fun getEventSectionCrossRef(eventId: Int, sectionId: Int): EventSectionCrossRef?
+
     @Query("SELECT * FROM events WHERE category_id = :categoryId")
     suspend fun getEventsByCategoryId(categoryId: Int): List<EventEntity>
 

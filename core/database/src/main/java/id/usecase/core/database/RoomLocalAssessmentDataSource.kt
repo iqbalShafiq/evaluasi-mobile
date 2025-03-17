@@ -100,6 +100,14 @@ class RoomLocalAssessmentDataSource(
         }
     }
 
+    override suspend fun getStudentById(studentId: Int): Student? {
+        return withContext(dispatcher) {
+            studentDao
+                .getStudentById(studentId)
+                ?.toDomainForm()
+        }
+    }
+
     override suspend fun getTotalStudent(): Int {
         return withContext(dispatcher) {
             studentDao.getTotalStudent()
@@ -223,6 +231,14 @@ class RoomLocalAssessmentDataSource(
     override suspend fun deleteEvent(event: Event) {
         withContext(dispatcher) {
             eventDao.delete(event.toEntity())
+        }
+    }
+
+    override suspend fun getEventSectionCrossRef(eventId: Int, sectionId: Int): EventSection? {
+        return withContext(dispatcher) {
+            eventDao
+                .getEventSectionCrossRef(eventId, sectionId)
+                ?.toDomainForm()
         }
     }
 

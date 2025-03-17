@@ -46,6 +46,7 @@ android {
 dependencies {
     // other modules
     implementation(project(":core:domain"))
+    implementation(project(":core:data"))
 
     // room
     implementation(libs.androidx.room.runtime)
@@ -55,6 +56,9 @@ dependencies {
 
     // coroutines
     implementation(libs.kotlinx.coroutines.core)
+
+    // work manager
+    implementation(libs.androidx.work.runtime.ktx)
 
     // koin
     implementation(platform(libs.koin.bom))

@@ -25,6 +25,7 @@ interface LocalAssessmentDataSource {
 
     suspend fun upsertStudent(students: Student): Student?
     suspend fun upsertStudents(students: List<Student>): List<Student>
+    suspend fun getStudentById(studentId: Int): Student?
     suspend fun getTotalStudent(): Int
     suspend fun getStudentsByClassRoomId(classRoomId: Int): List<Student>
     suspend fun deleteStudent(student: Student)
@@ -42,6 +43,7 @@ interface LocalAssessmentDataSource {
     suspend fun getEventsByCategoryId(categoryId: Int): List<Event>
     suspend fun getEventById(eventId: Int): Event?
     suspend fun deleteEvent(event: Event)
+    suspend fun getEventSectionCrossRef(eventId: Int, sectionId: Int): EventSection?
 
     suspend fun upsertAssessments(assessmentList: List<Assessment>): List<Long>
     suspend fun getAssessmentsByIds(assessmentIds: List<Int>): List<Assessment>

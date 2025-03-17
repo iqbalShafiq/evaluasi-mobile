@@ -6,5 +6,6 @@ enum class EntityType {
     CATEGORY,
     SECTION,
     EVENT,
-    ASSESSMENT
+    ASSESSMENT,
+    EVENT_SECTION
 }
