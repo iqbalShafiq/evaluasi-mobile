@@ -2,51 +2,54 @@ package id.usecase.assessment.presentation.screens.class_room.detail.analytics.c
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
-import com.patrykandpatrick.vico.compose.chart.Chart
-import com.patrykandpatrick.vico.compose.chart.column.columnChart
-import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
-import com.patrykandpatrick.vico.core.component.shape.LineComponent
-import com.patrykandpatrick.vico.core.entry.entryModelOf
+import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
+import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import id.usecase.core.domain.assessment.model.analytics.CategoryAnalysis
 import id.usecase.core.domain.assessment.model.analytics.SectionUsage
+import java.util.Map.entry
 
 @Composable
 fun SectionUsageDistributionChart(
     analysis: List<SectionUsage>
 ) {
-    val chartEntryData = analysis.mapIndexed { index, sectionUsage ->
-        Pair(index.toFloat(), sectionUsage.totalAssessments.toFloat())
-    }.toTypedArray()
-
-    Chart(
-        chart = columnChart(
-            columns = listOf(
-                LineComponent(
-                    color = MaterialTheme.colorScheme.primary.toArgb(),
-                    thicknessDp = 4f
-                )
-            )
-        ),
-        model = entryModelOf(*chartEntryData),
-        startAxis = rememberStartAxis(
-            valueFormatter = { value, _ -> "${value.toInt()}%" },
-            itemPlacer = AxisItemPlacer.Vertical.default(
-                maxItemCount = 6
-            )
-        ),
-        bottomAxis = rememberBottomAxis(
-            valueFormatter = { value, _ ->
-                analysis.getOrNull(value.toInt())?.sectionName ?: ""
+    val modelProducer = remember { CartesianChartModelProducer() }
+    LaunchedEffect(Unit) {
+        modelProducer.runTransaction {
+            columnSeries {
+                analysis.forEachIndexed { index, sectionUsage ->
+                    entry(index.toFloat(), sectionUsage.totalAssessments)
+                }
             }
+        }
+    }
+
+    CartesianChartHost(
+        chart = rememberCartesianChart(
+            rememberColumnCartesianLayer(),
+            startAxis = VerticalAxis.rememberStart(
+                valueFormatter = { _, value, _ -> value.toString() },
+                itemPlacer = VerticalAxis.ItemPlacer.count(count = { 6 })
+            ),
+            bottomAxis = HorizontalAxis.rememberBottom(
+                valueFormatter = { _, value, _ ->
+                    analysis.getOrNull(value.toInt())?.sectionName ?: ""
+                }
+            )
         ),
+        modelProducer = modelProducer,
         modifier = Modifier
             .fillMaxWidth()
             .height(200.dp)

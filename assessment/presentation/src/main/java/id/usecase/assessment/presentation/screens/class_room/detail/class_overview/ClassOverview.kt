@@ -1,6 +1,5 @@
 package id.usecase.assessment.presentation.screens.class_room.detail.class_overview
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,24 +14,27 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
-import com.patrykandpatrick.vico.compose.chart.Chart
-import com.patrykandpatrick.vico.compose.chart.column.columnChart
-import com.patrykandpatrick.vico.compose.chart.line.lineChart
-import com.patrykandpatrick.vico.compose.component.shape.shader.fromBrush
-import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
-import com.patrykandpatrick.vico.core.chart.line.LineChart
-import com.patrykandpatrick.vico.core.component.shape.LineComponent
-import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
-import com.patrykandpatrick.vico.core.entry.FloatEntry
-import com.patrykandpatrick.vico.core.entry.entryModelOf
+import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisTickComponent
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
+import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
+import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
+import com.patrykandpatrick.vico.core.common.Fill
+import com.patrykandpatrick.vico.core.common.shader.ShaderProvider
 import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.model.AssessmentEventUi
 import id.usecase.assessment.presentation.screens.class_room.detail.ClassRoomState
@@ -42,21 +44,35 @@ import id.usecase.designsystem.EvaluasiTheme
 import java.time.Month
 import java.time.format.TextStyle
 import java.util.Locale
+import java.util.Map.entry
 
 @Composable
 fun ClassOverviewTab(
     state: ClassRoomState,
     bottomPadding: Dp = 0.dp
 ) {
-    Log.d("TAG", "ClassOverviewTab: ${state.categoryDistributionData}")
+    val performanceModelProducer = remember { CartesianChartModelProducer() }
+    val categoryModelProducer = remember { CartesianChartModelProducer() }
 
-    val performanceTrendData = state.performanceTrendData
-        .map { Pair(it.x, it.y) }
-        .toTypedArray()
+    LaunchedEffect(Unit) {
+        performanceModelProducer.runTransaction {
+            lineSeries {
+                series(
+                    x = state.performanceTrendData.map { it.first },
+                    y = state.performanceTrendData.map { it.second }
+                )
+            }
+        }
 
-    val categoryDistributionData = state.categoryDistributionData
-        .map { Pair(it.x, it.y) }
-        .toTypedArray()
+        categoryModelProducer.runTransaction {
+            columnSeries {
+                series(
+                    x = state.categoryDistributionData.map { it.first },
+                    y = state.categoryDistributionData.map { it.second }
+                )
+            }
+        }
+    }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -130,48 +146,46 @@ fun ClassOverviewTab(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    if (performanceTrendData.isEmpty()) {
+                    if (state.performanceTrendData.isEmpty()) {
                         EmptyDataText()
                         return@ElevatedCard
-                    }
-
-                    Chart(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp),
-                        chart = lineChart(
-                            lines = listOf(
-                                LineChart.LineSpec(
-                                    lineColor = MaterialTheme.colorScheme.primary.toArgb(),
-                                    lineBackgroundShader = DynamicShaders.fromBrush(
-                                        brush = Brush.verticalGradient(
-                                            colors = listOf(
-                                                MaterialTheme.colorScheme.primary.copy(alpha = com.patrykandpatrick.vico.core.DefaultAlpha.LINE_BACKGROUND_SHADER_START),
-                                                MaterialTheme.colorScheme.primary.copy(alpha = com.patrykandpatrick.vico.core.DefaultAlpha.LINE_BACKGROUND_SHADER_END)
+                    } else {
+                        CartesianChartHost(
+                            chart = rememberCartesianChart(
+                                rememberLineCartesianLayer(),
+                                startAxis = VerticalAxis.rememberStart(
+                                    valueFormatter = { _, value, _ -> value.toString() },
+                                    itemPlacer = VerticalAxis.ItemPlacer.count(count = { 6 }),
+                                    tick = rememberAxisTickComponent(
+                                        fill = Fill(
+                                            shaderProvider = ShaderProvider.verticalGradient(
+                                                colors = intArrayOf(
+                                                    MaterialTheme.colorScheme.primary
+                                                        .copy(alpha = 0.4F)
+                                                        .toArgb(),
+                                                    MaterialTheme.colorScheme.primary
+                                                        .copy(alpha = 0.8F)
+                                                        .toArgb()
+                                                )
                                             )
                                         )
                                     )
+                                ),
+                                bottomAxis = HorizontalAxis.rememberBottom(
+                                    valueFormatter = { _, value, _ ->
+                                        state.performanceTrendData.getOrNull(value.toInt())?.first?.toInt()
+                                            ?.let { Month.of(it) }
+                                            ?.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+                                            ?: ""
+                                    }
                                 )
                             ),
-                        ),
-                        model = entryModelOf(*performanceTrendData),
-                        startAxis = rememberStartAxis(
-                            title = "Avg Score",
-                            valueFormatter = { value, _ -> value.toInt().toString() },
-                            itemPlacer = AxisItemPlacer.Vertical.default(
-                                maxItemCount = 6
-                            )
-                        ),
-                        bottomAxis = rememberBottomAxis(
-                            title = "Month",
-                            valueFormatter = { value, _ ->
-                                if (value in 1f..12f) {
-                                    Month.of(value.toInt())
-                                        .getDisplayName(TextStyle.SHORT, Locale.getDefault())
-                                } else ""
-                            }
-                        ),
-                    )
+                            modelProducer = performanceModelProducer,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp)
+                        )
+                    }
 
                     Spacer(modifier = Modifier.padding(bottom = 8.dp))
                 }
@@ -192,36 +206,29 @@ fun ClassOverviewTab(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    if (categoryDistributionData.isEmpty()) {
+                    if (state.categoryDistributionData.isEmpty()) {
                         EmptyDataText()
                         return@ElevatedCard
-                    }
-
-                    Chart(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp),
-                        chart = columnChart(
-                            columns = listOf(
-                                LineComponent(
-                                    color = MaterialTheme.colorScheme.primary.toArgb(),
-                                    thicknessDp = 4f
+                    } else {
+                        CartesianChartHost(
+                            chart = rememberCartesianChart(
+                                rememberColumnCartesianLayer(),
+                                startAxis = VerticalAxis.rememberStart(
+                                    valueFormatter = { _, value, _ -> value.toString() },
+                                    itemPlacer = VerticalAxis.ItemPlacer.count(count = { 6 })
+                                ),
+                                bottomAxis = HorizontalAxis.rememberBottom(
+                                    valueFormatter = { _, value, _ ->
+                                        state.categoryList.getOrNull(value.toInt()) ?: ""
+                                    }
                                 )
-                            )
-                        ),
-                        model = entryModelOf(*categoryDistributionData),
-                        startAxis = rememberStartAxis(
-                            title = "Score",
-                            valueFormatter = { value, _ -> value.toInt().toString() },
-                            itemPlacer = AxisItemPlacer.Vertical.default(
-                                maxItemCount = 6
-                            )
-                        ),
-                        bottomAxis = rememberBottomAxis(
-                            title = "Category",
-                            valueFormatter = { value, _ -> state.categoryList[value.toInt()] }
+                            ),
+                            modelProducer = categoryModelProducer,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp),
                         )
-                    )
+                    }
 
                     Spacer(modifier = Modifier.padding(bottom = 8.dp))
                 }
@@ -280,17 +287,17 @@ private fun ClassOverviewPreview() {
                 ),
                 classAverage = 80.0,
                 performanceTrendData = listOf(
-                    FloatEntry(1f, 50f),
-                    FloatEntry(2f, 60f),
-                    FloatEntry(3f, 70f),
-                    FloatEntry(4f, 20f),
-                    FloatEntry(5f, 30f),
-                    FloatEntry(6f, 40f),
+                    Pair(1f, 50f),
+                    Pair(2f, 60f),
+                    Pair(3f, 70f),
+                    Pair(4f, 20f),
+                    Pair(5f, 30f),
+                    Pair(6f, 40f),
                 ),
                 categoryDistributionData = listOf(
-                    FloatEntry(0f, 20f),
-                    FloatEntry(1f, 30f),
-                    FloatEntry(2f, 50f),
+                    Pair(0f, 20f),
+                    Pair(1f, 30f),
+                    Pair(2f, 50f),
                 ),
                 categoryList = listOf("Monthly", "Mid", "Final")
             )

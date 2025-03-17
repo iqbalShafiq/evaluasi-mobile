@@ -1,6 +1,5 @@
 package id.usecase.assessment.presentation.screens.class_room.detail
 
-import com.patrykandpatrick.vico.core.entry.ChartEntry
 import id.usecase.assessment.presentation.model.AssessmentEventUi
 import id.usecase.core.domain.assessment.model.analytics.CategoryAnalysis
 import id.usecase.core.domain.assessment.model.analytics.LowPerformanceAlert
@@ -18,8 +17,8 @@ data class ClassRoomState(
     val totalStudents: Int = 0,
     val classAverage: Double = 0.0,
     val categoryList: List<String> = emptyList(),
-    val performanceTrendData: List<ChartEntry> = emptyList(),
-    val categoryDistributionData: List<ChartEntry> = emptyList(),
+    val performanceTrendData: List<Pair<Float, Float>> = emptyList(),
+    val categoryDistributionData: List<Pair<Float, Float>> = emptyList(),
     val performanceDistribution: Map<String, Float> = emptyMap(),
     val studentProgress: List<StudentProgress> = emptyList(),
     val categoryAnalysis: List<CategoryAnalysis> = emptyList(),

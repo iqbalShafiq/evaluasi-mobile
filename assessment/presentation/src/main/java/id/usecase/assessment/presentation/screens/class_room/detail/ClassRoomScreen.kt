@@ -34,7 +34,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.patrykandpatrick.vico.core.entry.FloatEntry
 import id.usecase.assessment.presentation.R
 import id.usecase.assessment.presentation.model.AssessmentEventUi
 import id.usecase.assessment.presentation.screens.class_room.detail.analytics.AnalyticsTab
@@ -308,17 +307,17 @@ private fun ClassRoomPreview() {
         ),
         classAverage = 80.0,
         performanceTrendData = listOf(
-            FloatEntry(1f, 50f),
-            FloatEntry(2f, 60f),
-            FloatEntry(3f, 70f),
-            FloatEntry(4f, 20f),
-            FloatEntry(5f, 30f),
-            FloatEntry(6f, 40f),
+            Pair(1f, 50f),
+            Pair(2f, 60f),
+            Pair(3f, 70f),
+            Pair(4f, 20f),
+            Pair(5f, 30f),
+            Pair(6f, 40f),
         ),
         categoryDistributionData = listOf(
-            FloatEntry(0f, 20f),
-            FloatEntry(1f, 30f),
-            FloatEntry(2f, 50f),
+            Pair(0f, 20f),
+            Pair(1f, 30f),
+            Pair(2f, 50f),
         ),
         performanceDistribution = mapOf(
             "Poor" to 0.2f,

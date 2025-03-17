@@ -4,7 +4,6 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.patrykandpatrick.vico.core.entry.FloatEntry
 import id.usecase.assessment.domain.AnalyticsRepository
 import id.usecase.assessment.domain.AssessmentRepository
 import id.usecase.assessment.domain.CategoryRepository
@@ -143,7 +142,7 @@ class ClassRoomViewModel(
                     )
                 }
                 .collectLatest { result ->
-                    when(result) {
+                    when (result) {
                         DataResult.Loading -> _state.update {
                             it.copy(isLoading = true)
                         }
@@ -300,7 +299,7 @@ class ClassRoomViewModel(
                     _state.update {
                         it.copy(
                             performanceTrendData = result.map { trend ->
-                                FloatEntry(trend.first, trend.second)
+                                Pair(trend.first, trend.second)
                             }
                         )
                     }
@@ -327,7 +326,7 @@ class ClassRoomViewModel(
                     val (categories, distributions) = result.mapIndexed { index, distribution ->
                         Pair(
                             distribution.first,
-                            FloatEntry(index.toFloat(), distribution.second)
+                            Pair(index.toFloat(), distribution.second)
                         )
                     }.unzip()
 
