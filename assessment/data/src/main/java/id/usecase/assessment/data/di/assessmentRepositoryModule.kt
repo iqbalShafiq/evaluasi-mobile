@@ -20,6 +20,7 @@ val assessmentRepositoryModule = module {
     single<ClassRoomRepository> {
         ClassRoomRepositoryImpl(
             dataSource = get(),
+            syncService = get(),
             dispatcher = get(),
         )
     }
@@ -27,6 +28,7 @@ val assessmentRepositoryModule = module {
     single<CategoryRepository> {
         CategoryRepositoryImpl(
             dataSource = get(),
+            syncService = get(),
             dispatcher = get(),
         )
     }
@@ -34,6 +36,7 @@ val assessmentRepositoryModule = module {
     single<EventRepository> {
         EventRepositoryImpl(
             dataSource = get(),
+            syncService = get(),
             dispatcher = get(),
         )
     }
@@ -41,6 +44,7 @@ val assessmentRepositoryModule = module {
     single<AssessmentRepository> {
         AssessmentRepositoryImpl(
             dataSource = get(),
+            syncService = get(),
             dispatcher = get(),
         )
     }
@@ -48,6 +52,7 @@ val assessmentRepositoryModule = module {
     single<StudentRepository> {
         StudentRepositoryImpl(
             dataSource = get(),
+            syncService = get(),
             dispatcher = get(),
         )
     }
@@ -62,6 +67,7 @@ val assessmentRepositoryModule = module {
     single<SectionRepository> {
         SectionRepositoryImpl(
             dataSource = get(),
+            syncService = get(),
             dispatcher = get(),
         )
     }

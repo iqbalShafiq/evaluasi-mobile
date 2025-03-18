@@ -1,13 +1,18 @@
 package id.usecase.core.data.sync
 
 import android.content.Context
-import androidx.work.*
+import androidx.work.BackoffPolicy
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import id.usecase.core.data.utils.NetworkUtils
-import id.usecase.core.domain.assessment.LocalAssessmentDataSource
 import id.usecase.core.domain.assessment.model.assessment.Assessment
 import id.usecase.core.domain.assessment.model.assessment.category.Category
 import id.usecase.core.domain.assessment.model.assessment.event.Event
 import id.usecase.core.domain.assessment.model.classroom.ClassRoom
+import id.usecase.core.domain.assessment.model.section.EventSection
 import id.usecase.core.domain.assessment.model.section.Section
 import id.usecase.core.domain.assessment.model.student.Student
 import id.usecase.core.domain.sync.EntityDependencyManager
@@ -18,10 +23,9 @@ import id.usecase.core.domain.sync.SyncStatus
 import kotlinx.coroutines.flow.Flow
 import java.util.concurrent.TimeUnit
 
-class SyncRepository(
+class SyncService(
     private val context: Context,
-    private val syncDataSource: SyncDataSource,
-    private val localAssessmentDataSource: LocalAssessmentDataSource
+    private val syncDataSource: SyncDataSource
 ) {
     /**
      * Mark a single entity for sync
@@ -78,6 +82,7 @@ class SyncRepository(
                 is Section -> entity.id
                 is Event -> entity.id
                 is Assessment -> entity.id
+                is EventSection -> entity.id
                 else -> throw IllegalArgumentException("Unknown entity type: ${entity::class.java.simpleName}")
             }
 
@@ -146,7 +151,7 @@ class SyncRepository(
 
         WorkManager.getInstance(context).enqueueUniqueWork(
             "immediate_sync_work",
-            ExistingWorkPolicy.REPLACE,
+            ExistingWorkPolicy.APPEND,
             syncWork
         )
     }

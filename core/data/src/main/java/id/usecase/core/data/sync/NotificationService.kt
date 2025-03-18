@@ -45,7 +45,7 @@ class NotificationService(private val context: Context) {
     fun showSyncNotification(isSyncing: Boolean, itemCount: Int = 0) {
         val activityClass = try {
             Class.forName("com.example.evaluasimobile.MainActivity")
-        } catch (e: ClassNotFoundException) {
+        } catch (_: ClassNotFoundException) {
             null
         }
 

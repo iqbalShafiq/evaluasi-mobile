@@ -196,7 +196,12 @@ class RoomLocalAssessmentDataSource(
             val unselectedSections = withContext(Dispatchers.Default) {
                 sectionDao.getSelectedSectionOnAssessment(eventSections.first().eventId)
                     .filter { section -> eventSections.none { it.sectionId == section.id } }
-                    .map { EventSectionCrossRef(eventId = eventSections.first().eventId, sectionId = it.id) }
+                    .map {
+                        EventSectionCrossRef(
+                            eventId = eventSections.first().eventId,
+                            sectionId = it.id
+                        )
+                    }
             }
 
             eventDao.deleteEventSection(unselectedSections)
@@ -243,9 +248,25 @@ class RoomLocalAssessmentDataSource(
             ) ?: return@withContext null
 
             EventSection(
+                id = result.eventSectionId,
                 eventId = result.eventId,
                 sectionId = result.sectionId
             )
+        }
+    }
+
+    override suspend fun getEventSectionCrossRef(eventSectionIdList: List<String>): List<EventSection> {
+        return withContext(dispatcher) {
+            val result = eventDao.getEventSectionCrossRef(
+                eventSectionIdList = eventSectionIdList
+            )
+            result.map {
+                EventSection(
+                    id = it.eventSectionId,
+                    eventId = it.eventId,
+                    sectionId = it.sectionId
+                )
+            }
         }
     }
 
@@ -380,6 +401,14 @@ class RoomLocalAssessmentDataSource(
             sectionDao
                 .getSectionById(sectionId)
                 ?.toDomainForm()
+        }
+    }
+
+    override suspend fun getSectionByIds(sectionIds: List<String>): List<Section> {
+        return withContext(dispatcher) {
+            sectionDao
+                .getSectionsByIds(sectionIds)
+                .map { it.toDomainForm() }
         }
     }
 

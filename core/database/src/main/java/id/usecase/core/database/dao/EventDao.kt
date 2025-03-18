@@ -51,6 +51,14 @@ interface EventDao {
     )
     suspend fun getEventSectionCrossRef(eventSectionId: String): EventSectionCrossRef?
 
+    @Query(
+        """
+        SELECT * FROM event_section_cross_ref
+        WHERE event_section_cross_ref.eventSectionId IN (:eventSectionIdList)
+        """
+    )
+    suspend fun getEventSectionCrossRef(eventSectionIdList: List<String>): List<EventSectionCrossRef>
+
     @Query("SELECT * FROM events WHERE category_id = :categoryId")
     suspend fun getEventsByCategoryId(categoryId: String): List<EventEntity>
 

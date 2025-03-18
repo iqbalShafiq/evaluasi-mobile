@@ -38,12 +38,14 @@ interface LocalAssessmentDataSource {
     suspend fun deleteCategory(category: Category)
 
     suspend fun upsertEvent(event: Event): String
-    suspend fun upsertEventSection(eventSections: List<EventSection>): List<String>
     suspend fun getEventsByClassRoomId(classRoomId: String): List<Event>
     suspend fun getEventsByCategoryId(categoryId: String): List<Event>
     suspend fun getEventById(eventId: String): Event?
     suspend fun deleteEvent(event: Event)
+
+    suspend fun upsertEventSection(eventSections: List<EventSection>): List<String>
     suspend fun getEventSectionCrossRef(eventSectionId: String): EventSection?
+    suspend fun getEventSectionCrossRef(eventSectionIdList: List<String>): List<EventSection>
 
     suspend fun upsertAssessments(assessmentList: List<Assessment>): List<String>
     suspend fun getAssessmentsByIds(assessmentIds: List<String>): List<Assessment>
@@ -65,6 +67,7 @@ interface LocalAssessmentDataSource {
 
     suspend fun upsertSection(section: List<Section>): List<String>
     suspend fun getSectionById(sectionId: String): Section?
+    suspend fun getSectionByIds(sectionIds: List<String>): List<Section>
     suspend fun getSectionsByClassRoomId(classRoomId: String): List<Section>
     suspend fun getSelectedSectionOnAssessment(assessmentId: String): List<Section>
 }

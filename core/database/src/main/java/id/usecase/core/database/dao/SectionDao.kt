@@ -22,6 +22,9 @@ interface SectionDao {
     @Query("SELECT * FROM sections WHERE id = :id")
     suspend fun getSectionById(id: String): SectionEntity?
 
+    @Query("SELECT * FROM sections WHERE id = :sectionIds")
+    suspend fun getSectionsByIds(sectionIds: List<String>): List<SectionEntity>
+
     @Query("SELECT * FROM sections WHERE class_room_id = :classRoomId")
     suspend fun getSectionsByClassRoomId(classRoomId: String): List<SectionEntity>
 

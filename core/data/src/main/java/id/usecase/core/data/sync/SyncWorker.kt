@@ -13,7 +13,6 @@ import id.usecase.core.data.sync.model.StudentNetworkModel
 import id.usecase.core.data.utils.NetworkUtils
 import id.usecase.core.domain.assessment.LocalAssessmentDataSource
 import id.usecase.core.domain.sync.EntityType
-import id.usecase.core.domain.utils.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
@@ -28,7 +27,7 @@ class SyncWorker(
 ) : CoroutineWorker(context, workerParams), KoinComponent {
 
     private val apiService: SyncApiService by inject()
-    private val syncRepository: SyncRepository by inject()
+    private val syncService: SyncService by inject()
     private val notificationService: NotificationService by inject()
     private val entityFactory: EntitySyncFactory by inject()
     private val assessmentDataSource: LocalAssessmentDataSource by inject()
@@ -40,7 +39,7 @@ class SyncWorker(
             }
 
             // Get pending items to sync (max 50 at a time)
-            val itemsToSync = syncRepository.getPendingSyncItems(50)
+            val itemsToSync = syncService.getPendingSyncItems(50)
 
             if (itemsToSync.isEmpty()) {
                 return@withContext Result.success()
@@ -88,7 +87,7 @@ class SyncWorker(
 
                     if (entity == null) {
                         // Entity was deleted, mark sync item as synced
-                        syncRepository.updateSyncResult(syncItem.id, true)
+                        syncService.updateSyncResult(syncItem.id, true)
                         successCount++
                         continue
                     }
@@ -112,25 +111,25 @@ class SyncWorker(
                     // Update sync result
                     when (result) {
                         is id.usecase.core.domain.utils.Result.Success -> {
-                            syncRepository.updateSyncResult(syncItem.id, true)
+                            syncService.updateSyncResult(syncItem.id, true)
                             successCount++
                         }
 
                         is id.usecase.core.domain.utils.Result.Error -> {
                             val errorMsg = result.error.message
-                            syncRepository.updateSyncResult(syncItem.id, false, errorMsg)
+                            syncService.updateSyncResult(syncItem.id, false, errorMsg)
                             failCount++
                         }
                     }
 
                 } catch (e: Exception) {
-                    syncRepository.updateSyncResult(syncItem.id, false, e.message)
+                    syncService.updateSyncResult(syncItem.id, false, e.message)
                     failCount++
                 }
             }
 
             // Cleanup old sync records
-            syncRepository.cleanupOldSyncRecords()
+            syncService.cleanupOldSyncRecords()
 
             // Show completion notification
             if (failCount > 0) {
@@ -140,8 +139,8 @@ class SyncWorker(
             }
 
             // If there are still items to sync, schedule another sync
-            if (syncRepository.getPendingSyncItems(1).isNotEmpty()) {
-                syncRepository.scheduleImmediateSync()
+            if (syncService.getPendingSyncItems(1).isNotEmpty()) {
+                syncService.scheduleImmediateSync()
             }
 
             Result.success()

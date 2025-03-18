@@ -60,7 +60,7 @@ class SyncApiService(
 
     suspend fun syncClassRoom(request: ClassRoomNetworkModel): Result<NetworkResponse<Boolean>, DataError.Network> {
         return httpClient.post<ClassRoomNetworkModel, NetworkResponse<Boolean>>(
-            route = "sync/classroom",
+            route = "sync/classRoom",
             body = ClassRoomNetworkModel(
                 id = request.id,
                 name = request.name,

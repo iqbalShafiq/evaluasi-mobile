@@ -3,9 +3,11 @@
 package id.usecase.assessment.data
 
 import id.usecase.assessment.domain.CategoryRepository
-import id.usecase.core.domain.utils.DataResult
+import id.usecase.core.data.sync.SyncService
 import id.usecase.core.domain.assessment.LocalAssessmentDataSource
 import id.usecase.core.domain.assessment.model.assessment.category.Category
+import id.usecase.core.domain.sync.EntityType
+import id.usecase.core.domain.utils.DataResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -14,14 +16,20 @@ import kotlinx.coroutines.withContext
 
 class CategoryRepositoryImpl(
     private val dataSource: LocalAssessmentDataSource,
+    private val syncService: SyncService,
     private val dispatcher: CoroutineDispatcher
 ) : CategoryRepository {
     override suspend fun upsertCategories(categories: List<Category>): DataResult<List<Category>> {
         return withContext(dispatcher) {
-            val insertedIds = dataSource
-                .upsertCategories(categories)
-                .map { it }
+            val insertedIds = dataSource.upsertCategories(categories)
             val insertedCategories = dataSource.getCategoriesByIds(insertedIds)
+            if (insertedCategories.isNotEmpty()) {
+                syncService.markMultipleForSync(
+                    entities = insertedCategories,
+                    entityType = EntityType.CATEGORY
+                )
+            }
+
             return@withContext DataResult.Success(insertedCategories)
         }
     }
@@ -30,6 +38,12 @@ class CategoryRepositoryImpl(
         return withContext(dispatcher) {
             val id = dataSource.upsertCategory(category)
             val result = dataSource.getCategoryById(id)
+            if (result != null) {
+                syncService.markForSync(
+                    entity = result,
+                    entityType = EntityType.CATEGORY
+                )
+            }
             return@withContext DataResult.Success(result)
         }
     }

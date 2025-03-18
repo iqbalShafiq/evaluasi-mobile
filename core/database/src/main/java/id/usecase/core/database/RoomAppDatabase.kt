@@ -10,6 +10,7 @@ import id.usecase.core.database.dao.ClassRoomDao
 import id.usecase.core.database.dao.EventDao
 import id.usecase.core.database.dao.SectionDao
 import id.usecase.core.database.dao.StudentDao
+import id.usecase.core.database.dao.SyncDao
 import id.usecase.core.database.entities.AssessmentEntity
 import id.usecase.core.database.entities.CategoryEntity
 import id.usecase.core.database.entities.ClassRoomEntity
@@ -17,6 +18,7 @@ import id.usecase.core.database.entities.EventEntity
 import id.usecase.core.database.entities.EventSectionCrossRef
 import id.usecase.core.database.entities.SectionEntity
 import id.usecase.core.database.entities.StudentEntity
+import id.usecase.core.database.entities.SyncEntity
 import id.usecase.core.database.type_converters.IntListConverter
 import id.usecase.core.database.type_converters.StringListConverter
 
@@ -28,7 +30,8 @@ import id.usecase.core.database.type_converters.StringListConverter
         StudentEntity::class,
         ClassRoomEntity::class,
         SectionEntity::class,
-        EventSectionCrossRef::class
+        EventSectionCrossRef::class,
+        SyncEntity::class
     ],
     version = 1
 )
@@ -41,4 +44,5 @@ abstract class RoomAppDatabase : RoomDatabase() {
     abstract fun classRoomDao(): ClassRoomDao
     abstract fun analyticsDao(): AnalyticsDao
     abstract fun sectionDao(): SectionDao
+    abstract fun syncDao(): SyncDao
 }

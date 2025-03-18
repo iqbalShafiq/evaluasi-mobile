@@ -1,9 +1,11 @@
 package id.usecase.assessment.data
 
 import id.usecase.assessment.domain.ClassRoomRepository
-import id.usecase.core.domain.utils.DataResult
+import id.usecase.core.data.sync.SyncService
 import id.usecase.core.domain.assessment.LocalAssessmentDataSource
 import id.usecase.core.domain.assessment.model.classroom.ClassRoom
+import id.usecase.core.domain.sync.EntityType
+import id.usecase.core.domain.utils.DataResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -12,11 +14,20 @@ import kotlinx.coroutines.withContext
 
 class ClassRoomRepositoryImpl(
     private val dataSource: LocalAssessmentDataSource,
+    private val syncService: SyncService,
     private val dispatcher: CoroutineDispatcher
 ) : ClassRoomRepository {
     override suspend fun upsertClassRoom(classRoom: ClassRoom): DataResult<ClassRoom?> {
         return withContext(dispatcher) {
             val newClassRoom = dataSource.upsertClassRoom(classRoom)
+
+            if (newClassRoom != null) {
+                syncService.markForSync(
+                    entity = newClassRoom,
+                    entityType = EntityType.CLASS_ROOM
+                )
+            }
+
             return@withContext DataResult.Success(newClassRoom)
         }
     }

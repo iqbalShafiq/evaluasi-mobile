@@ -8,7 +8,8 @@ object EntityDependencyManager {
         EntityType.STUDENT to 4,
         EntityType.SECTION to 3,
         EntityType.EVENT to 2,
-        EntityType.ASSESSMENT to 1
+        EntityType.ASSESSMENT to 1,
+        EntityType.EVENT_SECTION to 1
     )
 
     // Dependencies (what needs to be synced first)
@@ -17,7 +18,8 @@ object EntityDependencyManager {
         EntityType.STUDENT to listOf(EntityType.CLASS_ROOM),
         EntityType.SECTION to listOf(EntityType.CLASS_ROOM),
         EntityType.EVENT to listOf(EntityType.CATEGORY),
-        EntityType.ASSESSMENT to listOf(EntityType.STUDENT, EntityType.EVENT)
+        EntityType.ASSESSMENT to listOf(EntityType.STUDENT, EntityType.EVENT),
+        EntityType.EVENT_SECTION to listOf(EntityType.EVENT, EntityType.SECTION)
     )
 
     fun getPriority(entityType: EntityType): Int {

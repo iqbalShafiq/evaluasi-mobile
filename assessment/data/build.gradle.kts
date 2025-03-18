@@ -36,6 +36,7 @@ dependencies {
     // other modules
     implementation(project(":assessment:domain"))
     implementation(project(":core:domain"))
+    implementation(project(":core:data"))
 
     // coroutines
     implementation(libs.kotlinx.coroutines.core)

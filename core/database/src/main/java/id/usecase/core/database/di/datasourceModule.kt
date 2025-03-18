@@ -3,7 +3,9 @@ package id.usecase.core.database.di
 import androidx.room.Room
 import id.usecase.core.database.RoomAppDatabase
 import id.usecase.core.database.RoomLocalAssessmentDataSource
+import id.usecase.core.database.sync.RoomSyncDataSource
 import id.usecase.core.domain.assessment.LocalAssessmentDataSource
+import id.usecase.core.domain.sync.SyncDataSource
 import org.koin.dsl.module
 
 val dataSourceModule = module {
@@ -18,6 +20,7 @@ val dataSourceModule = module {
     single { get<RoomAppDatabase>().classRoomDao() }
     single { get<RoomAppDatabase>().analyticsDao() }
     single { get<RoomAppDatabase>().sectionDao() }
+    single { get<RoomAppDatabase>().syncDao() }
     single<LocalAssessmentDataSource> {
         RoomLocalAssessmentDataSource(
             classRoomDao = get(),
@@ -28,6 +31,11 @@ val dataSourceModule = module {
             analyticsDao = get(),
             sectionDao = get(),
             dispatcher = get()
+        )
+    }
+    single<SyncDataSource> {
+        RoomSyncDataSource(
+            syncDao = get()
         )
     }
 }

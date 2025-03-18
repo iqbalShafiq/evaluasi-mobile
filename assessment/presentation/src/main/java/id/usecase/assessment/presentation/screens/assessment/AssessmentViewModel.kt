@@ -36,6 +36,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Locale
+import java.util.UUID
 
 class AssessmentViewModel(
     private val application: Application,
@@ -442,6 +443,7 @@ class AssessmentViewModel(
 
             val eventSections = selectedSectionIds.map { sectionId ->
                 EventSection(
+                    id = UUID.randomUUID().toString(),
                     eventId = eventId,
                     sectionId = sectionId
                 )

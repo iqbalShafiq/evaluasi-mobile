@@ -1,10 +1,11 @@
 package id.usecase.assessment.data
 
-import android.util.Log
 import id.usecase.assessment.domain.AssessmentRepository
-import id.usecase.core.domain.utils.DataResult
+import id.usecase.core.data.sync.SyncService
 import id.usecase.core.domain.assessment.LocalAssessmentDataSource
 import id.usecase.core.domain.assessment.model.assessment.Assessment
+import id.usecase.core.domain.sync.EntityType
+import id.usecase.core.domain.utils.DataResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -13,19 +14,19 @@ import kotlinx.coroutines.withContext
 
 class AssessmentRepositoryImpl(
     private val dataSource: LocalAssessmentDataSource,
+    private val syncService: SyncService,
     private val dispatcher: CoroutineDispatcher
 ) : AssessmentRepository {
     override suspend fun upsertAssessments(assessmentList: List<Assessment>): DataResult<List<Assessment>> {
         return withContext(dispatcher) {
-            Log.d("TAG", "upsertAssessments assessment List: $assessmentList")
             val assessmentIds = dataSource.upsertAssessments(assessmentList)
-            Log.d("TAG", "upsertAssessments ids: $assessmentIds")
-            val assessments = dataSource.getAssessmentsByIds(
-                assessmentIds.map {
-                    it
-                }
-            )
-            Log.d("TAG", "upsertAssessments upserted: $assessments")
+            val assessments = dataSource.getAssessmentsByIds(assessmentIds)
+            if (assessments.isNotEmpty()) {
+                syncService.markMultipleForSync(
+                    entities = assessments,
+                    entityType = EntityType.ASSESSMENT
+                )
+            }
 
             DataResult.Success(assessments)
         }

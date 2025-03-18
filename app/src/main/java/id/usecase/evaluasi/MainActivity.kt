@@ -27,13 +27,16 @@ import id.usecase.assessment.presentation.screens.class_room.create.sections.Sec
 import id.usecase.assessment.presentation.screens.class_room.create.students.AddStudentsScreenRoot
 import id.usecase.assessment.presentation.screens.class_room.detail.ClassRoomScreenRoot
 import id.usecase.assessment.presentation.screens.home.HomeScreenRoot
+import id.usecase.core.data.di.PeriodicSyncScheduler
 import id.usecase.designsystem.EvaluasiTheme
 import id.usecase.evaluasi.authentication.presentation.login.LoginScreenRoot
 import id.usecase.evaluasi.authentication.presentation.register.RegisterScreenRoot
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
     private val viewModel by viewModel<MainViewModel>()
+    private val syncScheduler: PeriodicSyncScheduler by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
@@ -42,6 +45,7 @@ class MainActivity : ComponentActivity() {
         }
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
+        syncScheduler.schedule()
         enableEdgeToEdge()
         setContent {
             val state = viewModel.state.collectAsStateWithLifecycle()
