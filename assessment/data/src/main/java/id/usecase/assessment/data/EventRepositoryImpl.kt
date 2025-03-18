@@ -18,7 +18,7 @@ class EventRepositoryImpl(
     override suspend fun upsertEvent(event: Event): DataResult<Event?> {
         return withContext(dispatcher) {
             val eventId = dataSource.upsertEvent(event)
-            DataResult.Success(dataSource.getEventById(eventId.toInt()))
+            DataResult.Success(dataSource.getEventById(eventId))
         }
     }
 
@@ -29,7 +29,7 @@ class EventRepositoryImpl(
         }
     }
 
-    override fun getEventsByClassRoomId(classRoomId: Int): Flow<DataResult<List<Event>>> {
+    override fun getEventsByClassRoomId(classRoomId: String): Flow<DataResult<List<Event>>> {
         return flow {
             emit(DataResult.Loading)
             val events: List<Event> = dataSource.getEventsByClassRoomId(classRoomId)
@@ -37,7 +37,7 @@ class EventRepositoryImpl(
         }.flowOn(dispatcher)
     }
 
-    override fun getEventsByCategoryId(categoryId: Int): Flow<DataResult<List<Event>>> {
+    override fun getEventsByCategoryId(categoryId: String): Flow<DataResult<List<Event>>> {
         return flow {
             emit(DataResult.Loading)
             val events: List<Event> = dataSource.getEventsByCategoryId(categoryId)
@@ -45,11 +45,12 @@ class EventRepositoryImpl(
         }.flowOn(dispatcher)
     }
 
-    override fun getEventById(eventId: Int): Flow<DataResult<Event?>> {
+    override fun getEventById(eventId: String): Flow<DataResult<Event?>> {
         return flow {
             emit(DataResult.Loading)
-            val event: Event? = dataSource.getEventById(eventId)
-            if (event == null) throw Exception("Event not found")
+            val event: Event = dataSource.getEventById(
+                eventId
+            ) ?: throw Exception("Event not found")
 
             emit(DataResult.Success(event))
         }.flowOn(dispatcher)

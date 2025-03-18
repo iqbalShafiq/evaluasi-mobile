@@ -1,14 +1,11 @@
 package id.usecase.core.data.sync.model
 
 import kotlinx.serialization.Serializable
+import java.util.UUID
 
 @Serializable
 data class EventSectionNetworkModel(
-    val id: Int,
-    val name: String,
-    val purpose: String,
-    val eventDate: Long,
-    val categoryId: Int,
-    val createdTime: Long,
-    val lastModifiedTime: Long
+    val id: String = UUID.randomUUID().toString(),
+    val eventId: String,
+    val sectionId: String,
 )

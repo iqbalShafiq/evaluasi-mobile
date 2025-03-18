@@ -1,12 +1,12 @@
 package id.usecase.assessment.presentation.model
 
 data class AssessmentEventUi(
-    val id: Int,
+    val id: String,
     val name: String,
     val totalAssessment: Int,
-    val categoryId: Int,
+    val categoryId: String,
     val categoryName: String,
-    val classId: Int,
+    val classId: String,
     val eventDate: String,
     val createdTime: String,
     val lastModifiedTime: String,

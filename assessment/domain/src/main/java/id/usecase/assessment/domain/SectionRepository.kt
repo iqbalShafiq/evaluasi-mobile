@@ -5,8 +5,8 @@ import id.usecase.core.domain.assessment.model.section.Section
 import kotlinx.coroutines.flow.Flow
 
 interface SectionRepository {
-    suspend fun upsertSection(sections: List<Section>): DataResult<List<Long>>
-    fun getSectionById(sectionId: Int): Flow<DataResult<Section?>>
-    fun getSectionsByClassRoomId(classRoomId: Int): Flow<DataResult<List<Section>>>
-    fun getSelectedSectionOnAssessment(assessmentId: Int): Flow<DataResult<List<Section>>>
+    suspend fun upsertSection(sections: List<Section>): DataResult<List<String>>
+    fun getSectionById(sectionId: String): Flow<DataResult<Section?>>
+    fun getSectionsByClassRoomId(classRoomId: String): Flow<DataResult<List<Section>>>
+    fun getSelectedSectionOnAssessment(assessmentId: String): Flow<DataResult<List<Section>>>
 }

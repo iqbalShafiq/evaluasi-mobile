@@ -207,7 +207,7 @@ private fun PeriodInfo(
 @Composable
 private fun ClassRoomCardPreview() {
     val classRoom = ClassRoomUi(
-        id = 1,
+        id = "",
         className = "1A",
         subject = "Subject 1",
         lastAssessment = "Lorem ipsum dolor kucing mengionglah meow dolor",

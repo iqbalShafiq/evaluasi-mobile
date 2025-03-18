@@ -26,7 +26,7 @@ fun ClassRoom.toUi(): ClassRoomUi = ClassRoomUi(
     endPeriod = longPeriod?.toString() ?: ""
 )
 
-fun CategoryItemState.toDomainForm(classRoomId: Int) = Category(
+fun CategoryItemState.toDomainForm(classRoomId: String) = Category(
     id = id,
     name = name.text,
     percentage = partPercentage.text.toDouble(),
@@ -41,7 +41,7 @@ fun Category.toItemState() = CategoryItemState(
     partPercentage = TextFieldValue(text = percentage.toString())
 )
 
-fun AddStudentItemState.toDomainForm(classRoomId: Int) = Student(
+fun AddStudentItemState.toDomainForm(classRoomId: String) = Student(
     id = id,
     name = name.text,
     classRoomId = classRoomId,
@@ -52,7 +52,7 @@ fun AddStudentItemState.toDomainForm(classRoomId: Int) = Student(
 
 fun Student.toItemState() = AddStudentItemState(
     id = id,
-    identifier = TextFieldValue(text = id.toString()),
+    identifier = TextFieldValue(text = id),
     name = TextFieldValue(text = name),
     isValid = true
 )
@@ -62,7 +62,7 @@ fun AddStudentItemState.toDomainForm() = AddStudentUi(
     name = name.text
 )
 
-fun Event.toUi(classRoomId: Int, assessedStudent: Int, categoryName: String) = AssessmentEventUi(
+fun Event.toUi(classRoomId: String, assessedStudent: Int, categoryName: String) = AssessmentEventUi(
     id = id,
     name = name,
     totalAssessment = assessedStudent,
@@ -74,7 +74,7 @@ fun Event.toUi(classRoomId: Int, assessedStudent: Int, categoryName: String) = A
     lastModifiedTime = lastModifiedTime.toString()
 )
 
-fun SectionCardState.toDomainForm(classRoomId: Int) = Section(
+fun SectionCardState.toDomainForm(classRoomId: String) = Section(
     id = sectionId,
     name = name.text,
     topics = subSections.map { it.description.text },

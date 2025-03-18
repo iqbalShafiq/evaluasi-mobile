@@ -8,12 +8,12 @@ import id.usecase.core.domain.assessment.model.analytics.StudentProgress
 import kotlinx.coroutines.flow.Flow
 
 interface AnalyticsRepository {
-    fun getPerformanceTrend(classRoomId: Int): Flow<List<Pair<Float, Float>>>
-    fun getCategoryDistribution(classRoomId: Int): Flow<List<Pair<String, Float>>>
-    fun getPerformanceDistribution(classRoomId: Int): Flow<Map<String, Float>>
-    fun getStudentProgress(classRoomId: Int): Flow<List<StudentProgress>>
-    fun getCategoryAnalysis(classRoomId: Int): Flow<List<CategoryAnalysis>>
-    fun getLowPerformanceStudentsByClassRoomId(classRoomId: Int): Flow<List<LowPerformanceAlert>>
-    fun getSectionScoreDistributionByClassRoomId(classRoomId: Int): Flow<List<SectionScore>>
-    fun getSectionUsageByClassRoomId(classRoomId: Int): Flow<List<SectionUsage>>
+    fun getPerformanceTrend(classRoomId: String): Flow<List<Pair<Float, Float>>>
+    fun getCategoryDistribution(classRoomId: String): Flow<List<Pair<String, Float>>>
+    fun getPerformanceDistribution(classRoomId: String): Flow<Map<String, Float>>
+    fun getStudentProgress(classRoomId: String): Flow<List<StudentProgress>>
+    fun getCategoryAnalysis(classRoomId: String): Flow<List<CategoryAnalysis>>
+    fun getLowPerformanceStudentsByClassRoomId(classRoomId: String): Flow<List<LowPerformanceAlert>>
+    fun getSectionScoreDistributionByClassRoomId(classRoomId: String): Flow<List<SectionScore>>
+    fun getSectionUsageByClassRoomId(classRoomId: String): Flow<List<SectionUsage>>
 }

@@ -3,22 +3,29 @@ package id.usecase.core.database.dao
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Upsert
 import id.usecase.core.database.entities.AssessmentEntity
 
 @Dao
 interface AssessmentDao {
+    @Transaction
+    suspend fun upsertAndGetIds(assessments: List<AssessmentEntity>): List<String> {
+        upsert(assessments)
+        return assessments.map { it.id }
+    }
+
     @Upsert
-    suspend fun upsert(assessments: List<AssessmentEntity>): List<Long>
+    suspend fun upsert(assessments: List<AssessmentEntity>)
 
     @Query("SELECT * FROM assessments WHERE id IN (:ids)")
-    suspend fun getAssessmentsByIds(ids: List<Int>): List<AssessmentEntity>
+    suspend fun getAssessmentsByIds(ids: List<String>): List<AssessmentEntity>
 
     @Query("SELECT * FROM assessments WHERE event_id = :eventId")
-    suspend fun getAssessmentsByEventId(eventId: Int): List<AssessmentEntity>
+    suspend fun getAssessmentsByEventId(eventId: String): List<AssessmentEntity>
 
     @Query("SELECT * FROM assessments WHERE id = :id")
-    suspend fun getAssessmentById(id: Int): AssessmentEntity?
+    suspend fun getAssessmentById(id: String): AssessmentEntity?
 
     @Query(
         """
@@ -29,7 +36,7 @@ interface AssessmentDao {
         WHERE categories.class_room_id = :classRoomId
         """
     )
-    suspend fun getAverageScoreByClassRoomId(classRoomId: Int): Double
+    suspend fun getAverageScoreByClassRoomId(classRoomId: String): Double
 
     @Query(
         """
@@ -42,10 +49,10 @@ interface AssessmentDao {
         LIMIT 1
         """
     )
-    suspend fun getLastAssessmentByClassRoomId(classRoomId: Int): String
+    suspend fun getLastAssessmentByClassRoomId(classRoomId: String): String
 
     @Query("SELECT AVG(score) FROM assessments WHERE student_id = :studentId")
-    suspend fun getAverageScoreByStudentId(studentId: Int): Double
+    suspend fun getAverageScoreByStudentId(studentId: String): Double
 
     @Delete
     suspend fun delete(assessment: AssessmentEntity)

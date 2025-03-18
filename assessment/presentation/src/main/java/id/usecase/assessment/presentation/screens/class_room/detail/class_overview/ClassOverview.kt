@@ -239,9 +239,9 @@ private fun ClassOverviewPreview() {
                 totalStudents = 30,
                 assessmentEvents = listOf(
                     AssessmentEventUi(
-                        id = 1,
-                        categoryId = 1,
-                        classId = 1,
+                        id = "1",
+                        categoryId = "1",
+                        classId = "1",
                         name = "Assessment Name",
                         categoryName = "Monthly",
                         createdTime = "2022-07-01 08:00:00",
@@ -252,9 +252,9 @@ private fun ClassOverviewPreview() {
                         completionProgress = 0.5f
                     ),
                     AssessmentEventUi(
-                        id = 2,
-                        categoryId = 1,
-                        classId = 1,
+                        id = "2",
+                        categoryId = "1",
+                        classId = "1",
                         name = "Assessment Name",
                         categoryName = "Mid",
                         createdTime = "2022-07-01 08:00:00",
@@ -265,9 +265,9 @@ private fun ClassOverviewPreview() {
                         completionProgress = 0.5f
                     ),
                     AssessmentEventUi(
-                        id = 3,
-                        categoryId = 1,
-                        classId = 1,
+                        id = "3",
+                        categoryId = "1",
+                        classId = "1",
                         name = "Assessment Name",
                         categoryName = "Final",
                         createdTime = "2022-07-01 08:00:00",

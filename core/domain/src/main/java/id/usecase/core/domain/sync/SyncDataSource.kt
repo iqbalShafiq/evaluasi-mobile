@@ -11,7 +11,7 @@ interface SyncDataSource {
 
     suspend fun getSyncItemsByStatus(status: SyncStatus): List<SyncModel>
 
-    suspend fun getSyncItemForEntity(entityId: Int, entityType: EntityType): SyncModel?
+    suspend fun getSyncItemForEntity(entityId: String, entityType: EntityType): SyncModel?
 
     suspend fun getPendingSyncItems(
         statuses: List<SyncStatus> = listOf(SyncStatus.PENDING, SyncStatus.FAILED),

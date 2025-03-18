@@ -2,7 +2,7 @@ package id.usecase.core.domain.sync
 
 data class SyncModel(
     val id: Int = 0,
-    val entityId: Int,
+    val entityId: String,
     val entityType: EntityType,
     val syncStatus: SyncStatus,
     val priority: Int = 0,

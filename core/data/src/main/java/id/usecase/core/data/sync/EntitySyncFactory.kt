@@ -24,11 +24,12 @@ class EntitySyncFactory {
             EntityType.SECTION -> SectionSyncable(entity as Section)
             EntityType.EVENT -> EventSyncable(entity as Event)
             EntityType.ASSESSMENT -> AssessmentSyncable(entity as Assessment)
+            EntityType.EVENT_SECTION -> TODO()
         }
     }
 
     inner class ClassRoomSyncable(private val entity: ClassRoom) : SyncableEntity {
-        override val id: Int get() = entity.id
+        override val id: String get() = entity.id
         override val lastModifiedTime: Long get() = entity.lastModifiedTime
 
         override fun toNetworkModel(): Any {
@@ -47,7 +48,7 @@ class EntitySyncFactory {
     }
 
     inner class StudentSyncable(private val entity: Student) : SyncableEntity {
-        override val id: Int get() = entity.id
+        override val id: String get() = entity.id
         override val lastModifiedTime: Long get() = entity.lastModifiedTime
 
         override fun toNetworkModel(): Any {
@@ -63,7 +64,7 @@ class EntitySyncFactory {
     }
 
     inner class CategorySyncable(private val entity: Category) : SyncableEntity {
-        override val id: Int get() = entity.id
+        override val id: String get() = entity.id
         override val lastModifiedTime: Long get() = entity.lastModifiedTime
 
         override fun toNetworkModel(): Any {
@@ -79,7 +80,7 @@ class EntitySyncFactory {
     }
 
     inner class SectionSyncable(private val entity: Section) : SyncableEntity {
-        override val id: Int get() = entity.id
+        override val id: String get() = entity.id
         override val lastModifiedTime: Long get() = entity.lastModifiedTime
 
         override fun toNetworkModel(): Any {
@@ -95,7 +96,7 @@ class EntitySyncFactory {
     }
 
     inner class EventSyncable(private val entity: Event) : SyncableEntity {
-        override val id: Int get() = entity.id
+        override val id: String get() = entity.id
         override val lastModifiedTime: Long get() = entity.lastModifiedTime
 
         override fun toNetworkModel(): Any {
@@ -112,7 +113,7 @@ class EntitySyncFactory {
     }
 
     inner class AssessmentSyncable(private val entity: Assessment) : SyncableEntity {
-        override val id: Int get() = entity.id
+        override val id: String get() = entity.id
         override val lastModifiedTime: Long get() = entity.lastModifiedTime
 
         override fun toNetworkModel(): Any {

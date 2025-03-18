@@ -92,7 +92,7 @@ class AssessmentViewModel(
         }
     }
 
-    private suspend fun loadClassSections(classRoomId: Int) {
+    private suspend fun loadClassSections(classRoomId: String) {
         withContext(dispatcher) {
             sectionRepository.getSectionsByClassRoomId(classRoomId)
                 .catch { e ->
@@ -126,7 +126,7 @@ class AssessmentViewModel(
         }
     }
 
-    private suspend fun loadAssessmentCategories(classRoomId: Int) {
+    private suspend fun loadAssessmentCategories(classRoomId: String) {
         withContext(dispatcher) {
             categoryRepository.getCategoriesByClassRoomId(classRoomId)
                 .catch { e ->
@@ -160,7 +160,7 @@ class AssessmentViewModel(
         }
     }
 
-    private suspend fun loadStudentsOfClassRoom(classRoomId: Int) {
+    private suspend fun loadStudentsOfClassRoom(classRoomId: String) {
         withContext(dispatcher) {
             studentRepository.getStudentsByClassRoomId(classRoomId)
                 .catch { e ->
@@ -191,7 +191,7 @@ class AssessmentViewModel(
         }
     }
 
-    private suspend fun loadSelectedSections(eventId: Int) {
+    private suspend fun loadSelectedSections(eventId: String) {
         withContext(dispatcher) {
             sectionRepository.getSelectedSectionOnAssessment(eventId)
                 .catch { e ->
@@ -223,7 +223,7 @@ class AssessmentViewModel(
         }
     }
 
-    private suspend fun loadAssessmentsByEventId(eventId: Int) {
+    private suspend fun loadAssessmentsByEventId(eventId: String) {
         withContext(dispatcher) {
             assessmentRepository.getAssessmentsByEventId(eventId)
                 .catch {
@@ -248,7 +248,7 @@ class AssessmentViewModel(
                                     assessmentList = result.data.ifEmpty {
                                         state.value.studentList.map { student ->
                                             Assessment(
-                                                id = 0,
+                                                id = "",
                                                 studentId = student.id,
                                                 eventId = eventId,
                                                 score = 0.0,
@@ -265,7 +265,7 @@ class AssessmentViewModel(
         }
     }
 
-    private suspend fun getStudentAvgScore(studentId: Int): Double {
+    private suspend fun getStudentAvgScore(studentId: String): Double {
         return assessmentRepository.getAverageScoreByStudentId(studentId)
             .catch { 0.0 }
             .map { result ->
@@ -290,7 +290,7 @@ class AssessmentViewModel(
 
                 StudentAssessmentState(
                     data = StudentScoreUi(
-                        assessmentId = studentAssessment?.id ?: 0,
+                        assessmentId = studentAssessment?.id ?: "",
                         studentId = student.id,
                         studentName = student.name,
                         score = studentAssessment?.score ?: 0.0,
@@ -305,7 +305,7 @@ class AssessmentViewModel(
         }
     }
 
-    private suspend fun loadCategoryById(categoryId: Int): Category? {
+    private suspend fun loadCategoryById(categoryId: String): Category? {
         return withContext(dispatcher) {
             categoryRepository.getCategoryById(categoryId)
                 .catch { null }
@@ -319,16 +319,16 @@ class AssessmentViewModel(
         }
     }
 
-    private suspend fun loadNewAssessment(classRoomId: Int) {
+    private suspend fun loadNewAssessment(classRoomId: String) {
         withContext(dispatcher) {
             loadStudentsOfClassRoom(classRoomId)
             _state.update {
                 it.copy(
                     assessmentList = state.value.studentList.map { student ->
                         Assessment(
-                            id = 0,
+                            id = "",
                             studentId = student.id,
-                            eventId = 0,
+                            eventId = "",
                             score = 0.0,
                             createdTime = System.currentTimeMillis(),
                             lastModifiedTime = System.currentTimeMillis()
@@ -348,7 +348,7 @@ class AssessmentViewModel(
         }
     }
 
-    private suspend fun loadAssessmentDetail(eventId: Int) {
+    private suspend fun loadAssessmentDetail(eventId: String) {
         withContext(dispatcher) {
             eventRepository.getEventById(eventId)
                 .catch {
@@ -379,7 +379,7 @@ class AssessmentViewModel(
                             ).format(eventDate)
 
                             val category = loadCategoryById(
-                                categoryId = result.data?.categoryId ?: -1
+                                categoryId = result.data?.categoryId ?: ""
                             )
 
                             _state.update {
@@ -413,11 +413,11 @@ class AssessmentViewModel(
             _state.update { it.copy(assessmentListField = assessments) }
 
             val event = Event(
-                id = state.value.assessmentEvent?.id ?: 0,
+                id = state.value.assessmentEvent?.id ?: "",
                 name = state.value.assessmentNameField.text,
                 purpose = state.value.purposeField.text,
                 eventDate = state.value.selectedDate,
-                categoryId = state.value.category?.id ?: 0,
+                categoryId = state.value.category?.id ?: "",
                 createdTime = System.currentTimeMillis(),
                 lastModifiedTime = System.currentTimeMillis()
             )
@@ -426,16 +426,18 @@ class AssessmentViewModel(
                 DataResult.Loading -> _state.update { it.copy(isLoading = true) }
                 is DataResult.Success -> {
                     Log.d("TAG", "saveEvent: ${result.data}")
-                    saveEventSections(result.data?.id ?: state.value.assessmentEvent?.id ?: -1)
+                    saveEventSections(
+                        eventId = result.data?.id ?: state.value.assessmentEvent?.id ?: ""
+                    )
                 }
             }
         }
     }
 
-    private fun saveEventSections(eventId: Int) {
+    private fun saveEventSections(eventId: String) {
         viewModelScope.launch(dispatcher) {
             val selectedSectionIds = state.value.selectedSectionNameList.map { sectionName ->
-                state.value.sectionList.find { it.name == sectionName }?.id ?: 0
+                state.value.sectionList.find { it.name == sectionName }?.id ?: ""
             }
 
             val eventSections = selectedSectionIds.map { sectionId ->
@@ -454,13 +456,13 @@ class AssessmentViewModel(
         }
     }
 
-    private suspend fun saveAssessments(eventId: Int) {
+    private suspend fun saveAssessments(eventId: String) {
         withContext(dispatcher) {
             val assessmentList = withContext(Dispatchers.Default) {
                 state.value.assessmentListField.map { assessment ->
                     Assessment(
-                        id = assessment.data?.assessmentId ?: 0,
-                        studentId = assessment.data?.studentId ?: 0,
+                        id = assessment.data?.assessmentId ?: "",
+                        studentId = assessment.data?.studentId ?: "",
                         eventId = eventId,
                         score = assessment.score.text.toDoubleOrNull(),
                         createdTime = System.currentTimeMillis(),

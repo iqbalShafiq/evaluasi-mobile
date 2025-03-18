@@ -75,8 +75,8 @@ import java.util.Locale
 fun AssessmentScreenRoot(
     modifier: Modifier = Modifier,
     viewModel: AssessmentViewModel = koinViewModel(),
-    classRoomId: Int,
-    eventId: Int?,
+    classRoomId: String,
+    eventId: String?,
     onBackPressed: () -> Unit,
     onAssessmentHasSaved: () -> Unit
 ) {
@@ -170,7 +170,7 @@ fun AssessmentScreenRoot(
 @Composable
 fun AssessmentScreen(
     modifier: Modifier = Modifier,
-    eventId: Int?,
+    eventId: String?,
     onBackPressed: () -> Unit,
     state: AssessmentState,
     showStartDatePicker: () -> Unit,
@@ -479,13 +479,13 @@ private fun AssessmentScreenPreview() {
             onAction = {},
             onBackPressed = {},
             showStartDatePicker = {},
-            eventId = 1,
+            eventId = "123",
             state = AssessmentState(
                 assessmentListField = listOf(
                     StudentAssessmentState(
                         data = StudentScoreUi(
-                            assessmentId = 1,
-                            studentId = 1,
+                            assessmentId = "asd",
+                            studentId = "dsad",
                             studentName = "John Doe",
                             comments = "Good job",
                             score = 90.0,
@@ -494,8 +494,8 @@ private fun AssessmentScreenPreview() {
                     ),
                     StudentAssessmentState(
                         data = StudentScoreUi(
-                            assessmentId = 2,
-                            studentId = 2,
+                            assessmentId = "zxc",
+                            studentId = "gfdfg",
                             studentName = "Jane Doe",
                             comments = "Good job",
                             score = 90.0,
@@ -504,8 +504,8 @@ private fun AssessmentScreenPreview() {
                     ),
                     StudentAssessmentState(
                         data = StudentScoreUi(
-                            assessmentId = 3,
-                            studentId = 3,
+                            assessmentId = "cvbcvb",
+                            studentId = "cvbcvb",
                             studentName = "John Smith",
                             comments = "Good job",
                             score = 90.0,

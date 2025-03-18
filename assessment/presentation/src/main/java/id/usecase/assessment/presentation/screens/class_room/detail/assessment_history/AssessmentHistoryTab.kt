@@ -173,9 +173,9 @@ private fun AssessmentHistoryTabPreview() {
             state = ClassRoomState(
                 assessmentEvents = listOf(
                     AssessmentEventUi(
-                        id = 1,
-                        categoryId = 1,
-                        classId = 1,
+                        id = "1",
+                        categoryId = "1",
+                        classId = "1",
                         name = "Assessment Name",
                         categoryName = "Category Name",
                         createdTime = "2022-09-01 08:00:00",
@@ -185,9 +185,9 @@ private fun AssessmentHistoryTabPreview() {
                         isInProgress = false,
                         completionProgress = 0.5f
                     ), AssessmentEventUi(
-                        id = 2,
-                        categoryId = 1,
-                        classId = 1,
+                        id = "2",
+                        categoryId = "1",
+                        classId = "1",
                         name = "Assessment Name",
                         categoryName = "Category Name",
                         createdTime = "2022-08-01 08:00:00",
@@ -197,9 +197,9 @@ private fun AssessmentHistoryTabPreview() {
                         isInProgress = false,
                         completionProgress = 0.5f
                     ), AssessmentEventUi(
-                        id = 3,
-                        categoryId = 1,
-                        classId = 1,
+                        id = "3",
+                        categoryId = "1",
+                        classId = "1",
                         name = "Assessment Name",
                         categoryName = "Category Name",
                         createdTime = "2022-07-01 08:00:00",

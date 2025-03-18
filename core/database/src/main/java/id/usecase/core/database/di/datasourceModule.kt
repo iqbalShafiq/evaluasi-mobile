@@ -1,7 +1,6 @@
 package id.usecase.core.database.di
 
 import androidx.room.Room
-import id.usecase.core.database.MIGRATION_2_3
 import id.usecase.core.database.RoomAppDatabase
 import id.usecase.core.database.RoomLocalAssessmentDataSource
 import id.usecase.core.domain.assessment.LocalAssessmentDataSource
@@ -10,7 +9,6 @@ import org.koin.dsl.module
 val dataSourceModule = module {
     single<RoomAppDatabase> {
         Room.databaseBuilder(get(), RoomAppDatabase::class.java, "evaluasi")
-            .addMigrations(MIGRATION_2_3)
             .build()
     }
     single { get<RoomAppDatabase>().eventDao() }

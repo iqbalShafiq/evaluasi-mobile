@@ -4,10 +4,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SectionNetworkModel(
-    val id: Int,
+    val id: String,
     val name: String,
     val topics: List<String>,
-    val classRoomId: Int,
+    val classRoomId: String,
     val createdTime: Long,
     val lastModifiedTime: Long
 )

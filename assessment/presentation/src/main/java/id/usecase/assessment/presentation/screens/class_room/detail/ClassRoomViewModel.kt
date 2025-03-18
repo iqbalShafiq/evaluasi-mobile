@@ -64,7 +64,7 @@ class ClassRoomViewModel(
         }
     }
 
-    private suspend fun loadClassRoom(classRoomId: Int) {
+    private suspend fun loadClassRoom(classRoomId: String) {
         withContext(dispatcher) {
             classRoomRepository.getClassRoomById(classRoomId)
                 .catch { e ->
@@ -129,8 +129,8 @@ class ClassRoomViewModel(
 
     private suspend fun loadAverageScore() {
         withContext(dispatcher) {
-            val classRoomId = state.value.classRoom?.id ?: 0
-            if (classRoomId == 0) return@withContext
+            val classRoomId = state.value.classRoom?.id ?: ""
+            if (classRoomId == "") return@withContext
 
             assessmentRepository.getAverageScoreByClassRoomId(classRoomId)
                 .catch { e ->
@@ -229,7 +229,7 @@ class ClassRoomViewModel(
         }
     }
 
-    private suspend fun getCategoryNames(classRoomId: Int): List<Pair<Int, String>> {
+    private suspend fun getCategoryNames(classRoomId: String): List<Pair<String, String>> {
         return suspendCoroutine { continuation ->
             viewModelScope.launch(dispatcher) {
                 categoryRepository.getCategoriesByClassRoomId(classRoomId)
@@ -257,7 +257,7 @@ class ClassRoomViewModel(
         }
     }
 
-    private suspend fun getTotalAssessmentFromEvent(eventId: Int): Int {
+    private suspend fun getTotalAssessmentFromEvent(eventId: String): Int {
         return suspendCoroutine { continuation ->
             viewModelScope.launch(dispatcher) {
                 assessmentRepository.getAssessmentsByEventId(eventId)
@@ -283,8 +283,8 @@ class ClassRoomViewModel(
 
     private suspend fun getPerformanceTrend() {
         withContext(dispatcher) {
-            val classRoomId = state.value.classRoom?.id ?: 0
-            if (classRoomId == 0) return@withContext
+            val classRoomId = state.value.classRoom?.id ?: ""
+            if (classRoomId == "") return@withContext
 
             analyticsRepository.getPerformanceTrend(classRoomId)
                 .catch { e ->
@@ -310,8 +310,8 @@ class ClassRoomViewModel(
 
     private suspend fun getCategoryDistribution() {
         withContext(dispatcher) {
-            val classRoomId = state.value.classRoom?.id ?: 0
-            if (classRoomId == 0) return@withContext
+            val classRoomId = state.value.classRoom?.id ?: ""
+            if (classRoomId == "") return@withContext
 
             analyticsRepository.getCategoryDistribution(classRoomId)
                 .catch { e ->
@@ -346,8 +346,8 @@ class ClassRoomViewModel(
 
     private suspend fun getPerformanceDistribution() {
         withContext(dispatcher) {
-            val classRoomId = state.value.classRoom?.id ?: 0
-            if (classRoomId == 0) return@withContext
+            val classRoomId = state.value.classRoom?.id ?: ""
+            if (classRoomId == "") return@withContext
 
             analyticsRepository.getPerformanceDistribution(classRoomId)
                 .catch { e ->
@@ -369,8 +369,8 @@ class ClassRoomViewModel(
 
     private suspend fun getCategoryAnalysis() {
         withContext(dispatcher) {
-            val classRoomId = state.value.classRoom?.id ?: 0
-            if (classRoomId == 0) return@withContext
+            val classRoomId = state.value.classRoom?.id ?: ""
+            if (classRoomId == "") return@withContext
 
             analyticsRepository.getCategoryAnalysis(classRoomId)
                 .catch { e ->
@@ -392,8 +392,8 @@ class ClassRoomViewModel(
 
     private suspend fun getStudentProgress() {
         withContext(dispatcher) {
-            val classRoomId = state.value.classRoom?.id ?: 0
-            if (classRoomId == 0) return@withContext
+            val classRoomId = state.value.classRoom?.id ?: ""
+            if (classRoomId == "") return@withContext
 
             analyticsRepository.getStudentProgress(classRoomId)
                 .catch { e ->
@@ -415,8 +415,8 @@ class ClassRoomViewModel(
 
     private suspend fun getLowPerformanceStudents() {
         withContext(dispatcher) {
-            val classRoomId = state.value.classRoom?.id ?: 0
-            if (classRoomId == 0) return@withContext
+            val classRoomId = state.value.classRoom?.id ?: ""
+            if (classRoomId == "") return@withContext
 
             analyticsRepository.getLowPerformanceStudentsByClassRoomId(classRoomId)
                 .catch { e ->
@@ -438,8 +438,8 @@ class ClassRoomViewModel(
 
     private suspend fun getSectionScores() {
         withContext(dispatcher) {
-            val classRoomId = state.value.classRoom?.id ?: 0
-            if (classRoomId == 0) return@withContext
+            val classRoomId = state.value.classRoom?.id ?: ""
+            if (classRoomId == "") return@withContext
 
             analyticsRepository.getSectionScoreDistributionByClassRoomId(classRoomId)
                 .catch { e ->
@@ -461,8 +461,8 @@ class ClassRoomViewModel(
 
     private suspend fun getSectionUsages() {
         withContext(dispatcher) {
-            val classRoomId = state.value.classRoom?.id ?: 0
-            if (classRoomId == 0) return@withContext
+            val classRoomId = state.value.classRoom?.id ?: ""
+            if (classRoomId == "") return@withContext
 
             analyticsRepository.getSectionUsageByClassRoomId(classRoomId)
                 .catch { e ->

@@ -47,7 +47,7 @@ class AddCategoriesViewModel(
         }
     }
 
-    private fun loadCategories(classRoomId: Int) {
+    private fun loadCategories(classRoomId: String) {
         viewModelScope.launch(dispatcher) {
             repository.getCategoriesByClassRoomId(classRoomId)
                 .catch { e ->
@@ -78,7 +78,7 @@ class AddCategoriesViewModel(
         }
     }
 
-    private fun addCategories(categories: List<CategoryItemState>, classRoomId: Int) {
+    private fun addCategories(categories: List<CategoryItemState>, classRoomId: String) {
         viewModelScope.launch(dispatcher) {
             val categoryList = withContext(Dispatchers.Default) {
                 categories.map {

@@ -23,8 +23,8 @@ class StudentRepositoryImpl(
 
     override suspend fun upsertStudents(students: List<Student>): DataResult<List<Student>> {
         return withContext(dispatcher) {
-            val students = dataSource.upsertStudents(students)
-            return@withContext DataResult.Success(students)
+            val result = dataSource.upsertStudents(students)
+            return@withContext DataResult.Success(result)
         }
     }
 
@@ -36,7 +36,7 @@ class StudentRepositoryImpl(
         }.flowOn(dispatcher)
     }
 
-    override fun getStudentsByClassRoomId(classRoomId: Int): Flow<DataResult<List<Student>>> {
+    override fun getStudentsByClassRoomId(classRoomId: String): Flow<DataResult<List<Student>>> {
         return flow {
             emit(DataResult.Loading)
             val students: List<Student> = dataSource.getStudentsByClassRoomId(classRoomId)

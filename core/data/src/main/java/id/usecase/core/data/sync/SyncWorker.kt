@@ -4,10 +4,16 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import id.usecase.core.data.sync.model.AssessmentNetworkModel
+import id.usecase.core.data.sync.model.CategoryNetworkModel
+import id.usecase.core.data.sync.model.ClassRoomNetworkModel
+import id.usecase.core.data.sync.model.EventNetworkModel
+import id.usecase.core.data.sync.model.EventSectionNetworkModel
+import id.usecase.core.data.sync.model.SectionNetworkModel
+import id.usecase.core.data.sync.model.StudentNetworkModel
 import id.usecase.core.data.utils.NetworkUtils
 import id.usecase.core.domain.assessment.LocalAssessmentDataSource
 import id.usecase.core.domain.sync.EntityType
-import id.usecase.core.domain.sync.SyncStatus
+import id.usecase.core.domain.utils.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
@@ -51,18 +57,33 @@ class SyncWorker(
                 try {
                     // Get the actual entity from database
                     val entity = when (syncItem.entityType) {
-                        EntityType.CLASS_ROOM -> assessmentDataSource.getClassRoomById(syncItem.entityId)
-                        EntityType.STUDENT -> assessmentDataSource.getStudentById(syncItem.entityId)
-                        EntityType.CATEGORY -> assessmentDataSource.getCategoryById(syncItem.entityId)
-                        EntityType.SECTION -> assessmentDataSource.getSectionById(syncItem.entityId)
-                        EntityType.EVENT -> assessmentDataSource.getEventById(syncItem.entityId)
-                        EntityType.EVENT_SECTION -> {
-                            // Decompose the composite key
-                            val eventId = syncItem.entityId / 31
-                            val sectionId = syncItem.entityId % 31
-                            assessmentDataSource.getEventSectionCrossRef(eventId, sectionId)
-                        }
-                        EntityType.ASSESSMENT -> assessmentDataSource.getAssessmentById(syncItem.entityId)
+                        EntityType.CLASS_ROOM -> assessmentDataSource.getClassRoomById(
+                            classRoomId = syncItem.entityId
+                        )
+
+                        EntityType.STUDENT -> assessmentDataSource.getStudentById(
+                            studentId = syncItem.entityId
+                        )
+
+                        EntityType.CATEGORY -> assessmentDataSource.getCategoryById(
+                            categoryId = syncItem.entityId
+                        )
+
+                        EntityType.SECTION -> assessmentDataSource.getSectionById(
+                            sectionId = syncItem.entityId
+                        )
+
+                        EntityType.EVENT -> assessmentDataSource.getEventById(
+                            eventId = syncItem.entityId
+                        )
+
+                        EntityType.EVENT_SECTION -> assessmentDataSource.getEventSectionCrossRef(
+                            eventSectionId = syncItem.entityId
+                        )
+
+                        EntityType.ASSESSMENT -> assessmentDataSource.getAssessmentById(
+                            assessmentId = syncItem.entityId
+                        )
                     }
 
                     if (entity == null) {
@@ -73,27 +94,29 @@ class SyncWorker(
                     }
 
                     // Convert entity to network model
-                    val syncableEntity = entityFactory.createSyncableEntity(syncItem.entityType, entity)
+                    val syncableEntity =
+                        entityFactory.createSyncableEntity(syncItem.entityType, entity)
                     val networkModel = syncableEntity.toNetworkModel()
 
                     // Sync to server using Ktor
                     val result = when (syncItem.entityType) {
-                        EntityType.CLASS_ROOM -> apiService.syncClassRoom(networkModel)
-                        EntityType.STUDENT -> apiService.syncStudent(networkModel)
-                        EntityType.CATEGORY -> apiService.syncCategory(networkModel)
-                        EntityType.SECTION -> apiService.syncSection(networkModel)
-                        EntityType.EVENT -> apiService.syncEvent(networkModel)
-                        EntityType.EVENT_SECTION -> apiService.syncEventSection(networkModel)
+                        EntityType.CLASS_ROOM -> apiService.syncClassRoom(networkModel as ClassRoomNetworkModel)
+                        EntityType.STUDENT -> apiService.syncStudent(networkModel as StudentNetworkModel)
+                        EntityType.CATEGORY -> apiService.syncCategory(networkModel as CategoryNetworkModel)
+                        EntityType.SECTION -> apiService.syncSection(networkModel as SectionNetworkModel)
+                        EntityType.EVENT -> apiService.syncEvent(networkModel as EventNetworkModel)
+                        EntityType.EVENT_SECTION -> apiService.syncEventSection(networkModel as EventSectionNetworkModel)
                         EntityType.ASSESSMENT -> apiService.syncAssessment(networkModel as AssessmentNetworkModel)
                     }
 
                     // Update sync result
                     when (result) {
-                        is Result.Success -> {
+                        is id.usecase.core.domain.utils.Result.Success -> {
                             syncRepository.updateSyncResult(syncItem.id, true)
                             successCount++
                         }
-                        is Result.Error -> {
+
+                        is id.usecase.core.domain.utils.Result.Error -> {
                             val errorMsg = result.error.message
                             syncRepository.updateSyncResult(syncItem.id, false, errorMsg)
                             failCount++
@@ -101,7 +124,6 @@ class SyncWorker(
                     }
 
                 } catch (e: Exception) {
-                    Timber.e(e, "Error syncing item ${syncItem.id}")
                     syncRepository.updateSyncResult(syncItem.id, false, e.message)
                     failCount++
                 }
@@ -112,7 +134,7 @@ class SyncWorker(
 
             // Show completion notification
             if (failCount > 0) {
-                notificationService.showSyncCompletionNotification(successCount, failCount)
+                notificationService.showSyncNotification(false, successCount)
             } else {
                 notificationService.cancelSyncNotification()
             }
@@ -122,11 +144,10 @@ class SyncWorker(
                 syncRepository.scheduleImmediateSync()
             }
 
-            androidx.work.ListenableWorker.Result.success()
+            Result.success()
         } catch (e: Exception) {
-            Timber.e(e, "Sync worker failed")
-            notificationService.showSyncFailureNotification(e.message ?: "Unknown error")
-            androidx.work.ListenableWorker.Result.failure()
+            notificationService.showSyncNotification(false, 0)
+            Result.failure()
         }
     }
 }

@@ -1,10 +1,10 @@
 package id.usecase.core.domain.assessment.model.assessment.category
 
 data class Category(
-    val id: Int,
+    val id: String,
     val name: String,
     val percentage: Double,
-    val classRoomId: Int,
+    val classRoomId: String,
     val createdTime: Long,
     val lastModifiedTime: Long
 )

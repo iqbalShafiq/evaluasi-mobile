@@ -25,7 +25,7 @@ interface SyncDao {
     suspend fun getSyncItemsByStatus(status: SyncStatus): List<SyncEntity>
 
     @Query("SELECT * FROM sync_items WHERE entityId = :entityId AND entityType = :entityType")
-    suspend fun getSyncItemForEntity(entityId: Int, entityType: EntityType): SyncEntity?
+    suspend fun getSyncItemForEntity(entityId: String, entityType: EntityType): SyncEntity?
 
     @Query("SELECT * FROM sync_items WHERE syncStatus IN (:statuses) ORDER BY priority DESC, attemptCount ASC, createdTime ASC LIMIT :limit")
     suspend fun getPendingSyncItems(

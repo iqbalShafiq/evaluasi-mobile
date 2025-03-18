@@ -3,20 +3,35 @@ package id.usecase.core.database.dao
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Upsert
 import id.usecase.core.database.entities.EventEntity
 import id.usecase.core.database.entities.EventSectionCrossRef
 
 @Dao
 interface EventDao {
-    @Upsert
-    suspend fun upsert(event: EventEntity): Long
+    @Transaction
+    suspend fun upsertAndGetId(event: EventEntity): String {
+        upsert(event)
+        return event.id
+    }
+
+    @Transaction
+    suspend fun upsertEventSectionsAndGetIds(
+        crossRef: List<EventSectionCrossRef>
+    ): List<String> {
+        upsertEventSection(crossRef)
+        return crossRef.map { it.eventSectionId }
+    }
 
     @Upsert
-    suspend fun upsertEventSection(crossRef: List<EventSectionCrossRef>): List<Long>
+    suspend fun upsert(event: EventEntity)
+
+    @Upsert
+    suspend fun upsertEventSection(crossRef: List<EventSectionCrossRef>)
 
     @Query("SELECT * FROM events WHERE id = :id")
-    suspend fun getEventById(id: Int): EventEntity?
+    suspend fun getEventById(id: String): EventEntity?
 
     @Query(
         """
@@ -26,20 +41,18 @@ interface EventDao {
         ORDER BY events.last_modified_time DESC
         """
     )
-    suspend fun getEventsByClassRoomId(classRoomId: Int): List<EventEntity>
+    suspend fun getEventsByClassRoomId(classRoomId: String): List<EventEntity>
 
     @Query(
         """
-        SELECT events.* FROM events
-        INNER JOIN event_section_cross_ref ON events.id = event_section_cross_ref.eventId
-        WHERE event_section_cross_ref.sectionId = :sectionId
-        ORDER BY events.last_modified_time DESC
+        SELECT * FROM event_section_cross_ref
+        WHERE event_section_cross_ref.eventSectionId = :eventSectionId
         """
     )
-    suspend fun getEventSectionCrossRef(eventId: Int, sectionId: Int): EventSectionCrossRef?
+    suspend fun getEventSectionCrossRef(eventSectionId: String): EventSectionCrossRef?
 
     @Query("SELECT * FROM events WHERE category_id = :categoryId")
-    suspend fun getEventsByCategoryId(categoryId: Int): List<EventEntity>
+    suspend fun getEventsByCategoryId(categoryId: String): List<EventEntity>
 
     @Delete
     suspend fun delete(event: EventEntity)

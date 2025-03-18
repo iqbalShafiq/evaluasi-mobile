@@ -4,10 +4,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class StudentNetworkModel(
-    val id: Int,
+    val id: String,
     val name: String,
     val identifier: Int,
-    val classRoomId: Int,
+    val classRoomId: String,
     val createdTime: Long,
     val lastModifiedTime: Long
 )

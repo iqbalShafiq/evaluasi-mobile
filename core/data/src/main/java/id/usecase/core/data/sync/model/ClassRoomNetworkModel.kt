@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ClassRoomNetworkModel(
-    val id: Int,
+    val id: String,
     val name: String,
     val subject: String,
     val description: String,

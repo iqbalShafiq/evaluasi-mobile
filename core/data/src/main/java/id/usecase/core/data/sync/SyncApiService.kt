@@ -6,6 +6,7 @@ import id.usecase.core.data.sync.model.AssessmentNetworkModel
 import id.usecase.core.data.sync.model.CategoryNetworkModel
 import id.usecase.core.data.sync.model.ClassRoomNetworkModel
 import id.usecase.core.data.sync.model.EventNetworkModel
+import id.usecase.core.data.sync.model.EventSectionNetworkModel
 import id.usecase.core.data.sync.model.SectionNetworkModel
 import id.usecase.core.data.sync.model.StudentNetworkModel
 import id.usecase.core.domain.utils.DataError
@@ -15,8 +16,8 @@ import io.ktor.client.HttpClient
 class SyncApiService(
     private val httpClient: HttpClient
 ) {
-    suspend fun syncAssessment(request: AssessmentNetworkModel): Result<NetworkResponse<Boolean>, DataError.Network> {
-        return httpClient.post<AssessmentNetworkModel, NetworkResponse<Boolean>>(
+    suspend fun syncAssessment(request: AssessmentNetworkModel): Result<NetworkResponse<Nothing>, DataError.Network> {
+        return httpClient.post<AssessmentNetworkModel, NetworkResponse<Nothing>>(
             route = "sync/assessment",
             body = AssessmentNetworkModel(
                 id = request.id,
@@ -103,5 +104,14 @@ class SyncApiService(
         )
     }
 
-    suspend fun syncEventSection
+    suspend fun syncEventSection(request: EventSectionNetworkModel): Result<NetworkResponse<Boolean>, DataError.Network> {
+        return httpClient.post<EventSectionNetworkModel, NetworkResponse<Boolean>>(
+            route = "sync/event",
+            body = EventSectionNetworkModel(
+                id = request.id,
+                eventId = request.eventId,
+                sectionId = request.sectionId,
+            )
+        )
+    }
 }

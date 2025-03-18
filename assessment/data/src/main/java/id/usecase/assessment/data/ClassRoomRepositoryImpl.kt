@@ -37,11 +37,11 @@ class ClassRoomRepositoryImpl(
         }.flowOn(dispatcher)
     }
 
-    override fun getClassRoomById(classRoomId: Int): Flow<DataResult<ClassRoom?>> {
+    override fun getClassRoomById(classRoomId: String): Flow<DataResult<ClassRoom?>> {
         return flow {
             emit(DataResult.Loading)
-            val classRoom: ClassRoom? = dataSource.getClassRoomById(classRoomId)
-            if (classRoom == null) throw Exception("Class room not found")
+            val classRoom: ClassRoom = dataSource.getClassRoomById(classRoomId)
+                ?: throw Exception("Class room not found")
 
             emit(DataResult.Success(classRoom))
         }.flowOn(dispatcher)

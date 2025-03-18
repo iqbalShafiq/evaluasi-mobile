@@ -59,7 +59,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun SectionEditorScreenRoot(
     modifier: Modifier = Modifier,
-    classRoomId: Int,
+    classRoomId: String,
     isUpdating: Boolean,
     viewModel: SectionEditorViewModel = koinViewModel(),
     onBackPressed: () -> Unit,
@@ -116,7 +116,7 @@ fun SectionEditorScreenRoot(
 @Composable
 private fun SectionEditorScreen(
     modifier: Modifier = Modifier,
-    classRoomId: Int,
+    classRoomId: String,
     isUpdating: Boolean,
     state: SectionEditorState,
     onAction: (SectionEditorAction) -> Unit,
@@ -287,7 +287,7 @@ private fun SectionEditorScreenPreview() {
     EvaluasiTheme {
         SectionEditorScreen(
             modifier = Modifier,
-            classRoomId = 1,
+            classRoomId = "1",
             isUpdating = false,
             state = state,
             onAction = {},

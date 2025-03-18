@@ -28,7 +28,7 @@ interface AnalyticsDao {
         ORDER BY month
     """
     )
-    suspend fun getPerformanceTrendByClassRoom(classRoomId: Int): List<MonthlyScore>
+    suspend fun getPerformanceTrendByClassRoom(classRoomId: String): List<MonthlyScore>
 
     // For Category Distribution
     @Query(
@@ -44,7 +44,7 @@ interface AnalyticsDao {
         ORDER BY c.percentage ASC
     """
     )
-    suspend fun getCategoryDistributionByClassRoom(classRoomId: Int): List<CategoryScore>
+    suspend fun getCategoryDistributionByClassRoom(classRoomId: String): List<CategoryScore>
 
     // For Performance Distribution
     @Query(
@@ -67,7 +67,7 @@ interface AnalyticsDao {
         GROUP BY performance_level
     """
     )
-    suspend fun getPerformanceDistributionByClassRoom(classRoomId: Int): List<PerformanceScore>
+    suspend fun getPerformanceDistributionByClassRoom(classRoomId: String): List<PerformanceScore>
 
     // For Student Progress
     @Query(
@@ -86,7 +86,7 @@ interface AnalyticsDao {
         GROUP BY s.id, s.name
     """
     )
-    suspend fun getStudentProgressByClassRoom(classRoomId: Int): List<StudentProgress>
+    suspend fun getStudentProgressByClassRoom(classRoomId: String): List<StudentProgress>
 
     // For Category Analysis
     @Query(
@@ -102,7 +102,7 @@ interface AnalyticsDao {
         ORDER BY c.percentage ASC
     """
     )
-    suspend fun getCategoryAnalysisByClassRoom(classRoomId: Int): List<CategoryAnalysis>
+    suspend fun getCategoryAnalysisByClassRoom(classRoomId: String): List<CategoryAnalysis>
 
     // For Low Performance Students
     @Query(
@@ -123,7 +123,7 @@ interface AnalyticsDao {
         HAVING average_score < 50
     """
     )
-    suspend fun getLowPerformanceStudentsByClassRoomId(classRoomId: Int): List<LowPerformanceAlert>
+    suspend fun getLowPerformanceStudentsByClassRoomId(classRoomId: String): List<LowPerformanceAlert>
 
     // Section score distribution by class room
     @Query(
@@ -138,7 +138,7 @@ interface AnalyticsDao {
         GROUP BY s.id, s.name
     """
     )
-    suspend fun getSectionScoreDistributionByClassRoomId(classRoomId: Int): List<SectionScore>
+    suspend fun getSectionScoreDistributionByClassRoomId(classRoomId: String): List<SectionScore>
 
     // Section usage by class room
     @Query(
@@ -153,5 +153,5 @@ interface AnalyticsDao {
     GROUP BY s.id, s.name
     """
     )
-    suspend fun getSectionUsageByClassRoomId(classRoomId: Int): List<SectionUsage>
+    suspend fun getSectionUsageByClassRoomId(classRoomId: String): List<SectionUsage>
 }

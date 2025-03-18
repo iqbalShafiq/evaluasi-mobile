@@ -40,8 +40,8 @@ class RoomLocalAssessmentDataSource(
 ) : LocalAssessmentDataSource {
     override suspend fun upsertClassRoom(classRoom: ClassRoom): ClassRoom? {
         return withContext(dispatcher) {
-            val id = classRoomDao.upsert(classRoom.toEntity())
-            return@withContext classRoomDao.getClassRoomById(id.toInt())?.toDomainForm()
+            val id = classRoomDao.upsertAndGetId(classRoom.toEntity())
+            return@withContext classRoomDao.getClassRoomById(id)?.toDomainForm()
         }
     }
 
@@ -61,7 +61,7 @@ class RoomLocalAssessmentDataSource(
         }
     }
 
-    override suspend fun getClassRoomById(classRoomId: Int): ClassRoom? {
+    override suspend fun getClassRoomById(classRoomId: String): ClassRoom? {
         return withContext(dispatcher) {
             classRoomDao
                 .getClassRoomById(classRoomId)
@@ -77,9 +77,9 @@ class RoomLocalAssessmentDataSource(
 
     override suspend fun upsertStudent(students: Student): Student? {
         return withContext(dispatcher) {
-            val id = studentDao.upsert(students.toEntity())
+            val id = studentDao.upsertAndGetId(students.toEntity())
             studentDao
-                .getStudentById(id.toInt())
+                .getStudentById(id)
                 ?.toDomainForm()
         }
     }
@@ -90,17 +90,17 @@ class RoomLocalAssessmentDataSource(
                 it.toEntity()
             }
 
-            val ids = studentDao.upsert(
+            val ids = studentDao.upsertAndGetId(
                 studentList = studentEntities
             )
 
             studentDao
-                .getStudentsByClassRoomId(ids.first().toInt())
+                .getStudentsByClassRoomId(ids.first())
                 .map { it.toDomainForm() }
         }
     }
 
-    override suspend fun getStudentById(studentId: Int): Student? {
+    override suspend fun getStudentById(studentId: String): Student? {
         return withContext(dispatcher) {
             studentDao
                 .getStudentById(studentId)
@@ -114,7 +114,7 @@ class RoomLocalAssessmentDataSource(
         }
     }
 
-    override suspend fun getStudentsByClassRoomId(classRoomId: Int): List<Student> {
+    override suspend fun getStudentsByClassRoomId(classRoomId: String): List<Student> {
         return withContext(dispatcher) {
             studentDao
                 .getStudentsByClassRoomId(classRoomId)
@@ -128,25 +128,25 @@ class RoomLocalAssessmentDataSource(
         }
     }
 
-    override suspend fun upsertCategories(categories: List<Category>): List<Long> {
+    override suspend fun upsertCategories(categories: List<Category>): List<String> {
         return withContext(dispatcher) {
             val categoryEntities = categories.map {
                 it.toEntity()
             }
 
-            categoryDao.upsert(
+            categoryDao.upsertAndGetId(
                 categories = categoryEntities
             )
         }
     }
 
-    override suspend fun upsertCategory(category: Category): Long {
+    override suspend fun upsertCategory(category: Category): String {
         return withContext(dispatcher) {
-            categoryDao.upsert(category.toEntity())
+            categoryDao.upsertAndGetId(category.toEntity())
         }
     }
 
-    override suspend fun getCategoriesByClassRoomId(classRoomId: Int): List<Category> {
+    override suspend fun getCategoriesByClassRoomId(classRoomId: String): List<Category> {
         return withContext(dispatcher) {
             categoryDao
                 .getCategoriesByClassRoomId(classRoomId)
@@ -154,7 +154,7 @@ class RoomLocalAssessmentDataSource(
         }
     }
 
-    override suspend fun getCategoryById(categoryId: Int): Category? {
+    override suspend fun getCategoryById(categoryId: String): Category? {
         return withContext(dispatcher) {
             categoryDao
                 .getCategoryById(categoryId)
@@ -162,7 +162,7 @@ class RoomLocalAssessmentDataSource(
         }
     }
 
-    override suspend fun getCategoriesByIds(categoryIds: List<Int>): List<Category> {
+    override suspend fun getCategoriesByIds(categoryIds: List<String>): List<Category> {
         return withContext(dispatcher) {
             categoryDao
                 .getCategoriesByIds(categoryIds)
@@ -176,13 +176,13 @@ class RoomLocalAssessmentDataSource(
         }
     }
 
-    override suspend fun upsertEvent(event: Event): Long {
+    override suspend fun upsertEvent(event: Event): String {
         return withContext(dispatcher) {
-            eventDao.upsert(event.toEntity())
+            eventDao.upsertAndGetId(event.toEntity())
         }
     }
 
-    override suspend fun upsertEventSection(eventSections: List<EventSection>): List<Long> {
+    override suspend fun upsertEventSection(eventSections: List<EventSection>): List<String> {
         return withContext(dispatcher) {
             val crossRef = withContext(Dispatchers.Default) {
                 eventSections.map {
@@ -196,15 +196,15 @@ class RoomLocalAssessmentDataSource(
             val unselectedSections = withContext(Dispatchers.Default) {
                 sectionDao.getSelectedSectionOnAssessment(eventSections.first().eventId)
                     .filter { section -> eventSections.none { it.sectionId == section.id } }
-                    .map { EventSectionCrossRef(eventSections.first().eventId, it.id) }
+                    .map { EventSectionCrossRef(eventId = eventSections.first().eventId, sectionId = it.id) }
             }
 
             eventDao.deleteEventSection(unselectedSections)
-            eventDao.upsertEventSection(crossRef)
+            eventDao.upsertEventSectionsAndGetIds(crossRef)
         }
     }
 
-    override suspend fun getEventsByClassRoomId(classRoomId: Int): List<Event> {
+    override suspend fun getEventsByClassRoomId(classRoomId: String): List<Event> {
         return withContext(dispatcher) {
             eventDao
                 .getEventsByClassRoomId(classRoomId)
@@ -212,7 +212,7 @@ class RoomLocalAssessmentDataSource(
         }
     }
 
-    override suspend fun getEventsByCategoryId(categoryId: Int): List<Event> {
+    override suspend fun getEventsByCategoryId(categoryId: String): List<Event> {
         return withContext(dispatcher) {
             eventDao
                 .getEventsByCategoryId(categoryId)
@@ -220,7 +220,7 @@ class RoomLocalAssessmentDataSource(
         }
     }
 
-    override suspend fun getEventById(eventId: Int): Event? {
+    override suspend fun getEventById(eventId: String): Event? {
         return withContext(dispatcher) {
             eventDao
                 .getEventById(eventId)
@@ -234,15 +234,22 @@ class RoomLocalAssessmentDataSource(
         }
     }
 
-    override suspend fun getEventSectionCrossRef(eventId: Int, sectionId: Int): EventSection? {
+    override suspend fun getEventSectionCrossRef(
+        eventSectionId: String,
+    ): EventSection? {
         return withContext(dispatcher) {
-            eventDao
-                .getEventSectionCrossRef(eventId, sectionId)
-                ?.toDomainForm()
+            val result = eventDao.getEventSectionCrossRef(
+                eventSectionId = eventSectionId
+            ) ?: return@withContext null
+
+            EventSection(
+                eventId = result.eventId,
+                sectionId = result.sectionId
+            )
         }
     }
 
-    override suspend fun upsertAssessments(assessmentList: List<Assessment>): List<Long> {
+    override suspend fun upsertAssessments(assessmentList: List<Assessment>): List<String> {
         return withContext(dispatcher) {
             val mappedAssessmentList = withContext(Dispatchers.Default) {
                 assessmentList.map {
@@ -250,11 +257,11 @@ class RoomLocalAssessmentDataSource(
                 }
             }
 
-            assessmentDao.upsert(mappedAssessmentList)
+            assessmentDao.upsertAndGetIds(mappedAssessmentList)
         }
     }
 
-    override suspend fun getAssessmentsByIds(assessmentIds: List<Int>): List<Assessment> {
+    override suspend fun getAssessmentsByIds(assessmentIds: List<String>): List<Assessment> {
         return withContext(dispatcher) {
             assessmentDao
                 .getAssessmentsByIds(assessmentIds)
@@ -262,7 +269,7 @@ class RoomLocalAssessmentDataSource(
         }
     }
 
-    override suspend fun getAssessmentsByEventId(eventId: Int): List<Assessment> {
+    override suspend fun getAssessmentsByEventId(eventId: String): List<Assessment> {
         return withContext(dispatcher) {
             assessmentDao
                 .getAssessmentsByEventId(eventId)
@@ -270,7 +277,7 @@ class RoomLocalAssessmentDataSource(
         }
     }
 
-    override suspend fun getAssessmentById(assessmentId: Int): Assessment? {
+    override suspend fun getAssessmentById(assessmentId: String): Assessment? {
         return withContext(dispatcher) {
             assessmentDao
                 .getAssessmentById(assessmentId)
@@ -278,19 +285,19 @@ class RoomLocalAssessmentDataSource(
         }
     }
 
-    override suspend fun getAverageScoreByClassRoomId(classRoomId: Int): Double {
+    override suspend fun getAverageScoreByClassRoomId(classRoomId: String): Double {
         return withContext(dispatcher) {
             assessmentDao.getAverageScoreByClassRoomId(classRoomId)
         }
     }
 
-    override suspend fun getLastAssessmentByClassRoomId(classRoomId: Int): String {
+    override suspend fun getLastAssessmentByClassRoomId(classRoomId: String): String {
         return withContext(dispatcher) {
             assessmentDao.getLastAssessmentByClassRoomId(classRoomId)
         }
     }
 
-    override suspend fun getAverageScoreByStudentId(studentId: Int): Double {
+    override suspend fun getAverageScoreByStudentId(studentId: String): Double {
         return withContext(dispatcher) {
             assessmentDao.getAverageScoreByStudentId(studentId)
         }
@@ -302,73 +309,73 @@ class RoomLocalAssessmentDataSource(
         }
     }
 
-    override suspend fun getPerformanceTrendByClassRoom(classRoomId: Int): List<MonthlyScore> {
+    override suspend fun getPerformanceTrendByClassRoom(classRoomId: String): List<MonthlyScore> {
         return withContext(dispatcher) {
             val result = analyticsDao.getPerformanceTrendByClassRoom(classRoomId)
             result.map { it.toDomainForm() }
         }
     }
 
-    override suspend fun getCategoryDistributionByClassRoom(classRoomId: Int): List<CategoryScore> {
+    override suspend fun getCategoryDistributionByClassRoom(classRoomId: String): List<CategoryScore> {
         return withContext(dispatcher) {
             val result = analyticsDao.getCategoryDistributionByClassRoom(classRoomId)
             result.map { it.toDomainForm() }
         }
     }
 
-    override suspend fun getPerformanceDistributionByClassRoom(classRoomId: Int): List<PerformanceScore> {
+    override suspend fun getPerformanceDistributionByClassRoom(classRoomId: String): List<PerformanceScore> {
         return withContext(dispatcher) {
             val result = analyticsDao.getPerformanceDistributionByClassRoom(classRoomId)
             result.map { it.toDomainForm() }
         }
     }
 
-    override suspend fun getStudentProgressByClassRoom(classRoomId: Int): List<StudentProgress> {
+    override suspend fun getStudentProgressByClassRoom(classRoomId: String): List<StudentProgress> {
         return withContext(dispatcher) {
             val result = analyticsDao.getStudentProgressByClassRoom(classRoomId)
             result.map { it.toDomainForm() }
         }
     }
 
-    override suspend fun getCategoryAnalysisByClassRoom(classRoomId: Int): List<CategoryAnalysis> {
+    override suspend fun getCategoryAnalysisByClassRoom(classRoomId: String): List<CategoryAnalysis> {
         return withContext(dispatcher) {
             val result = analyticsDao.getCategoryAnalysisByClassRoom(classRoomId)
             result.map { it.toDomainForm() }
         }
     }
 
-    override suspend fun getLowPerformanceStudentsByClassRoomId(classRoomId: Int): List<LowPerformanceAlert> {
+    override suspend fun getLowPerformanceStudentsByClassRoomId(classRoomId: String): List<LowPerformanceAlert> {
         return withContext(dispatcher) {
             val result = analyticsDao.getLowPerformanceStudentsByClassRoomId(classRoomId)
             result.map { it.toDomainForm() }
         }
     }
 
-    override suspend fun getSectionUsageByClassRoomId(classRoomId: Int): List<SectionUsage> {
+    override suspend fun getSectionUsageByClassRoomId(classRoomId: String): List<SectionUsage> {
         return withContext(dispatcher) {
             val result = analyticsDao.getSectionUsageByClassRoomId(classRoomId)
             result.map { it.toDomainForm() }
         }
     }
 
-    override suspend fun getSectionScoreDistributionByClassRoomId(classRoomId: Int): List<SectionScore> {
+    override suspend fun getSectionScoreDistributionByClassRoomId(classRoomId: String): List<SectionScore> {
         return withContext(dispatcher) {
             val result = analyticsDao.getSectionScoreDistributionByClassRoomId(classRoomId)
             result.map { it.toDomainForm() }
         }
     }
 
-    override suspend fun upsertSection(section: List<Section>): List<Long> {
+    override suspend fun upsertSection(section: List<Section>): List<String> {
         return withContext(dispatcher) {
             val sectionEntities = section.map {
                 it.toEntity()
             }
 
-            sectionDao.upsert(sectionEntities)
+            sectionDao.upsertAndGetId(sectionEntities)
         }
     }
 
-    override suspend fun getSectionById(sectionId: Int): Section? {
+    override suspend fun getSectionById(sectionId: String): Section? {
         return withContext(dispatcher) {
             sectionDao
                 .getSectionById(sectionId)
@@ -376,7 +383,7 @@ class RoomLocalAssessmentDataSource(
         }
     }
 
-    override suspend fun getSectionsByClassRoomId(classRoomId: Int): List<Section> {
+    override suspend fun getSectionsByClassRoomId(classRoomId: String): List<Section> {
         return withContext(dispatcher) {
             sectionDao
                 .getSectionsByClassRoomId(classRoomId)
@@ -384,7 +391,7 @@ class RoomLocalAssessmentDataSource(
         }
     }
 
-    override suspend fun getSelectedSectionOnAssessment(assessmentId: Int): List<Section> {
+    override suspend fun getSelectedSectionOnAssessment(assessmentId: String): List<Section> {
         return withContext(dispatcher) {
             sectionDao
                 .getSelectedSectionOnAssessment(assessmentId)

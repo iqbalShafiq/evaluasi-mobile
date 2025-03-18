@@ -25,7 +25,7 @@ class RoomSyncDataSource(private val syncDao: SyncDao) : SyncDataSource {
     }
 
     override suspend fun getSyncItemForEntity(
-        entityId: Int,
+        entityId: String,
         entityType: EntityType
     ): SyncModel? {
         return syncDao.getSyncItemForEntity(entityId, entityType)?.toModel()

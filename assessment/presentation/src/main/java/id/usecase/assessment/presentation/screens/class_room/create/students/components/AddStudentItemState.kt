@@ -3,7 +3,7 @@ package id.usecase.assessment.presentation.screens.class_room.create.students.co
 import androidx.compose.ui.text.input.TextFieldValue
 
 data class AddStudentItemState(
-    val id: Int = 0,
+    val id: String = "",
     val identifier: TextFieldValue = TextFieldValue(),
     val name: TextFieldValue = TextFieldValue(),
     val isValid: Boolean = false

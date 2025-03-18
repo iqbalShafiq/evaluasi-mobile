@@ -65,7 +65,7 @@ import java.util.Locale
 @Composable
 fun CreateClassRoomScreenRoot(
     modifier: Modifier = Modifier,
-    classRoomId: Int? = null,
+    classRoomId: String? = null,
     onBackPressed: () -> Unit,
     onClassHasCreated: (classRoom: ClassRoomUi) -> Unit,
     onClassRoomHasUpdated: () -> Unit,

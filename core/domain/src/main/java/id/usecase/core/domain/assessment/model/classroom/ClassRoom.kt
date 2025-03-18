@@ -1,7 +1,7 @@
 package id.usecase.core.domain.assessment.model.classroom
 
 data class ClassRoom(
-    val id: Int,
+    val id: String,
     val name: String,
     val subject: String,
     val description: String,

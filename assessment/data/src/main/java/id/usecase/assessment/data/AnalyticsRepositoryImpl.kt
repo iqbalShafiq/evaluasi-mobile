@@ -16,7 +16,7 @@ class AnalyticsRepositoryImpl(
     private val dataSource: LocalAssessmentDataSource,
     private val dispatcher: CoroutineDispatcher
 ) : AnalyticsRepository {
-    override fun getPerformanceTrend(classRoomId: Int): Flow<List<Pair<Float, Float>>> {
+    override fun getPerformanceTrend(classRoomId: String): Flow<List<Pair<Float, Float>>> {
         return flow {
             val result = dataSource.getPerformanceTrendByClassRoom(classRoomId)
                 .map { Pair(it.month, it.averageScore) }
@@ -24,7 +24,7 @@ class AnalyticsRepositoryImpl(
         }.flowOn(dispatcher)
     }
 
-    override fun getCategoryDistribution(classRoomId: Int): Flow<List<Pair<String, Float>>> {
+    override fun getCategoryDistribution(classRoomId: String): Flow<List<Pair<String, Float>>> {
         return flow {
             val result = dataSource.getCategoryDistributionByClassRoom(classRoomId)
                 .map { Pair(it.categoryName, it.totalAssessments) }
@@ -32,7 +32,7 @@ class AnalyticsRepositoryImpl(
         }.flowOn(dispatcher)
     }
 
-    override fun getPerformanceDistribution(classRoomId: Int): Flow<Map<String, Float>> {
+    override fun getPerformanceDistribution(classRoomId: String): Flow<Map<String, Float>> {
         return flow {
             val result = dataSource.getPerformanceDistributionByClassRoom(classRoomId)
                 .associate { it.performanceLevel to it.averageScore }
@@ -40,7 +40,7 @@ class AnalyticsRepositoryImpl(
         }.flowOn(dispatcher)
     }
 
-    override fun getStudentProgress(classRoomId: Int): Flow<List<StudentProgress>> {
+    override fun getStudentProgress(classRoomId: String): Flow<List<StudentProgress>> {
         return flow {
             val result = dataSource.getStudentProgressByClassRoom(classRoomId)
                 .map { StudentProgress(it.studentName, it.progressPercentage, it.lastUpdated) }
@@ -48,7 +48,7 @@ class AnalyticsRepositoryImpl(
         }.flowOn(dispatcher)
     }
 
-    override fun getCategoryAnalysis(classRoomId: Int): Flow<List<CategoryAnalysis>> {
+    override fun getCategoryAnalysis(classRoomId: String): Flow<List<CategoryAnalysis>> {
         return flow {
             val result = dataSource.getCategoryAnalysisByClassRoom(classRoomId)
                 .map { CategoryAnalysis(it.categoryName, it.averageScore) }
@@ -56,7 +56,7 @@ class AnalyticsRepositoryImpl(
         }.flowOn(dispatcher)
     }
 
-    override fun getLowPerformanceStudentsByClassRoomId(classRoomId: Int): Flow<List<LowPerformanceAlert>> {
+    override fun getLowPerformanceStudentsByClassRoomId(classRoomId: String): Flow<List<LowPerformanceAlert>> {
         return flow {
             val result = dataSource.getLowPerformanceStudentsByClassRoomId(classRoomId)
                 .map {
@@ -71,14 +71,14 @@ class AnalyticsRepositoryImpl(
         }.flowOn(dispatcher)
     }
 
-    override fun getSectionScoreDistributionByClassRoomId(classRoomId: Int): Flow<List<SectionScore>> {
+    override fun getSectionScoreDistributionByClassRoomId(classRoomId: String): Flow<List<SectionScore>> {
         return flow {
             val result = dataSource.getSectionScoreDistributionByClassRoomId(classRoomId)
             emit(result)
         }.flowOn(dispatcher)
     }
 
-    override fun getSectionUsageByClassRoomId(classRoomId: Int): Flow<List<SectionUsage>> {
+    override fun getSectionUsageByClassRoomId(classRoomId: String): Flow<List<SectionUsage>> {
         return flow {
             val result = dataSource.getSectionUsageByClassRoomId(classRoomId)
             emit(result)

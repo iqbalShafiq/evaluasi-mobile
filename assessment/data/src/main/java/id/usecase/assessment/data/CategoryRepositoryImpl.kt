@@ -20,7 +20,7 @@ class CategoryRepositoryImpl(
         return withContext(dispatcher) {
             val insertedIds = dataSource
                 .upsertCategories(categories)
-                .map { it.toInt() }
+                .map { it }
             val insertedCategories = dataSource.getCategoriesByIds(insertedIds)
             return@withContext DataResult.Success(insertedCategories)
         }
@@ -28,15 +28,13 @@ class CategoryRepositoryImpl(
 
     override suspend fun upsertCategory(category: Category): DataResult<Category?> {
         return withContext(dispatcher) {
-            val id = dataSource
-                .upsertCategory(category)
-                .toInt()
+            val id = dataSource.upsertCategory(category)
             val result = dataSource.getCategoryById(id)
             return@withContext DataResult.Success(result)
         }
     }
 
-    override fun getCategoriesByClassRoomId(classRoomId: Int): Flow<DataResult<List<Category>>> {
+    override fun getCategoriesByClassRoomId(classRoomId: String): Flow<DataResult<List<Category>>> {
         return flow {
             emit(DataResult.Loading)
             val categories: List<Category> = dataSource.getCategoriesByClassRoomId(classRoomId)
@@ -44,7 +42,7 @@ class CategoryRepositoryImpl(
         }.flowOn(dispatcher)
     }
 
-    override fun getCategoryById(categoryId: Int): Flow<DataResult<Category?>> {
+    override fun getCategoryById(categoryId: String): Flow<DataResult<Category?>> {
         return flow {
             emit(DataResult.Loading)
             val category: Category? = dataSource.getCategoryById(categoryId)

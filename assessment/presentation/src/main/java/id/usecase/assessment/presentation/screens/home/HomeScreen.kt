@@ -61,7 +61,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeScreenRoot(
-    onClassRoomChosen: (Int) -> Unit,
+    onClassRoomChosen: (String) -> Unit,
     onCreateClassRoomClicked: () -> Unit,
     onLogoutMenuClicked: () -> Unit,
     homeViewModel: HomeViewModel = koinViewModel()
@@ -120,7 +120,7 @@ fun HomeScreen(
     errorMessage: String? = null,
     state: HomeState,
     onCreateClassRoomClicked: () -> Unit,
-    onClassRoomChosen: (Int) -> Unit,
+    onClassRoomChosen: (String) -> Unit,
     onAction: (HomeAction) -> Unit,
     onLogoutMenuClicked: () -> Unit
 ) { 
@@ -340,7 +340,7 @@ private fun HomeScreenPreview() {
                         subject = "Math",
                         className = "A",
                         studentCount = 20,
-                        id = 1,
+                        id = "1",
                         lastAssessment = "January Math Exam",
                         startPeriod = "2021-01-01",
                         endPeriod = "2021-12-31"
@@ -349,7 +349,7 @@ private fun HomeScreenPreview() {
                         subject = "Science",
                         className = "B",
                         studentCount = 30,
-                        id = 2,
+                        id = "2",
                         lastAssessment = "February Science Exam",
                         startPeriod = "2021-01-01",
                         endPeriod = "2021-12-31"
@@ -358,7 +358,7 @@ private fun HomeScreenPreview() {
                         subject = "English",
                         className = "C",
                         studentCount = 40,
-                        id = 3,
+                        id = "3",
                         lastAssessment = "March English Exam",
                         startPeriod = "2021-01-01",
                         endPeriod = "2021-12-31"
@@ -367,7 +367,7 @@ private fun HomeScreenPreview() {
                         subject = "History",
                         className = "D",
                         studentCount = 50,
-                        id = 4,
+                        id = "4",
                         lastAssessment = "April History Exam",
                         startPeriod = "2021-01-01",
                         endPeriod = "2021-12-31"

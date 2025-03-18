@@ -18,8 +18,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -44,7 +42,6 @@ import id.usecase.assessment.presentation.screens.class_room.create.categories.c
 import id.usecase.assessment.presentation.screens.class_room.create.categories.components.CategoryItemState
 import id.usecase.core.presentation.ui.ObserveAsEvents
 import id.usecase.designsystem.EvaluasiTheme
-import id.usecase.designsystem.components.app_bar.ActionItem
 import id.usecase.designsystem.components.app_bar.EvaluasiTopAppBar
 import id.usecase.designsystem.components.button.ButtonType
 import id.usecase.designsystem.components.button.EvaluasiButton
@@ -55,7 +52,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun AddCategoriesScreenRoot(
     modifier: Modifier = Modifier,
-    classRoomId: Int,
+    classRoomId: String,
     onBackPressed: () -> Unit,
     onCategoriesHasCreated: () -> Unit,
     viewModel: AddCategoriesViewModel = koinViewModel()
@@ -124,7 +121,7 @@ fun AddCategoriesScreenRoot(
 @Composable
 fun AddCategoriesScreen(
     modifier: Modifier = Modifier,
-    classRoomId: Int,
+    classRoomId: String,
     state: AddCategoriesState,
     onBackPressed: () -> Unit,
     onClearStudentPressed: () -> Unit,
@@ -291,7 +288,7 @@ private fun AddCategoriesPreview() {
             onBackPressed = { },
             onClearStudentPressed = { },
             onAction = { },
-            classRoomId = 0
+            classRoomId = ""
         )
     }
 }

@@ -127,12 +127,12 @@ private fun StudentAssessmentCardPreview() {
         mutableStateOf(
             StudentAssessmentState(
                 data = StudentScoreUi(
-                    studentId = 1,
+                    studentId = "1",
                     studentName = "John Doe",
                     comments = "Good job",
                     score = 90.0,
                     avgScore = 80.0,
-                    assessmentId = 1
+                    assessmentId = "1"
                 )
             )
         )

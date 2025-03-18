@@ -4,11 +4,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class EventNetworkModel(
-    val id: Int,
+    val id: String,
     val name: String,
     val purpose: String,
     val eventDate: Long,
-    val categoryId: Int,
+    val categoryId: String,
     val createdTime: Long,
     val lastModifiedTime: Long
 )

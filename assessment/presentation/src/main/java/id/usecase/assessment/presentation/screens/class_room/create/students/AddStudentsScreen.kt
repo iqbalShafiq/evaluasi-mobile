@@ -17,8 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -47,7 +45,6 @@ import id.usecase.assessment.presentation.screens.class_room.create.students.com
 import id.usecase.assessment.presentation.screens.class_room.create.students.components.AddStudentItemState
 import id.usecase.core.presentation.ui.ObserveAsEvents
 import id.usecase.designsystem.EvaluasiTheme
-import id.usecase.designsystem.components.app_bar.ActionItem
 import id.usecase.designsystem.components.app_bar.EvaluasiTopAppBar
 import id.usecase.designsystem.components.button.ButtonType
 import id.usecase.designsystem.components.button.EvaluasiButton
@@ -59,7 +56,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun AddStudentsScreenRoot(
     modifier: Modifier = Modifier,
-    classRoomId: Int,
+    classRoomId: String,
     onBackPressed: () -> Unit,
     onStudentHasAdded: () -> Unit,
     openAutoFillScanner: () -> Unit,
@@ -126,7 +123,7 @@ fun AddStudentsScreenRoot(
 @Composable
 fun AddStudentsScreen(
     modifier: Modifier = Modifier,
-    classRoomId: Int,
+    classRoomId: String,
     onBackPressed: () -> Unit,
     onClearStudentPressed: () -> Unit,
     onPastePressed: () -> Unit,
@@ -292,7 +289,7 @@ private fun AddStudentsPreview() {
     EvaluasiTheme {
         AddStudentsScreen(
             state = state,
-            classRoomId = 0,
+            classRoomId = "0",
             onBackPressed = { },
             onClearStudentPressed = { },
             onPastePressed = { },

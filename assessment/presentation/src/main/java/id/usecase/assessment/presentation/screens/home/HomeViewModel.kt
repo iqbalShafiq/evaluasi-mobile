@@ -144,7 +144,7 @@ class HomeViewModel(
         }
     }
 
-    private suspend fun loadStudentTotalPerClassRoom(classRoomId: Int): Int {
+    private suspend fun loadStudentTotalPerClassRoom(classRoomId: String): Int {
         return withContext(dispatcher) {
             studentRepository.getStudentsByClassRoomId(classRoomId)
                 .catch { 0 }
@@ -158,7 +158,7 @@ class HomeViewModel(
         }
     }
 
-    private suspend fun loadLastAssessment(classRoomId: Int): String {
+    private suspend fun loadLastAssessment(classRoomId: String): String {
         return withContext(dispatcher) {
             assessmentRepository.getLastAssessmentByClassRoomId(classRoomId)
                 .catch { "" }

@@ -22,7 +22,7 @@ class AssessmentRepositoryImpl(
             Log.d("TAG", "upsertAssessments ids: $assessmentIds")
             val assessments = dataSource.getAssessmentsByIds(
                 assessmentIds.map {
-                    it.toInt()
+                    it
                 }
             )
             Log.d("TAG", "upsertAssessments upserted: $assessments")
@@ -31,7 +31,7 @@ class AssessmentRepositoryImpl(
         }
     }
 
-    override fun getAssessmentsByEventId(eventId: Int): Flow<DataResult<List<Assessment>>> {
+    override fun getAssessmentsByEventId(eventId: String): Flow<DataResult<List<Assessment>>> {
         return flow {
             emit(DataResult.Loading)
             val assessments: List<Assessment> = dataSource.getAssessmentsByEventId(eventId)
@@ -39,17 +39,17 @@ class AssessmentRepositoryImpl(
         }.flowOn(dispatcher)
     }
 
-    override fun getAssessmentById(assessmentId: Int): Flow<DataResult<Assessment?>> {
+    override fun getAssessmentById(assessmentId: String): Flow<DataResult<Assessment?>> {
         return flow {
             emit(DataResult.Loading)
-            val assessment: Assessment? = dataSource.getAssessmentById(assessmentId)
-            if (assessment == null) throw Exception("Assessment not found")
+            val assessment: Assessment = dataSource.getAssessmentById(assessmentId)
+                ?: throw Exception("Assessment not found")
 
             emit(DataResult.Success(assessment))
         }.flowOn(dispatcher)
     }
 
-    override fun getAverageScoreByClassRoomId(classRoomId: Int): Flow<DataResult<Double>> {
+    override fun getAverageScoreByClassRoomId(classRoomId: String): Flow<DataResult<Double>> {
         return flow {
             emit(DataResult.Loading)
             val avgScore: Double = dataSource.getAverageScoreByClassRoomId(classRoomId)
@@ -57,7 +57,7 @@ class AssessmentRepositoryImpl(
         }.flowOn(dispatcher)
     }
 
-    override fun getLastAssessmentByClassRoomId(classRoomId: Int): Flow<DataResult<String?>> {
+    override fun getLastAssessmentByClassRoomId(classRoomId: String): Flow<DataResult<String?>> {
         return flow {
             emit(DataResult.Loading)
             val assessment: String? = dataSource.getLastAssessmentByClassRoomId(classRoomId)
@@ -65,7 +65,7 @@ class AssessmentRepositoryImpl(
         }.flowOn(dispatcher)
     }
 
-    override fun getAverageScoreByStudentId(studentId: Int): Flow<DataResult<Double>> {
+    override fun getAverageScoreByStudentId(studentId: String): Flow<DataResult<Double>> {
         return flow {
             emit(DataResult.Loading)
             val avgScore: Double = dataSource.getAverageScoreByStudentId(studentId)

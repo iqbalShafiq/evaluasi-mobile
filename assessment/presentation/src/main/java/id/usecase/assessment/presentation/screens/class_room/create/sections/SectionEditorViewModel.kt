@@ -46,7 +46,7 @@ class SectionEditorViewModel(
         }
     }
 
-    private fun loadSections(classRoomId: Int) {
+    private fun loadSections(classRoomId: String) {
         viewModelScope.launch(dispatcher) {
             sectionRepository.getSectionsByClassRoomId(classRoomId)
                 .catch { e ->
@@ -88,7 +88,7 @@ class SectionEditorViewModel(
         }
     }
 
-    private fun saveSection(sectionStates: List<SectionCardState>, classRoomId: Int) {
+    private fun saveSection(sectionStates: List<SectionCardState>, classRoomId: String) {
         Log.d(TAG, "saveSection: $sectionStates")
         viewModelScope.launch(dispatcher) {
             try {

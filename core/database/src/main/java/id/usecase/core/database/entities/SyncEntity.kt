@@ -9,7 +9,7 @@ import id.usecase.core.domain.sync.SyncStatus
 data class SyncEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val entityId: Int,
+    val entityId: String,
     val entityType: EntityType,
     val syncStatus: SyncStatus,
     val priority: Int = 0,

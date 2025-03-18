@@ -14,14 +14,14 @@ class SectionRepositoryImpl(
     private val dataSource: LocalAssessmentDataSource,
     private val dispatcher: CoroutineDispatcher
 ) : SectionRepository {
-    override suspend fun upsertSection(sections: List<Section>): DataResult<List<Long>> {
+    override suspend fun upsertSection(sections: List<Section>): DataResult<List<String>> {
         return withContext(dispatcher) {
             val sectionId = dataSource.upsertSection(sections)
             DataResult.Success(sectionId)
         }
     }
 
-    override fun getSectionById(sectionId: Int): Flow<DataResult<Section?>> {
+    override fun getSectionById(sectionId: String): Flow<DataResult<Section?>> {
         return flow {
             emit(DataResult.Loading)
             val section: Section? = dataSource.getSectionById(sectionId)
@@ -29,7 +29,7 @@ class SectionRepositoryImpl(
         }.flowOn(dispatcher)
     }
 
-    override fun getSectionsByClassRoomId(classRoomId: Int): Flow<DataResult<List<Section>>> {
+    override fun getSectionsByClassRoomId(classRoomId: String): Flow<DataResult<List<Section>>> {
         return flow {
             emit(DataResult.Loading)
             val sections: List<Section> = dataSource.getSectionsByClassRoomId(classRoomId)
@@ -37,7 +37,7 @@ class SectionRepositoryImpl(
         }.flowOn(dispatcher)
     }
 
-    override fun getSelectedSectionOnAssessment(assessmentId: Int): Flow<DataResult<List<Section>>> {
+    override fun getSelectedSectionOnAssessment(assessmentId: String): Flow<DataResult<List<Section>>> {
         return flow {
             emit(DataResult.Loading)
             val sections: List<Section> = dataSource.getSelectedSectionOnAssessment(assessmentId)

@@ -20,51 +20,51 @@ interface LocalAssessmentDataSource {
     suspend fun upsertClassRoom(classRoom: ClassRoom): ClassRoom?
     suspend fun getClassRooms(): List<ClassRoom>
     suspend fun searchClassRooms(query: String): List<ClassRoom>
-    suspend fun getClassRoomById(classRoomId: Int): ClassRoom?
+    suspend fun getClassRoomById(classRoomId: String): ClassRoom?
     suspend fun deleteClassRoom(classRoom: ClassRoom)
 
     suspend fun upsertStudent(students: Student): Student?
     suspend fun upsertStudents(students: List<Student>): List<Student>
-    suspend fun getStudentById(studentId: Int): Student?
+    suspend fun getStudentById(studentId: String): Student?
     suspend fun getTotalStudent(): Int
-    suspend fun getStudentsByClassRoomId(classRoomId: Int): List<Student>
+    suspend fun getStudentsByClassRoomId(classRoomId: String): List<Student>
     suspend fun deleteStudent(student: Student)
 
-    suspend fun upsertCategories(categories: List<Category>): List<Long>
-    suspend fun upsertCategory(category: Category): Long
-    suspend fun getCategoriesByClassRoomId(classRoomId: Int): List<Category>
-    suspend fun getCategoryById(categoryId: Int): Category?
-    suspend fun getCategoriesByIds(categoryIds: List<Int>): List<Category>
+    suspend fun upsertCategories(categories: List<Category>): List<String>
+    suspend fun upsertCategory(category: Category): String
+    suspend fun getCategoriesByClassRoomId(classRoomId: String): List<Category>
+    suspend fun getCategoryById(categoryId: String): Category?
+    suspend fun getCategoriesByIds(categoryIds: List<String>): List<Category>
     suspend fun deleteCategory(category: Category)
 
-    suspend fun upsertEvent(event: Event): Long
-    suspend fun upsertEventSection(eventSections: List<EventSection>): List<Long>
-    suspend fun getEventsByClassRoomId(classRoomId: Int): List<Event>
-    suspend fun getEventsByCategoryId(categoryId: Int): List<Event>
-    suspend fun getEventById(eventId: Int): Event?
+    suspend fun upsertEvent(event: Event): String
+    suspend fun upsertEventSection(eventSections: List<EventSection>): List<String>
+    suspend fun getEventsByClassRoomId(classRoomId: String): List<Event>
+    suspend fun getEventsByCategoryId(categoryId: String): List<Event>
+    suspend fun getEventById(eventId: String): Event?
     suspend fun deleteEvent(event: Event)
-    suspend fun getEventSectionCrossRef(eventId: Int, sectionId: Int): EventSection?
+    suspend fun getEventSectionCrossRef(eventSectionId: String): EventSection?
 
-    suspend fun upsertAssessments(assessmentList: List<Assessment>): List<Long>
-    suspend fun getAssessmentsByIds(assessmentIds: List<Int>): List<Assessment>
-    suspend fun getAssessmentsByEventId(eventId: Int): List<Assessment>
-    suspend fun getAssessmentById(assessmentId: Int): Assessment?
-    suspend fun getAverageScoreByClassRoomId(classRoomId: Int): Double
-    suspend fun getLastAssessmentByClassRoomId(classRoomId: Int): String?
-    suspend fun getAverageScoreByStudentId(studentId: Int): Double
+    suspend fun upsertAssessments(assessmentList: List<Assessment>): List<String>
+    suspend fun getAssessmentsByIds(assessmentIds: List<String>): List<Assessment>
+    suspend fun getAssessmentsByEventId(eventId: String): List<Assessment>
+    suspend fun getAssessmentById(assessmentId: String): Assessment?
+    suspend fun getAverageScoreByClassRoomId(classRoomId: String): Double
+    suspend fun getLastAssessmentByClassRoomId(classRoomId: String): String?
+    suspend fun getAverageScoreByStudentId(studentId: String): Double
     suspend fun deleteAssessment(assessment: Assessment)
 
-    suspend fun getPerformanceTrendByClassRoom(classRoomId: Int): List<MonthlyScore>
-    suspend fun getCategoryDistributionByClassRoom(classRoomId: Int): List<CategoryScore>
-    suspend fun getPerformanceDistributionByClassRoom(classRoomId: Int): List<PerformanceScore>
-    suspend fun getStudentProgressByClassRoom(classRoomId: Int): List<StudentProgress>
-    suspend fun getCategoryAnalysisByClassRoom(classRoomId: Int): List<CategoryAnalysis>
-    suspend fun getLowPerformanceStudentsByClassRoomId(classRoomId: Int): List<LowPerformanceAlert>
-    suspend fun getSectionScoreDistributionByClassRoomId(classRoomId: Int): List<SectionScore>
-    suspend fun getSectionUsageByClassRoomId(classRoomId: Int): List<SectionUsage>
+    suspend fun getPerformanceTrendByClassRoom(classRoomId: String): List<MonthlyScore>
+    suspend fun getCategoryDistributionByClassRoom(classRoomId: String): List<CategoryScore>
+    suspend fun getPerformanceDistributionByClassRoom(classRoomId: String): List<PerformanceScore>
+    suspend fun getStudentProgressByClassRoom(classRoomId: String): List<StudentProgress>
+    suspend fun getCategoryAnalysisByClassRoom(classRoomId: String): List<CategoryAnalysis>
+    suspend fun getLowPerformanceStudentsByClassRoomId(classRoomId: String): List<LowPerformanceAlert>
+    suspend fun getSectionScoreDistributionByClassRoomId(classRoomId: String): List<SectionScore>
+    suspend fun getSectionUsageByClassRoomId(classRoomId: String): List<SectionUsage>
 
-    suspend fun upsertSection(section: List<Section>): List<Long>
-    suspend fun getSectionById(sectionId: Int): Section?
-    suspend fun getSectionsByClassRoomId(classRoomId: Int): List<Section>
-    suspend fun getSelectedSectionOnAssessment(assessmentId: Int): List<Section>
+    suspend fun upsertSection(section: List<Section>): List<String>
+    suspend fun getSectionById(sectionId: String): Section?
+    suspend fun getSectionsByClassRoomId(classRoomId: String): List<Section>
+    suspend fun getSelectedSectionOnAssessment(assessmentId: String): List<Section>
 }

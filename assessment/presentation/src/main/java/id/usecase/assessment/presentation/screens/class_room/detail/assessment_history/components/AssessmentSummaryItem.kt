@@ -139,7 +139,7 @@ fun AssessmentSummaryItem(
 private fun AssessmentSummaryItemPreview() {
     AssessmentSummaryItem(
         assessment = AssessmentEventUi(
-            id = 1,
+            id = "1",
             name = "Assessment Name",
             categoryName = "Category Name",
             eventDate = "2021-09-01 00:00:00",
@@ -147,8 +147,8 @@ private fun AssessmentSummaryItemPreview() {
             lastModifiedTime = "2021-09-01 00:00:00",
             isInProgress = false,
             completionProgress = 0.5f,
-            categoryId = 1,
-            classId = 1,
+            categoryId = "1",
+            classId = "1",
             createdTime = "2021-09-01 00:00:00"
         ),
         onDetailClicked = { }

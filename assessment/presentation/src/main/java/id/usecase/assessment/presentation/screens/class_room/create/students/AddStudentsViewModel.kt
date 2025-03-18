@@ -46,7 +46,7 @@ class AddStudentsViewModel(
         }
     }
 
-    private fun loadStudents(classRoomId: Int) {
+    private fun loadStudents(classRoomId: String) {
         viewModelScope.launch(dispatcher) {
             repository.getStudentsByClassRoomId(classRoomId = classRoomId)
                 .catch { e ->
@@ -78,7 +78,7 @@ class AddStudentsViewModel(
         }
     }
 
-    private fun submitStudents(students: List<AddStudentItemState>, classRoomId: Int) {
+    private fun submitStudents(students: List<AddStudentItemState>, classRoomId: String) {
         viewModelScope.launch(dispatcher) {
             val studentList = withContext(dispatcher) {
                 students.map {

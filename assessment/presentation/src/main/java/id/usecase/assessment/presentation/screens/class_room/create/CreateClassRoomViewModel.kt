@@ -64,7 +64,7 @@ class CreateClassRoomViewModel(
         }
     }
 
-    private fun loadClassRoomDetail(classRoomId: Int) {
+    private fun loadClassRoomDetail(classRoomId: String) {
         viewModelScope.launch(dispatcher) {
             repository.getClassRoomById(classRoomId)
                 .catch { e ->
@@ -126,7 +126,7 @@ class CreateClassRoomViewModel(
         viewModelScope.launch(dispatcher) {
             val result = repository.upsertClassRoom(
                 ClassRoom(
-                    id = _state.value.classRoom?.id ?: 0,
+                    id = _state.value.classRoom?.id ?: "",
                     name = _state.value.classRoomName.text,
                     subject = _state.value.subject.text,
                     description = _state.value.description.text,

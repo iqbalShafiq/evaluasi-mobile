@@ -5,11 +5,13 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import id.usecase.core.database.type_converters.IntListConverter
+import id.usecase.core.database.utils.EntityPrefix
+import id.usecase.core.database.utils.generateEntityId
 
 @Entity(tableName = "class_rooms")
 data class ClassRoomEntity (
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    @PrimaryKey
+    val id: String = generateEntityId(EntityPrefix.CLASS_ROOM),
     val name: String,
     val subject: String,
     val description: String,

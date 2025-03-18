@@ -5,7 +5,7 @@ import id.usecase.assessment.presentation.screens.class_room.create.sections.com
 sealed class SectionEditorAction {
     data class Save(
         val sections: List<SectionCardState>,
-        val classRoomId: Int
+        val classRoomId: String
     ) : SectionEditorAction()
-    data class LoadSections(val classRoomId: Int) : SectionEditorAction()
+    data class LoadSections(val classRoomId: String) : SectionEditorAction()
 }
