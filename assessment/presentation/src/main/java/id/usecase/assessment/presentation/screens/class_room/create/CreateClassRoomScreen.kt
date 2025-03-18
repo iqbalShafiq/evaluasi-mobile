@@ -139,9 +139,7 @@ fun CreateClassRoomScreenRoot(
                 openAlertDialog = false
             },
             dialogTitle = "Error",
-            dialogText = errorMessage,
-            icon = ImageVector.vectorResource(id.usecase.designsystem.R.drawable.ic_test_icon),
-            iconDescription = "Error icon"
+            dialogText = errorMessage
         )
     }
 

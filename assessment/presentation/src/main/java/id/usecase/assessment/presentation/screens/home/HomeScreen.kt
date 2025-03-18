@@ -90,8 +90,6 @@ fun HomeScreenRoot(
 
     if (showLogoutConfirmationDialog) {
         StandardAlertDialog(
-            icon = ImageVector.vectorResource(R.drawable.ic_logout),
-            iconDescription = "Logout",
             dialogTitle = "Logout",
             dialogText = "Are you sure you want to logout?",
             onDismissRequest = { showLogoutConfirmationDialog = false },
@@ -123,7 +121,7 @@ fun HomeScreen(
     onClassRoomChosen: (String) -> Unit,
     onAction: (HomeAction) -> Unit,
     onLogoutMenuClicked: () -> Unit
-) { 
+) {
     val context = LocalContext.current
     var fabHeight by remember { mutableIntStateOf(0) }
     val heightInDp = with(LocalDensity.current) { fabHeight.toDp() }
