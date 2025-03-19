@@ -12,6 +12,8 @@ import id.usecase.core.database.utils.generateEntityId
 data class ClassRoomEntity (
     @PrimaryKey
     val id: String = generateEntityId(EntityPrefix.CLASS_ROOM),
+    @ColumnInfo(name = "teacher_id")
+    val teacherId: String,
     val name: String,
     val subject: String,
     val description: String,

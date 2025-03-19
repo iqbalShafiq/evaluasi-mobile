@@ -46,6 +46,7 @@ fun Student.toEntity() = StudentEntity(
 
 fun ClassRoomEntity.toDomainForm() = ClassRoom(
     id = id,
+    teacherId = teacherId,
     name = name,
     subject = subject,
     startPeriod = startPeriod,
@@ -58,6 +59,7 @@ fun ClassRoomEntity.toDomainForm() = ClassRoom(
 
 fun ClassRoom.toEntity() = ClassRoomEntity(
     id = id,
+    teacherId = teacherId,
     name = name,
     subject = subject,
     startPeriod = startPeriod,

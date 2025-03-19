@@ -12,6 +12,7 @@ import id.usecase.assessment.presentation.screens.class_room.create.CreateClassR
 import id.usecase.assessment.presentation.utils.toUi
 import id.usecase.core.domain.utils.DataResult
 import id.usecase.core.domain.assessment.model.classroom.ClassRoom
+import id.usecase.core.domain.auth.SessionStorage
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,6 +32,7 @@ import java.util.Locale
 class CreateClassRoomViewModel(
     private val application: Application,
     private val repository: ClassRoomRepository,
+    private val sessionStorage: SessionStorage,
     private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
@@ -127,6 +129,7 @@ class CreateClassRoomViewModel(
             val result = repository.upsertClassRoom(
                 ClassRoom(
                     id = _state.value.classRoom?.id ?: "",
+                    teacherId = sessionStorage.get()?.userId ?: "",
                     name = _state.value.classRoomName.text,
                     subject = _state.value.subject.text,
                     description = _state.value.description.text,
