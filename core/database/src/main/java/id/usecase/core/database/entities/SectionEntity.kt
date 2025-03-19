@@ -4,10 +4,9 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import id.usecase.core.database.type_converters.IntListConverter
 import id.usecase.core.database.type_converters.StringListConverter
-import id.usecase.core.database.utils.EntityPrefix
-import id.usecase.core.database.utils.generateEntityId
+import id.usecase.core.domain.utils.EntityPrefix
+import id.usecase.core.domain.utils.generateEntityId
 
 @Entity(tableName = "sections")
 data class SectionEntity(

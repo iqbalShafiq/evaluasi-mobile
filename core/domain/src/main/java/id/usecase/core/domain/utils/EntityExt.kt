@@ -1,4 +1,4 @@
-package id.usecase.core.database.utils
+package id.usecase.core.domain.utils
 
 import java.util.UUID
 

@@ -13,6 +13,8 @@ import id.usecase.assessment.presentation.utils.toUi
 import id.usecase.core.domain.utils.DataResult
 import id.usecase.core.domain.assessment.model.classroom.ClassRoom
 import id.usecase.core.domain.auth.SessionStorage
+import id.usecase.core.domain.utils.EntityPrefix
+import id.usecase.core.domain.utils.generateEntityId
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -128,7 +130,7 @@ class CreateClassRoomViewModel(
         viewModelScope.launch(dispatcher) {
             val result = repository.upsertClassRoom(
                 ClassRoom(
-                    id = _state.value.classRoom?.id ?: "",
+                    id = _state.value.classRoom?.id ?: generateEntityId(EntityPrefix.CLASS_ROOM),
                     teacherId = sessionStorage.get()?.userId ?: "",
                     name = _state.value.classRoomName.text,
                     subject = _state.value.subject.text,

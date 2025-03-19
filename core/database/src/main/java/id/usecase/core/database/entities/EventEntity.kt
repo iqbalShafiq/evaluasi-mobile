@@ -3,8 +3,8 @@ package id.usecase.core.database.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import id.usecase.core.database.utils.EntityPrefix
-import id.usecase.core.database.utils.generateEntityId
+import id.usecase.core.domain.utils.EntityPrefix
+import id.usecase.core.domain.utils.generateEntityId
 
 @Entity(tableName = "events")
 data class EventEntity(
