@@ -15,12 +15,14 @@ import id.usecase.assessment.presentation.model.StudentScoreUi
 import id.usecase.assessment.presentation.screens.assessment.AssessmentEvent.AssessmentHasSaved
 import id.usecase.assessment.presentation.screens.assessment.AssessmentEvent.OnErrorOccurred
 import id.usecase.assessment.presentation.screens.assessment.students.StudentAssessmentState
-import id.usecase.core.domain.utils.DataResult
 import id.usecase.core.domain.assessment.model.assessment.Assessment
 import id.usecase.core.domain.assessment.model.assessment.category.Category
 import id.usecase.core.domain.assessment.model.assessment.event.Event
 import id.usecase.core.domain.assessment.model.section.EventSection
 import id.usecase.core.domain.assessment.model.student.Student
+import id.usecase.core.domain.utils.DataResult
+import id.usecase.core.domain.utils.EntityPrefix
+import id.usecase.core.domain.utils.generateEntityId
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -414,7 +416,7 @@ class AssessmentViewModel(
             _state.update { it.copy(assessmentListField = assessments) }
 
             val event = Event(
-                id = state.value.assessmentEvent?.id ?: "",
+                id = state.value.assessmentEvent?.id ?: generateEntityId(EntityPrefix.EVENT),
                 name = state.value.assessmentNameField.text,
                 purpose = state.value.purposeField.text,
                 eventDate = state.value.selectedDate,
@@ -428,7 +430,7 @@ class AssessmentViewModel(
                 is DataResult.Success -> {
                     Log.d("TAG", "saveEvent: ${result.data}")
                     saveEventSections(
-                        eventId = result.data?.id ?: state.value.assessmentEvent?.id ?: ""
+                        eventId = result.data?.id ?: event.id
                     )
                 }
             }
