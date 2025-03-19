@@ -25,7 +25,7 @@ class SyncApiService(
                 eventId = request.eventId,
                 score = request.score,
                 createdTime = request.createdTime,
-                lastModifiedTime = request.lastModifiedTime
+                updatedTime = request.updatedTime
             )
         )
     }
@@ -39,7 +39,7 @@ class SyncApiService(
                 topics = request.topics,
                 classRoomId = request.classRoomId,
                 createdTime = request.createdTime,
-                lastModifiedTime = request.lastModifiedTime
+                updatedTime = request.updatedTime
             )
         )
     }
@@ -53,7 +53,7 @@ class SyncApiService(
                 identifier = request.identifier,
                 classRoomId = request.classRoomId,
                 createdTime = request.createdTime,
-                lastModifiedTime = request.lastModifiedTime
+                updatedTime = request.updatedTime
             )
         )
     }
@@ -63,10 +63,12 @@ class SyncApiService(
             route = "sync/classRoom",
             body = ClassRoomNetworkModel(
                 id = request.id,
+                teacherId = request.teacherId,
                 name = request.name,
-                createdTime = request.createdTime,
-                lastModifiedTime = request.lastModifiedTime,
                 subject = request.subject,
+                lastModifiedStatus = request.lastModifiedStatus,
+                createdTime = request.createdTime,
+                updatedTime = request.updatedTime,
                 description = request.description,
                 startPeriod = request.startPeriod,
                 longPeriod = request.longPeriod,
@@ -82,7 +84,7 @@ class SyncApiService(
                 id = request.id,
                 name = request.name,
                 createdTime = request.createdTime,
-                lastModifiedTime = request.lastModifiedTime,
+                updatedTime = request.updatedTime,
                 percentage = request.percentage,
                 classRoomId = request.classRoomId
             )
@@ -96,7 +98,7 @@ class SyncApiService(
                 id = request.id,
                 name = request.name,
                 createdTime = request.createdTime,
-                lastModifiedTime = request.lastModifiedTime,
+                updatedTime = request.updatedTime,
                 purpose = request.purpose,
                 eventDate = request.eventDate,
                 categoryId = request.categoryId

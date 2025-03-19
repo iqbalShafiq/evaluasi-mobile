@@ -141,9 +141,10 @@ class SyncWorker(
             }
 
             // If there are still items to sync, schedule another sync
-            if (syncService.getPendingSyncItems(1).isNotEmpty()) {
-                syncService.scheduleImmediateSync()
-            }
+            // TODO
+//            if (syncService.getPendingSyncItems(1).isNotEmpty()) {
+//                syncService.scheduleImmediateSync()
+//            }
 
             Result.success()
         } catch (e: Exception) {

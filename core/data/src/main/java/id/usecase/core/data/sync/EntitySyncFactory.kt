@@ -14,6 +14,8 @@ import id.usecase.core.domain.assessment.model.section.Section
 import id.usecase.core.domain.assessment.model.student.Student
 import id.usecase.core.domain.sync.EntityType
 import id.usecase.core.domain.sync.SyncableEntity
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class EntitySyncFactory {
     fun createSyncableEntity(entityType: EntityType, entity: Any): SyncableEntity {
@@ -35,14 +37,22 @@ class EntitySyncFactory {
         override fun toNetworkModel(): Any {
             return ClassRoomNetworkModel(
                 id = entity.id,
+                teacherId = entity.teacherId,
                 name = entity.name,
                 subject = entity.subject,
                 description = entity.description,
                 startPeriod = entity.startPeriod,
                 longPeriod = entity.longPeriod,
                 schedule = entity.schedule,
-                createdTime = entity.createdTime,
-                lastModifiedTime = entity.lastModifiedTime
+                lastModifiedStatus = 'I',
+                createdTime = SimpleDateFormat(
+                    "yyyy-MM-DD'T'HH:mm:ss",
+                    Locale.getDefault()
+                ).format(entity.createdTime),
+                updatedTime = SimpleDateFormat(
+                    "yyyy-MM-DD'T'HH:mm:ss",
+                    Locale.getDefault()
+                ).format(entity.lastModifiedTime),
             )
         }
     }
@@ -58,7 +68,7 @@ class EntitySyncFactory {
                 identifier = entity.identifier,
                 classRoomId = entity.classRoomId,
                 createdTime = entity.createdTime,
-                lastModifiedTime = entity.lastModifiedTime
+                updatedTime = entity.lastModifiedTime
             )
         }
     }
@@ -72,7 +82,7 @@ class EntitySyncFactory {
                 id = entity.id,
                 name = entity.name,
                 createdTime = entity.createdTime,
-                lastModifiedTime = entity.lastModifiedTime,
+                updatedTime = entity.lastModifiedTime,
                 percentage = entity.percentage,
                 classRoomId = entity.classRoomId
             )
@@ -88,7 +98,7 @@ class EntitySyncFactory {
                 id = entity.id,
                 name = entity.name,
                 createdTime = entity.createdTime,
-                lastModifiedTime = entity.lastModifiedTime,
+                updatedTime = entity.lastModifiedTime,
                 classRoomId = entity.classRoomId,
                 topics = entity.topics
             )
@@ -104,7 +114,7 @@ class EntitySyncFactory {
                 id = entity.id,
                 name = entity.name,
                 createdTime = entity.createdTime,
-                lastModifiedTime = entity.lastModifiedTime,
+                updatedTime = entity.lastModifiedTime,
                 eventDate = entity.eventDate,
                 categoryId = entity.categoryId,
                 purpose = entity.purpose
@@ -120,7 +130,7 @@ class EntitySyncFactory {
             return AssessmentNetworkModel(
                 id = entity.id,
                 createdTime = entity.createdTime,
-                lastModifiedTime = entity.lastModifiedTime,
+                updatedTime = entity.lastModifiedTime,
                 studentId = entity.studentId,
                 eventId = entity.eventId,
                 score = entity.score

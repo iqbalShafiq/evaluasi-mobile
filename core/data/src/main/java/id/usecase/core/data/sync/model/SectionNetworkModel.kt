@@ -1,5 +1,6 @@
 package id.usecase.core.data.sync.model
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -7,7 +8,10 @@ data class SectionNetworkModel(
     val id: String,
     val name: String,
     val topics: List<String>,
+    @SerialName("class_room_id")
     val classRoomId: String,
+    @SerialName("created_time")
     val createdTime: Long,
-    val lastModifiedTime: Long
+    @SerialName("updated_time")
+    val updatedTime: Long
 )
