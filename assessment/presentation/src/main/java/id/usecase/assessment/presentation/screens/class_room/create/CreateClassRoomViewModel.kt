@@ -111,7 +111,7 @@ class CreateClassRoomViewModel(
                                     description = TextFieldValue(
                                         text = result.data?.description ?: ""
                                     ),
-                                    hasSchedule = result.data?.schedule?.isNotEmpty() ?: false,
+                                    hasSchedule = result.data?.schedule?.isNotEmpty() == true,
                                     selectedDays = result.data?.schedule
                                         ?.mapNotNull { day ->
                                             DayOfWeek.entries.find { dow -> dow.value == day }
@@ -140,12 +140,8 @@ class CreateClassRoomViewModel(
                         .atTime(0, 0, 0, 0)
                         .toEpochSecond(ZoneOffset.UTC),
                     longPeriod = _state.value.longPeriod.text.toLongOrNull(),
-                    createdTime = LocalDateTime
-                        .now()
-                        .toEpochSecond(ZoneOffset.UTC),
-                    lastModifiedTime = LocalDateTime
-                        .now()
-                        .toEpochSecond(ZoneOffset.UTC),
+                    createdTime = System.currentTimeMillis(),
+                    lastModifiedTime = System.currentTimeMillis(),
                     schedule = _state.value.selectedDays.map { it.value }
                 )
             )

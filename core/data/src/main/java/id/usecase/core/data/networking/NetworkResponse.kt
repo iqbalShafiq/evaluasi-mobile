@@ -6,3 +6,8 @@ import kotlinx.serialization.Serializable
 data class NetworkResponse<T>(
     val data: T
 )
+
+@Serializable
+data class EmptyResponse(
+    val data: Nothing? = null
+)

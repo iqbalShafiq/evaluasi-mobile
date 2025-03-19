@@ -1,7 +1,7 @@
 package id.usecase.core.data.sync
 
-import id.usecase.core.data.networking.NetworkResponse
-import id.usecase.core.data.networking.post
+import id.usecase.core.data.networking.EmptyResponse
+import id.usecase.core.data.networking.postWithEmptyResult
 import id.usecase.core.data.sync.model.AssessmentNetworkModel
 import id.usecase.core.data.sync.model.CategoryNetworkModel
 import id.usecase.core.data.sync.model.ClassRoomNetworkModel
@@ -16,8 +16,8 @@ import io.ktor.client.HttpClient
 class SyncApiService(
     private val httpClient: HttpClient
 ) {
-    suspend fun syncAssessment(request: AssessmentNetworkModel): Result<NetworkResponse<Nothing>, DataError.Network> {
-        return httpClient.post<AssessmentNetworkModel, NetworkResponse<Nothing>>(
+    suspend fun syncAssessment(request: AssessmentNetworkModel): Result<EmptyResponse, DataError.Network> {
+        return httpClient.postWithEmptyResult<AssessmentNetworkModel>(
             route = "sync/assessment",
             body = AssessmentNetworkModel(
                 id = request.id,
@@ -30,8 +30,8 @@ class SyncApiService(
         )
     }
 
-    suspend fun syncSection(request: SectionNetworkModel): Result<NetworkResponse<Boolean>, DataError.Network> {
-        return httpClient.post<SectionNetworkModel, NetworkResponse<Boolean>>(
+    suspend fun syncSection(request: SectionNetworkModel): Result<EmptyResponse, DataError.Network> {
+        return httpClient.postWithEmptyResult<SectionNetworkModel>(
             route = "sync/section",
             body = SectionNetworkModel(
                 id = request.id,
@@ -44,8 +44,8 @@ class SyncApiService(
         )
     }
 
-    suspend fun syncStudent(request: StudentNetworkModel): Result<NetworkResponse<Boolean>, DataError.Network> {
-        return httpClient.post<StudentNetworkModel, NetworkResponse<Boolean>>(
+    suspend fun syncStudent(request: StudentNetworkModel): Result<EmptyResponse, DataError.Network> {
+        return httpClient.postWithEmptyResult<StudentNetworkModel>(
             route = "sync/student",
             body = StudentNetworkModel(
                 id = request.id,
@@ -58,8 +58,8 @@ class SyncApiService(
         )
     }
 
-    suspend fun syncClassRoom(request: ClassRoomNetworkModel): Result<NetworkResponse<Boolean>, DataError.Network> {
-        return httpClient.post<ClassRoomNetworkModel, NetworkResponse<Boolean>>(
+    suspend fun syncClassRoom(request: ClassRoomNetworkModel): Result<EmptyResponse, DataError.Network> {
+        return httpClient.postWithEmptyResult<ClassRoomNetworkModel>(
             route = "sync/classRoom",
             body = ClassRoomNetworkModel(
                 id = request.id,
@@ -77,8 +77,8 @@ class SyncApiService(
         )
     }
 
-    suspend fun syncCategory(request: CategoryNetworkModel): Result<NetworkResponse<Boolean>, DataError.Network> {
-        return httpClient.post<CategoryNetworkModel, NetworkResponse<Boolean>>(
+    suspend fun syncCategory(request: CategoryNetworkModel): Result<EmptyResponse, DataError.Network> {
+        return httpClient.postWithEmptyResult<CategoryNetworkModel>(
             route = "sync/category",
             body = CategoryNetworkModel(
                 id = request.id,
@@ -91,8 +91,8 @@ class SyncApiService(
         )
     }
 
-    suspend fun syncEvent(request: EventNetworkModel): Result<NetworkResponse<Boolean>, DataError.Network> {
-        return httpClient.post<EventNetworkModel, NetworkResponse<Boolean>>(
+    suspend fun syncEvent(request: EventNetworkModel): Result<EmptyResponse, DataError.Network> {
+        return httpClient.postWithEmptyResult<EventNetworkModel>(
             route = "sync/event",
             body = EventNetworkModel(
                 id = request.id,
@@ -106,8 +106,8 @@ class SyncApiService(
         )
     }
 
-    suspend fun syncEventSection(request: EventSectionNetworkModel): Result<NetworkResponse<Boolean>, DataError.Network> {
-        return httpClient.post<EventSectionNetworkModel, NetworkResponse<Boolean>>(
+    suspend fun syncEventSection(request: EventSectionNetworkModel): Result<EmptyResponse, DataError.Network> {
+        return httpClient.postWithEmptyResult<EventSectionNetworkModel>(
             route = "sync/event",
             body = EventSectionNetworkModel(
                 id = request.id,

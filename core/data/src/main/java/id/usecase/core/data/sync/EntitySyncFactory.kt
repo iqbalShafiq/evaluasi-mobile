@@ -46,11 +46,11 @@ class EntitySyncFactory {
                 schedule = entity.schedule,
                 lastModifiedStatus = 'I',
                 createdTime = SimpleDateFormat(
-                    "yyyy-MM-DD'T'HH:mm:ss",
+                    "yyyy-MM-dd'T'HH:mm:ss",
                     Locale.getDefault()
                 ).format(entity.createdTime),
                 updatedTime = SimpleDateFormat(
-                    "yyyy-MM-DD'T'HH:mm:ss",
+                    "yyyy-MM-dd'T'HH:mm:ss",
                     Locale.getDefault()
                 ).format(entity.lastModifiedTime),
             )

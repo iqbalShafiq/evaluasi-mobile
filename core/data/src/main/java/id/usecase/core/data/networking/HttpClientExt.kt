@@ -43,6 +43,18 @@ suspend inline fun <reified Request, reified Response : NetworkResponse<*>> Http
     }
 }
 
+suspend inline fun <reified Request> HttpClient.postWithEmptyResult(
+    route: String,
+    body: Request
+): Result<EmptyResponse, DataError.Network> {
+    return safeCall {
+        post {
+            url(constructRoute(route))
+            setBody(body)
+        }
+    }
+}
+
 suspend inline fun <reified Response : Any> HttpClient.delete(
     route: String,
     queryParameters: Map<String, Any?> = mapOf()
