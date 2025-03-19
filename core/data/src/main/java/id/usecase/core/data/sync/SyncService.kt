@@ -1,7 +1,6 @@
 package id.usecase.core.data.sync
 
 import android.content.Context
-import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
@@ -21,12 +20,14 @@ import id.usecase.core.domain.sync.SyncDataSource
 import id.usecase.core.domain.sync.SyncModel
 import id.usecase.core.domain.sync.SyncStatus
 import kotlinx.coroutines.flow.Flow
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicLong
 
 class SyncService(
     private val context: Context,
     private val syncDataSource: SyncDataSource
 ) {
+    private val lastSyncTime = AtomicLong(0)
+
     /**
      * Mark a single entity for sync
      */
@@ -140,22 +141,32 @@ class SyncService(
      * Schedule immediate sync
      */
     fun scheduleImmediateSync() {
+        val currentTime = System.currentTimeMillis()
+        val lastSync = lastSyncTime.get()
+
+        // Skip if we synced too recently
+        if (currentTime - lastSync < MIN_SYNC_INTERVAL) {
+            return
+        }
+
+        // Try to update the atomic time
+        if (!lastSyncTime.compareAndSet(lastSync, currentTime)) {
+            // Another thread beat us to it
+            return
+        }
+
+        // Schedule the work
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
         val syncWork = OneTimeWorkRequestBuilder<SyncWorker>()
             .setConstraints(constraints)
-            .setBackoffCriteria(
-                BackoffPolicy.EXPONENTIAL,
-                10,
-                TimeUnit.SECONDS
-            )
             .build()
 
         WorkManager.getInstance(context).enqueueUniqueWork(
             "immediate_sync_work",
-            ExistingWorkPolicy.APPEND,
+            ExistingWorkPolicy.REPLACE,
             syncWork
         )
     }
@@ -193,5 +204,9 @@ class SyncService(
     suspend fun cleanupOldSyncRecords(olderThan: Long = 7 * 24 * 60 * 60 * 1000L) {
         val cutoffTime = System.currentTimeMillis() - olderThan
         syncDataSource.cleanupOldSyncItems(cutoffTime = cutoffTime)
+    }
+
+    companion object {
+        private const val MIN_SYNC_INTERVAL = 60_000L
     }
 }

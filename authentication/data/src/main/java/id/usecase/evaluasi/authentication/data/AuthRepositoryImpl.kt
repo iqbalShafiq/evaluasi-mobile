@@ -31,7 +31,7 @@ class AuthRepositoryImpl(
         if (result is Result.Success) {
             sessionStorage.set(
                 AuthInfo(
-                    accessToken = result.data.data.token,
+                    accessToken = result.data.data.token.removePrefix("Bearer "),
                     userId = result.data.data.teacher.id
                 )
             )
