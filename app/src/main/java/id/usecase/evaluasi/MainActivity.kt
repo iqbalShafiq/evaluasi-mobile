@@ -28,6 +28,7 @@ import id.usecase.assessment.presentation.screens.class_room.create.students.Add
 import id.usecase.assessment.presentation.screens.class_room.detail.ClassRoomScreenRoot
 import id.usecase.assessment.presentation.screens.home.HomeScreenRoot
 import id.usecase.core.data.di.PeriodicSyncScheduler
+import id.usecase.core.presentation.ui.NotificationPermissionHandler
 import id.usecase.designsystem.EvaluasiTheme
 import id.usecase.evaluasi.authentication.presentation.login.LoginScreenRoot
 import id.usecase.evaluasi.authentication.presentation.register.RegisterScreenRoot
@@ -52,6 +53,7 @@ class MainActivity : ComponentActivity() {
             EvaluasiTheme {
                 Column(modifier = Modifier.fillMaxSize()) {
                     if (!state.value.isCheckingSession) {
+                        NotificationPermissionHandler()
                         MyNavigation(
                             isLoggedIn = state.value.isLoggedIn,
                             onLogoutMenuClicked = {

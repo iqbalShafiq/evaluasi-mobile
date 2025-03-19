@@ -42,8 +42,12 @@ class SyncService(
         }
 
         val existingSync = syncDataSource.getSyncItemForEntity(entityId, entityType)
-        if (existingSync != null && existingSync.syncStatus == SyncStatus.SYNCED) {
-            return // Already synced successfully
+        val noNeedToSync = existingSync?.syncStatus == SyncStatus.SYNCED ||
+                existingSync?.syncStatus == SyncStatus.SYNCING ||
+                existingSync?.syncStatus == SyncStatus.PENDING
+
+        if (existingSync != null && noNeedToSync) {
+            return
         }
 
         val priority = EntityDependencyManager.getPriority(entityType)
@@ -58,7 +62,7 @@ class SyncService(
 
         syncDataSource.insertSyncItem(syncEntity)
 
-        // Mark dependencies for sync too (si applicable)
+        // Mark dependencies for sync it too
         markDependenciesForSync(entityType, entity)
 
         // If on WiFi, trigger immediate sync
@@ -124,7 +128,7 @@ class SyncService(
 
             EntityType.EVENT -> {
                 val event = entity as Event
-                // Hereø you would get Category entity and mark it for sync
+                // Here you would get Category entity and mark it for sync
             }
             // And so on for other entity types that have dependencies
             else -> { /* No dependencies or no special handling needed */
@@ -144,7 +148,7 @@ class SyncService(
             .setConstraints(constraints)
             .setBackoffCriteria(
                 BackoffPolicy.EXPONENTIAL,
-                10, // initial delay
+                10,
                 TimeUnit.SECONDS
             )
             .build()
@@ -186,8 +190,8 @@ class SyncService(
     /**
      * Cleanup old sync records
      */
-    suspend fun cleanupOldSyncRecords(olderThan: Long = 7 * 24 * 60 * 60 * 1000L /* 7 days */) {
+    suspend fun cleanupOldSyncRecords(olderThan: Long = 7 * 24 * 60 * 60 * 1000L) {
         val cutoffTime = System.currentTimeMillis() - olderThan
-        val deletedCount = syncDataSource.cleanupOldSyncItems(cutoffTime = cutoffTime)
+        syncDataSource.cleanupOldSyncItems(cutoffTime = cutoffTime)
     }
 }

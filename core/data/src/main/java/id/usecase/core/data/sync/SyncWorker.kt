@@ -32,6 +32,7 @@ class SyncWorker(
     private val entityFactory: EntitySyncFactory by inject()
     private val assessmentDataSource: LocalAssessmentDataSource by inject()
 
+    @Suppress("IMPLICIT_CAST_TO_ANY")
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
             if (!NetworkUtils.isNetworkConnected(context)) {
@@ -93,8 +94,10 @@ class SyncWorker(
                     }
 
                     // Convert entity to network model
-                    val syncableEntity =
-                        entityFactory.createSyncableEntity(syncItem.entityType, entity)
+                    val syncableEntity = entityFactory.createSyncableEntity(
+                        entityType = syncItem.entityType,
+                        entity = entity
+                    )
                     val networkModel = syncableEntity.toNetworkModel()
 
                     // Sync to server using Ktor
@@ -121,7 +124,6 @@ class SyncWorker(
                             failCount++
                         }
                     }
-
                 } catch (e: Exception) {
                     syncService.updateSyncResult(syncItem.id, false, e.message)
                     failCount++

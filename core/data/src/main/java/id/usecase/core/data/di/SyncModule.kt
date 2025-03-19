@@ -24,8 +24,6 @@ val syncModule = module {
     single { PeriodicSyncScheduler(get(), get()) }
 }
 
-
-
 class PeriodicSyncScheduler(
     private val workManager: WorkManager,
     private val context: Context
