@@ -11,7 +11,7 @@ data class CategoryEntity(
     @PrimaryKey
     val id: String = generateEntityId(EntityPrefix.CATEGORY),
     val name: String,
-    val percentage: Double,
+    val weight: Double,
     @ColumnInfo(name = "class_room_id")
     val classRoomId: String,
     @ColumnInfo(name = "created_time")

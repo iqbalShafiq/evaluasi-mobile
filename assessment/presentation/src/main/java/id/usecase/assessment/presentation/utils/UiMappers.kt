@@ -29,7 +29,7 @@ fun ClassRoom.toUi(): ClassRoomUi = ClassRoomUi(
 fun CategoryItemState.toDomainForm(classRoomId: String) = Category(
     id = id,
     name = name.text,
-    percentage = partPercentage.text.toDouble(),
+    weight = partPercentage.text.toDouble(),
     classRoomId = classRoomId,
     createdTime = System.currentTimeMillis(),
     lastModifiedTime = System.currentTimeMillis()
@@ -38,7 +38,7 @@ fun CategoryItemState.toDomainForm(classRoomId: String) = Category(
 fun Category.toItemState() = CategoryItemState(
     id = id,
     name = TextFieldValue(text = name),
-    partPercentage = TextFieldValue(text = percentage.toString())
+    partPercentage = TextFieldValue(text = weight.toString())
 )
 
 fun AddStudentItemState.toDomainForm(classRoomId: String) = Student(

@@ -85,7 +85,7 @@ class SyncApiService(
                 name = request.name,
                 createdTime = request.createdTime,
                 updatedTime = request.updatedTime,
-                percentage = request.percentage,
+                weight = request.weight,
                 classRoomId = request.classRoomId
             )
         )

@@ -4,7 +4,8 @@ data class Assessment(
     val id: String,
     val studentId: String,
     val eventId: String,
-    val score: Double?,
+    val score: Double,
+    val comment: String?,
     val createdTime: Long,
     val lastModifiedTime: Long
 )

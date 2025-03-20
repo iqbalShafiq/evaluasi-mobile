@@ -255,6 +255,7 @@ class AssessmentViewModel(
                                                 studentId = student.id,
                                                 eventId = eventId,
                                                 score = 0.0,
+                                                comment = "",
                                                 createdTime = System.currentTimeMillis(),
                                                 lastModifiedTime = System.currentTimeMillis()
                                             )
@@ -333,6 +334,7 @@ class AssessmentViewModel(
                             studentId = student.id,
                             eventId = "",
                             score = 0.0,
+                            comment = "",
                             createdTime = System.currentTimeMillis(),
                             lastModifiedTime = System.currentTimeMillis()
                         )
@@ -468,7 +470,8 @@ class AssessmentViewModel(
                         id = assessment.data?.assessmentId ?: "",
                         studentId = assessment.data?.studentId ?: "",
                         eventId = eventId,
-                        score = assessment.score.text.toDoubleOrNull(),
+                        score = assessment.score.text.toDoubleOrNull() ?: 0.0,
+                        comment = assessment.data?.comments ?: "",
                         createdTime = System.currentTimeMillis(),
                         lastModifiedTime = System.currentTimeMillis()
                     )

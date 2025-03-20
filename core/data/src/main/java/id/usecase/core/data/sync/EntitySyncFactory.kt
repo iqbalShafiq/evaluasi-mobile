@@ -81,9 +81,9 @@ class EntitySyncFactory {
             return CategoryNetworkModel(
                 id = entity.id,
                 name = entity.name,
+                weight = entity.weight,
                 createdTime = entity.createdTime,
                 updatedTime = entity.lastModifiedTime,
-                percentage = entity.percentage,
                 classRoomId = entity.classRoomId
             )
         }

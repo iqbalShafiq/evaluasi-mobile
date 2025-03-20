@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 data class CategoryNetworkModel(
     val id: String,
     val name: String,
-    val percentage: Double,
+    val weight: Double,
     @SerialName("class_room_id")
     val classRoomId: String,
     @SerialName("created_time")
